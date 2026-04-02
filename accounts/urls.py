@@ -1,17 +1,12 @@
 from django.urls import path
 from .views import login_view
-
-urlpatterns = [
-    path('login/', login_view, name='login'),
-]
-from django.urls import path
-from .views import login_view
 from django.http import HttpResponse
 
 def home_view(request):
     return HttpResponse("ログイン成功！")
 
 urlpatterns = [
-    path('login/', login_view, name='login'),
-    path('', home_view, name='home'),
+    path('', login_view, name='login'),
+    path('signup/', signup_view, name='signup'),
+    path('home/', home_view, name='home'),
 ]

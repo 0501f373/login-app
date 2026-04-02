@@ -1,19 +1,26 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 
 def login_view(request):
+    return render(request, 'accounts/login.html')
+
+def signup_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        password_confirm = request.POST.get('password_confirm')
 
-        user = authenticate(request, username=username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return redirect('home')  # ログイン後の遷移先
-        else:
-            return render(request, 'accounts/login.html', {
-                'error': 'ユーザー名またはパスワードが違います'
+        if password != password_confirm:
+            return render(request, 'accounts/signup.html', {
+                'error': 'パスワードが一致しません'
             })
 
-    return render(request, 'accounts/login.html')
+        if User.objects.filter(username=username).exists():
+            return render(request, 'accounts/signup.html', {
+                'error': 'このユーザー名はすでに使われています'
+            })
+
+        User.objects.create_user(username=username, password=password)
+        return redirect('login')
+
+    return render(request, 'accounts/signup.html')
