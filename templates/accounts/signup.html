@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         .signup-box {
@@ -60,9 +60,10 @@
             cursor: pointer;
         }
 
-        .error {
+        .error-list {
             color: red;
             margin-bottom: 12px;
+            padding-left: 20px;
             font-size: 14px;
         }
 
@@ -76,15 +77,25 @@
     <div class="signup-box">
         <h1>新規登録</h1>
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
+        {% if errors %}
+            <ul class="error-list">
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
         {% endif %}
 
         <form method="post">
             {% csrf_token %}
+
             <div class="form-group">
-                <label for="username">ユーザー名</label>
-                <input type="text" id="username" name="username" required>
+                <label for="display_name">ユーザー名</label>
+                <input type="text" id="display_name" name="display_name" value="{{ display_name|default:'' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" value="{{ email|default:'' }}" required>
             </div>
 
             <div class="form-group">
