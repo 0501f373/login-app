@@ -8,8 +8,8 @@ from django.contrib.auth import authenticate, login
 def validate_password_policy(password):
     errors = []
 
-    if len(password) < 8 or len(password) > 12:
-        errors.append("パスワードは8〜12文字で入力してください")
+    if len(password) < 8:
+        errors.append("パスワードは8文字以上で入力してください")
 
     if not re.search(r"[A-Za-z]", password):
         errors.append("パスワードにはアルファベットを含めてください")
