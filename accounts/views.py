@@ -3,6 +3,9 @@ import re
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
+
+from .models import Product
 
 
 def validate_password_policy(password):
@@ -35,7 +38,6 @@ def login_view(request):
                 "error": "パスワードを入力してください"
             })
 
-        # username に email を入れているので authenticate は username=email でOK
         user = authenticate(request, username=email, password=password)
 
         if user is not None:
@@ -58,29 +60,22 @@ def signup_view(request):
 
         errors = []
 
-        # 表示用ユーザー名チェック
         if not display_name:
             errors.append("ユーザー名を入力してください")
-
-        # 前後の空白は trim 済み。中に空白が残る場合はバリデーション
         elif re.search(r"\s", display_name):
             errors.append("ユーザー名に空白は使用できません")
 
-        # メールアドレスチェック
         if not email:
             errors.append("メールアドレスを入力してください")
-
         elif User.objects.filter(email__iexact=email).exists():
             errors.append("このメールアドレスはすでに登録されています")
 
-        # パスワード一致チェック
         if not password:
             errors.append("パスワードを入力してください")
 
         if password != password_confirm:
             errors.append("パスワードが一致しません")
 
-        # パスワードポリシー
         errors.extend(validate_password_policy(password))
 
         if errors:
@@ -90,7 +85,6 @@ def signup_view(request):
                 "email": email,
             })
 
-        # username は内部用として email を保存
         user = User.objects.create_user(
             username=email,
             email=email,
@@ -102,3 +96,26 @@ def signup_view(request):
         return redirect("home")
 
     return render(request, "accounts/signup.html")
+
+
+def home_view(request):
+    return HttpResponse("ログイン成功！")
+
+
+def product_search(request):
+    keyword = request.GET.get("keyword", "")
+    category = request.GET.get("category", "")
+
+    products = Product.objects.all()
+
+    if keyword:
+        products = products.filter(name__icontains=keyword)
+
+    if category:
+        products = products.filter(category__icontains=category)
+
+    return render(request, "accounts/product_search.html", {
+        "keyword": keyword,
+        "category": category,
+        "products": products,
+    })
