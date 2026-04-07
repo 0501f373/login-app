@@ -1,6 +1,6 @@
 import re
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
@@ -118,4 +118,12 @@ def product_search(request):
         "keyword": keyword,
         "category": category,
         "products": products,
+    })
+
+from django.shortcuts import get_object_or_404
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, "accounts/product_detail.html", {
+        "product": product,
     })
