@@ -36,10 +36,6 @@
             text-decoration: none;
         }
 
-        .header-links a:hover {
-            text-decoration: underline;
-        }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -53,24 +49,36 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        .detail-card h1 {
-            margin-top: 0;
-            margin-bottom: 16px;
-        }
-
-        .detail-row {
-            margin-bottom: 12px;
-            font-size: 16px;
-        }
-
-        .label {
-            font-weight: bold;
+        .product-image {
+            width: 300px;
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: block;
         }
 
         .price {
             font-size: 20px;
             font-weight: bold;
             color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .sold-out {
+            color: red;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .cart-form {
+            margin-top: 20px;
+        }
+
+        .cart-form select,
+        .cart-form button {
+            padding: 10px;
+            margin-right: 8px;
         }
 
         .back-link {
@@ -78,10 +86,6 @@
             margin-top: 24px;
             color: #333;
             text-decoration: none;
-        }
-
-        .back-link:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
@@ -102,18 +106,31 @@
         <div class="detail-card">
             <h1>{{ product.name }}</h1>
 
-            <div class="detail-row">
-                <span class="label">カテゴリ:</span> {{ product.category }}
-            </div>
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+            {% else %}
+                <p>画像なし</p>
+            {% endif %}
 
-            <div class="detail-row price">
-                価格: {{ product.price }}円
-            </div>
+            <p>カテゴリ: {{ product.category }}</p>
+            <p class="price">価格: {{ product.price }}円</p>
+            <p>{{ product.description }}</p>
+            <p>在庫数: {{ product.stock }}</p>
 
-            <div class="detail-row">
-                <span class="label">商品説明:</span><br>
-                {{ product.description }}
-            </div>
+            {% if product.stock == 0 %}
+                <p class="sold-out">売り切れ</p>
+            {% else %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
+                    {% csrf_token %}
+                    <label for="quantity">数量:</label>
+                    <select name="quantity" id="quantity">
+                        {% for i in quantity_range %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">カートに入れる</button>
+                </form>
+            {% endif %}
 
             <a href="{% url 'product_search' %}" class="back-link">← 商品検索へ戻る</a>
         </div>

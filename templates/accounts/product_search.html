@@ -101,6 +101,7 @@
         
     </style>
 </head>
+<body>
 <div class="header">
     <div class="header-title">商品検索</div>
     <div class="header-links">
@@ -133,15 +134,30 @@
             <div class="product-list">
                 {% for product in products %}
                     <div class="card">
-                        <h2>
-                            <a href="{% url 'product_detail' product.id %}">
-                                {{ product.name }}
-                            </a>
-                        </h2>
-                        <p>カテゴリ: {{ product.category }}</p>
-                        <p class="price">価格: {{ product.price }}円</p>
-                        <p>{{ product.description }}</p>
-                    </div>
+
+    {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}"
+             style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+    {% endif %}
+
+    <h2>
+        <a href="{% url 'product_detail' product.id %}">
+            {{ product.name }}
+        </a>
+    </h2>
+
+    <p>カテゴリ: {{ product.category }}</p>
+    <p class="price">価格: {{ product.price }}円</p>
+
+    {% if product.stock == 0 %}
+        <p style="color: red; font-weight: bold;">売り切れ</p>
+    {% else %}
+        <p>在庫: {{ product.stock }}</p>
+    {% endif %}
+
+    <p>{{ product.description }}</p>
+
+</div>
                 {% endfor %}
             </div>
         {% else %}

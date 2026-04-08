@@ -129,4 +129,80 @@ def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, "accounts/product_detail.html", {
         "product": product,
+        "quantity_range": range(1, product.stock + 1),
     })
+
+def add_to_cart(request, product_id):
+    if request.method == "POST":
+        product = get_object_or_404(Product, id=product_id)
+        quantity = int(request.POST.get("quantity", 1))
+
+        if product.stock == 0:
+            return redirect("product_detail", product_id=product.id)
+
+        if quantity > product.stock:
+            quantity = product.stock
+
+        cart = request.session.get("cart", {})
+
+        product_id_str = str(product_id)
+        if product_id_str in cart:
+            cart[product_id_str] += quantity
+        else:
+            cart[product_id_str] = quantity
+
+        request.session["cart"] = cart
+
+        return redirect("cart")
+
+    return redirect("product_search")
+
+def cart_view(request):
+    cart = request.session.get("cart", {})
+    cart_items = []
+    total_price = 0
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        subtotal = product.price * quantity
+        total_price += subtotal
+
+        cart_items.append({
+            "product": product,
+            "quantity": quantity,
+            "subtotal": subtotal,
+        })
+
+    return render(request, "accounts/cart.html", {
+        "cart_items": cart_items,
+        "total_price": total_price,
+    })
+
+
+def order_confirm(request):
+    if request.method != "POST":
+        return redirect("cart")
+
+    cart = request.session.get("cart", {})
+
+    if not cart:
+        return redirect("cart")
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+
+        if product.stock < quantity:
+            return render(request, "accounts/cart.html", {
+                "cart_items": [],
+                "total_price": 0,
+                "error": f"{product.name} の在庫が不足しています"
+            })
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        product.stock -= quantity
+        product.save()
+
+    request.session["cart"] = {}
+
+    return render(request, "accounts/order_complete.html")

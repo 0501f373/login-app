@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>カート画面</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            background: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #333;
+            color: white;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .header-links a,
+        .header-links span {
+            color: white;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .cart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 24px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .empty {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-title">カート</div>
+        <div class="header-links">
+            {% if request.user.is_authenticated %}
+                <span>{{ request.user.first_name }}</span>
+            {% else %}
+                <a href="/login/">ログイン</a>
+                <a href="/signup/">新規登録</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>カート画面</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+                <div class="cart-card">
+                    <h2>{{ item.product.name }}</h2>
+                    <p>価格: {{ item.product.price }}円</p>
+                    <p>数量: {{ item.quantity }}</p>
+                    <p>小計: {{ item.subtotal }}円</p>
+                </div>
+            {% endfor %}
+
+            <p class="total">合計: {{ total_price }}円</p>
+
+            <form method="post" action="{% url 'order_confirm' %}">
+                {% csrf_token %}
+                <button type="submit" class="button">注文確定</button>
+            </form>
+        {% else %}
+            <div class="empty">
+                <p>カートに商品がありません。</p>
+            </div>
+        {% endif %}
+
+        <a href="{% url 'product_search' %}" class="button">商品検索へ戻る</a>
+    </div>
+</body>
+</html>

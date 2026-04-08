@@ -123,3 +123,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/home/fukushimaminami/login-app/staticfiles'
 
 LOGIN_REDIRECT_URL = 'product_search'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
