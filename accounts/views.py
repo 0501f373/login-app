@@ -206,3 +206,12 @@ def order_confirm(request):
     request.session["cart"] = {}
 
     return render(request, "accounts/order_complete.html")
+
+def remove_from_cart(request, product_id):
+    cart = request.session.get("cart", [])
+
+    if product_id in cart:
+        cart.remove(product_id)
+
+    request.session["cart"] = cart
+    return redirect("cart")

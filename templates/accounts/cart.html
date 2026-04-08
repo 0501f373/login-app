@@ -103,11 +103,21 @@
         {% if cart_items %}
             {% for item in cart_items %}
                 <div class="cart-card">
+
+                    {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="150">
+        {% endif %}
+        
                     <h2>{{ item.product.name }}</h2>
                     <p>価格: {{ item.product.price }}円</p>
                     <p>数量: {{ item.quantity }}</p>
                     <p>小計: {{ item.subtotal }}円</p>
-                </div>
+
+                    <form action="{% url 'remove_from_cart' item.product.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="button">カートから削除</button>
+        </form>
+    </div>
             {% endfor %}
 
             <p class="total">合計: {{ total_price }}円</p>
@@ -122,7 +132,7 @@
             </div>
         {% endif %}
 
-        <a href="{% url 'product_search' %}" class="button">商品検索へ戻る</a>
+        <a href="{% url 'product_search' %}" class="button">商品一覧に戻る</a>
     </div>
 </body>
 </html>
