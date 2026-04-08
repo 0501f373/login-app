@@ -42,7 +42,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect("home")
+            return redirect("product_search")
 
         return render(request, "accounts/login.html", {
             "error": "メールアドレスまたはパスワードが違います"

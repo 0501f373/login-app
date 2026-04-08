@@ -121,3 +121,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/home/fukushimaminami/login-app/staticfiles'
+
+LOGIN_REDIRECT_URL = 'product_search'
