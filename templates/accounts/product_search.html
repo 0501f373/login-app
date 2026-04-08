@@ -98,21 +98,20 @@
             padding: 20px;
             border-radius: 12px;
         }
-
-        {% if request.user.is_authenticated %}
-  {{ request.user.first_name }}
-{% endif %}
-
+        
     </style>
 </head>
-<body>
-    <div class="header">
-        <div class="header-title">商品検索</div>
-        <div class="header-links">
+<div class="header">
+    <div class="header-title">商品検索</div>
+    <div class="header-links">
+        {% if request.user.is_authenticated %}
+            <span>{{ request.user.first_name }}</span>
+        {% else %}
             <a href="/login/">ログイン</a>
             <a href="/signup/">新規登録</a>
-        </div>
+        {% endif %}
     </div>
+</div>
 
     <div class="container">
         <h1>商品検索画面</h1>
