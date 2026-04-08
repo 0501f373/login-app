@@ -106,7 +106,14 @@ def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     cart = request.session.get("cart", {})
-    cart_count = sum(cart.values())
+
+    # ←全部この中に入れる！！
+    if isinstance(cart, dict):
+        cart_count = sum(cart.values())
+    elif isinstance(cart, list):
+        cart_count = len(cart)
+    else:
+        cart_count = 0
 
     products = Product.objects.all()
 
@@ -119,10 +126,8 @@ def product_search(request):
     categories = Product.objects.values_list("category", flat=True).distinct()
 
     return render(request, "accounts/product_search.html", {
-        "keyword": keyword,
-        "category": category,
-        "categories": categories,
         "products": products,
+        "categories": categories,
         "cart_count": cart_count,
     })
 
