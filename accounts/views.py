@@ -254,3 +254,46 @@ def update_cart(request, product_id):
 
     return redirect("cart")
 
+def order_confirm(request):
+    if request.method != "POST":
+        return redirect("cart")
+
+    cart = request.session.get("cart", {})
+
+    if not isinstance(cart, dict):
+        cart = {}
+
+    if not cart:
+        return redirect("cart")
+
+    cart_items = []
+    total_price = 0
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+
+        if product.stock < quantity:
+            for pid, qty in cart.items():
+                item_product = get_object_or_404(Product, id=pid)
+                subtotal = item_product.price * qty
+                total_price += subtotal
+                cart_items.append({
+                    "product": item_product,
+                    "quantity": qty,
+                    "subtotal": subtotal,
+                })
+
+            return render(request, "accounts/cart.html", {
+                "cart_items": cart_items,
+                "total_price": total_price,
+                "error": f"{product.name} の在庫が不足しています",
+            })
+
+    for product_id, quantity in cart.items():
+        product = get_object_or_404(Product, id=product_id)
+        product.stock -= quantity
+        product.save()
+
+    request.session["cart"] = {}
+
+    return render(request, "accounts/order_complete.html")
