@@ -105,6 +105,8 @@ def home_view(request):
 def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
+    cart = request.session.get("cart", {})
+    cart_count = sum(cart.values())
 
     products = Product.objects.all()
 
@@ -121,6 +123,7 @@ def product_search(request):
         "category": category,
         "categories": categories,
         "products": products,
+        "cart_count": cart_count,
     })
 
 from django.shortcuts import get_object_or_404
@@ -214,4 +217,28 @@ def remove_from_cart(request, product_id):
         cart.remove(product_id)
 
     request.session["cart"] = cart
+    return redirect("cart")
+
+def update_cart(request, product_id):
+    if request.method == "POST":
+        cart = request.session.get("cart", {})
+        product_id_str = str(product_id)
+
+        if product_id_str in cart:
+            quantity = int(request.POST.get("quantity", 0))
+
+            if quantity <= 0:
+                # 削除
+                del cart[product_id_str]
+            else:
+                # 数量更新
+                product = get_object_or_404(Product, id=product_id)
+
+                if quantity > product.stock:
+                    quantity = product.stock
+
+                cart[product_id_str] = quantity
+
+        request.session["cart"] = cart
+
     return redirect("cart")

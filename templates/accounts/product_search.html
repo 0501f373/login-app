@@ -111,6 +111,8 @@
             <a href="/login/">ログイン</a>
             <a href="/signup/">新規登録</a>
         {% endif %}
+
+        <a href="{% url 'cart' %}">カート（{{ cart_count }}）</a>
     </div>
 </div>
 
@@ -168,3 +170,4 @@
     </div>
 </body>
 </html>
+

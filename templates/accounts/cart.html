@@ -107,16 +107,20 @@
                     {% if item.product.image %}
             <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" width="150">
         {% endif %}
-        
+
                     <h2>{{ item.product.name }}</h2>
                     <p>価格: {{ item.product.price }}円</p>
-                    <p>数量: {{ item.quantity }}</p>
-                    <p>小計: {{ item.subtotal }}円</p>
 
-                    <form action="{% url 'remove_from_cart' item.product.id %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="button">カートから削除</button>
-        </form>
+                    <form method="post" action="{% url 'update_cart' item.product.id %}">
+    {% csrf_token %}
+
+    <label>数量:</label>
+    <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
+
+    <button type="submit">更新</button>
+    <button type="submit" name="quantity" value="0">削除</button>
+</form>
+<p>小計: {{ item.subtotal }}円</p>
     </div>
             {% endfor %}
 
