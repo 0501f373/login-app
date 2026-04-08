@@ -112,11 +112,14 @@ def product_search(request):
         products = products.filter(name__icontains=keyword)
 
     if category:
-        products = products.filter(category__icontains=category)
+        products = products.filter(category=category)
+
+    categories = Product.objects.values_list("category", flat=True).distinct()
 
     return render(request, "accounts/product_search.html", {
         "keyword": keyword,
         "category": category,
+        "categories": categories,
         "products": products,
     })
 
