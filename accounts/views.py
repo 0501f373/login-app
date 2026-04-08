@@ -135,10 +135,13 @@ from django.shortcuts import get_object_or_404
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    quantity_range = range(1, product.stock + 1) if product.stock > 0 else []
+
     return render(request, "accounts/product_detail.html", {
         "product": product,
-        "quantity_range": range(1, product.stock + 1),
+        "quantity_range": quantity_range,
     })
+
 
 def add_to_cart(request, product_id):
     if request.method == "POST":
@@ -153,6 +156,9 @@ def add_to_cart(request, product_id):
 
         cart = request.session.get("cart", {})
 
+        if not isinstance(cart, dict):
+            cart = {}
+
         product_id_str = str(product_id)
         if product_id_str in cart:
             cart[product_id_str] += quantity
@@ -165,8 +171,13 @@ def add_to_cart(request, product_id):
 
     return redirect("product_search")
 
+
 def cart_view(request):
     cart = request.session.get("cart", {})
+
+    if not isinstance(cart, dict):
+        cart = {}
+
     cart_items = []
     total_price = 0
 
@@ -187,63 +198,61 @@ def cart_view(request):
     })
 
 
-def order_confirm(request):
-    if request.method != "POST":
-        return redirect("cart")
-
+def remove_from_cart(request, product_id):
     cart = request.session.get("cart", {})
 
-    if not cart:
-        return redirect("cart")
+    if not isinstance(cart, dict):
+        cart = {}
 
-    for product_id, quantity in cart.items():
-        product = get_object_or_404(Product, id=product_id)
+    product_id_str = str(product_id)
 
-        if product.stock < quantity:
-            return render(request, "accounts/cart.html", {
-                "cart_items": [],
-                "total_price": 0,
-                "error": f"{product.name} の在庫が不足しています"
-            })
-
-    for product_id, quantity in cart.items():
-        product = get_object_or_404(Product, id=product_id)
-        product.stock -= quantity
-        product.save()
-
-    request.session["cart"] = {}
-
-    return render(request, "accounts/order_complete.html")
-
-def remove_from_cart(request, product_id):
-    cart = request.session.get("cart", [])
-
-    if product_id in cart:
-        cart.remove(product_id)
+    if product_id_str in cart:
+        del cart[product_id_str]
 
     request.session["cart"] = cart
     return redirect("cart")
+
 
 def update_cart(request, product_id):
     if request.method == "POST":
         cart = request.session.get("cart", {})
         product_id_str = str(product_id)
 
+        if not isinstance(cart, dict):
+            cart = {}
+
         if product_id_str in cart:
             quantity = int(request.POST.get("quantity", 0))
+            product = get_object_or_404(Product, id=product_id)
 
             if quantity <= 0:
-                # 削除
                 del cart[product_id_str]
-            else:
-                # 数量更新
-                product = get_object_or_404(Product, id=product_id)
+                request.session["cart"] = cart
+                return redirect("cart")
 
-                if quantity > product.stock:
-                    quantity = product.stock
+            if quantity > product.stock:
+                cart_items = []
+                total_price = 0
 
-                cart[product_id_str] = quantity
+                for pid, qty in cart.items():
+                    item_product = get_object_or_404(Product, id=pid)
+                    subtotal = item_product.price * qty
+                    total_price += subtotal
 
-        request.session["cart"] = cart
+                    cart_items.append({
+                        "product": item_product,
+                        "quantity": qty,
+                        "subtotal": subtotal,
+                    })
+
+                return render(request, "accounts/cart.html", {
+                    "cart_items": cart_items,
+                    "total_price": total_price,
+                    "error": f"{product.name} の在庫が不足しています。在庫は {product.stock} 点です。",
+                })
+
+            cart[product_id_str] = quantity
+            request.session["cart"] = cart
 
     return redirect("cart")
+

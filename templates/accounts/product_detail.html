@@ -1,3 +1,7 @@
+完成版
+
+そのまま置き換えるならこの形です。
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -65,12 +69,6 @@
             margin-bottom: 12px;
         }
 
-        .sold-out {
-            color: red;
-            font-weight: bold;
-            margin: 12px 0;
-        }
-
         .cart-form {
             margin-top: 20px;
         }
@@ -115,11 +113,24 @@
             <p>カテゴリ: {{ product.category }}</p>
             <p class="price">価格: {{ product.price }}円</p>
             <p>{{ product.description }}</p>
-            <p>在庫数: {{ product.stock }}</p>
 
             {% if product.stock == 0 %}
-                <p class="sold-out">売り切れ</p>
+                <p style="color: red;">売り切れ</p>
+                <button type="button" disabled>カートに入れる</button>
+            {% elif product.stock <= 5 %}
+                <p style="color: orange;">残りわずか</p>
+                <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
+                    {% csrf_token %}
+                    <label for="quantity">数量:</label>
+                    <select name="quantity" id="quantity">
+                        {% for i in quantity_range %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">カートに入れる</button>
+                </form>
             {% else %}
+                <p style="color: green;">在庫あり</p>
                 <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
                     {% csrf_token %}
                     <label for="quantity">数量:</label>

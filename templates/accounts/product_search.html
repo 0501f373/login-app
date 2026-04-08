@@ -152,10 +152,12 @@
     <p class="price">価格: {{ product.price }}円</p>
 
     {% if product.stock == 0 %}
-        <p style="color: red; font-weight: bold;">売り切れ</p>
-    {% else %}
-        <p>在庫: {{ product.stock }}</p>
-    {% endif %}
+    <p style="color: red;">売り切れ</p>
+{% elif product.stock <= 5 %}
+    <p style="color: orange;">残りわずか</p>
+{% else %}
+    <p style="color: green;">在庫あり</p>
+{% endif %}
 
     <p>{{ product.description }}</p>
 
