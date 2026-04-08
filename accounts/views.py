@@ -131,8 +131,6 @@ def product_search(request):
         "cart_count": cart_count,
     })
 
-from django.shortcuts import get_object_or_404
-
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     quantity_range = range(1, product.stock + 1) if product.stock > 0 else []
