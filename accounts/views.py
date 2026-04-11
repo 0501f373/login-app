@@ -106,7 +106,7 @@ def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     cart = request.session.get("cart", {})
-    cart_count = sum(cart.values())
+    cart_count = len(cart)
 
     products = Product.objects.all()
 
@@ -148,7 +148,6 @@ def add_to_cart(request, product_id):
             quantity = product.stock
 
         cart = request.session.get("cart", {})
-        cart_count = len(cart)
 
         if not isinstance(cart, dict):
             cart = {}
