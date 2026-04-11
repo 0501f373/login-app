@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>商品検索画面</title>
+    <title>商品一覧</title>
     <style>
         body {
             font-family: sans-serif;
@@ -118,7 +118,7 @@
 </head>
 <body>
 <div class="header">
-    <div class="header-title">商品検索</div>
+    <div class="header-title">商品一覧</div>
     <div class="header-links">
         {% if request.user.is_authenticated %}
             <span>{{ request.user.first_name }}</span>
@@ -132,7 +132,7 @@
 </div>
 
     <div class="container">
-        <h1>商品検索画面</h1>
+        <h1>商品一覧</h1>
 
         <form method="get" class="search-form">
     <input
