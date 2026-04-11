@@ -292,3 +292,10 @@ def order_confirm(request):
     request.session["cart"] = {}
 
     return render(request, "accounts/order_complete.html")
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect
+
+def logout_view(request):
+    logout(request)
+    return redirect('product_search')
