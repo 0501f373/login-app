@@ -111,6 +111,7 @@
         <div class="header-links">
             {% if request.user.is_authenticated %}
                 <span>{{ request.user.first_name }}</span>
+                <a href="{% url 'logout' %}">ログアウト</a>
             {% else %}
                 <a href="/login/">ログイン</a>
                 <a href="/signup/">新規登録</a>
