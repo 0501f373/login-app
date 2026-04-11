@@ -113,7 +113,29 @@
             padding: 20px;
             border-radius: 12px;
         }
-        
+
+        .search-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.search-form input,
+.search-form select,
+.search-form button,
+.clear-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+}
+
+.clear-btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #ddd;
+    color: #333;
+    border-radius: 6px;
+}      
     </style>
 </head>
 <body>
@@ -153,6 +175,7 @@
     </select>
 
     <button type="submit">検索</button>
+    <a href="{% url 'product_search' %}" class="clear-btn">クリア</a>
 </form>
 
         {% if products %}
