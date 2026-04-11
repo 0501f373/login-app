@@ -79,14 +79,29 @@
             font-size: 22px;
         }
 
-        .card h2 a {
-            color: #222;
-            text-decoration: none;
-        }
+        .card-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
 
-        .card h2 a:hover {
-            text-decoration: underline;
-        }
+        .card-link:hover {
+    text-decoration: none;
+}
+
+        .card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+        .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
 
         .price {
             font-weight: bold;
@@ -119,48 +134,55 @@
     <div class="container">
         <h1>商品検索画面</h1>
 
-        <form method="get">
-            <input type="text" name="keyword" placeholder="商品名" value="{{ keyword }}">
-            <select name="category">
-    <option value="">すべて</option>
-    {% for c in categories %}
-        <option value="{{ c }}" {% if c == category %}selected{% endif %}>
-            {{ c }}
-        </option>
-    {% endfor %}
-</select>
-            <button type="submit">検索</button>
-        </form>
+        <form method="get" class="search-form">
+    <input
+        type="text"
+        name="keyword"
+        placeholder="商品名で検索"
+        value="{{ keyword }}"
+    >
+
+    <select name="category">
+        <option value="">すべてのカテゴリ</option>
+        {% for c in categories %}
+            <option value="{{ c }}" {% if c == category %}selected{% endif %}>
+                {{ c }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">検索</button>
+</form>
 
         {% if products %}
             <div class="product-list">
-                {% for product in products %}
-                    <div class="card">
+    {% for product in products %}
+        <a href="{% url 'product_detail' product.id %}" class="card-link">
+            <div class="card">
 
-    {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.name }}"
-             style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
-    {% endif %}
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                         style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;">
+                {% endif %}
 
-    <h2>
-        <a href="{% url 'product_detail' product.id %}">
-            {{ product.name }}
+                <h2>{{ product.name }}</h2>
+
+                <p>カテゴリ: {{ product.category }}</p>
+                <p class="price">価格: {{ product.price }}円</p>
+
+                {% if product.stock == 0 %}
+                    <p style="color: red;">売り切れ</p>
+                {% elif product.stock <= 5 %}
+                    <p style="color: orange;">残りわずか</p>
+                {% else %}
+                    <p style="color: green;">在庫あり</p>
+                {% endif %}
+
+                <p>{{ product.description }}</p>
+
+            </div>
         </a>
-    </h2>
-
-    <p>カテゴリ: {{ product.category }}</p>
-    <p class="price">価格: {{ product.price }}円</p>
-
-    {% if product.stock == 0 %}
-    <p style="color: red;">売り切れ</p>
-{% elif product.stock <= 5 %}
-    <p style="color: orange;">残りわずか</p>
-{% else %}
-    <p style="color: green;">在庫あり</p>
-{% endif %}
-
-    <p>{{ product.description }}</p>
-
+    {% endfor %}
 </div>
                 {% endfor %}
             </div>
