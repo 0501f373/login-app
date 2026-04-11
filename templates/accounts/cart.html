@@ -80,9 +80,8 @@
 
         .cart-actions {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between; /* ← 左右に分ける */
             align-items: center;
-            gap: 12px;
             margin-top: 24px;
         }
 
@@ -110,6 +109,13 @@
             padding: 9px 18px;
             font-size: 14px;
             font-weight: bold;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: space-between; /* ← 左右に分ける */
+            align-items: center;
+            margin-top: 24px;
         }
 
         .back-button:hover {
@@ -165,12 +171,12 @@
             <p class="total">合計: {{ total_price }}円</p>
 
 <div class="cart-actions">
-    <a href="{% url 'product_search' %}" class="back-button">商品一覧に戻る</a>
-
     <form method="post" action="{% url 'order_confirm' %}">
         {% csrf_token %}
         <button type="submit" class="checkout-button">購入手続きへ</button>
     </form>
+
+    <a href="{% url 'product_search' %}" class="back-button">商品一覧に戻る</a>
 </div>
 {% else %}
     <div class="empty">
