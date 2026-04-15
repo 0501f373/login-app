@@ -115,53 +115,62 @@
         }
 
         .search-form {
-    display: flex;
-    gap: 18px;
-    align-items: center;
-}
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
 
-.search-form input,
-.search-form select {
-    height: 40px;          /* ←高さを固定 */
-    padding: 0 12px;       /* ←上下padding消して中央寄せ */
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
+        .search-form input,
+        .search-form select {
+            height: 40px;          /* ←高さを固定 */
+            padding: 0 12px;       /* ←上下padding消して中央寄せ */
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
 
-.search-form button,
-.clear-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 16px;
-    font-size: 14px;
-    height: 40px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: #eee;
-    color: #333;
-    cursor: pointer;
-    text-decoration: none;
-    box-sizing: border-box;
-}
+        .search-form input[name="keyword"] {
+            width: 220px;
+        }
 
-    .floating-add-btn {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    width: 56px;
-    height: 56px;
-    background: #333;
-    color: white;
-    font-size: 28px;
-    text-align: center;
-    line-height: 56px;
-    border-radius: 50%;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
+        .search-form input[name="min_price"],
+        .search-form input[name="max_price"] {
+            width: 120px;
+        }
+        
+        .search-form button,
+        .clear-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            font-size: 14px;
+            height: 40px;
+            order-radius: 6px;
+            border: 1px solid #ccc;
+            background: #eee;
+            color: #333;
+            cursor: pointer;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+
+            .floating-add-btn {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 56px;
+            height: 56px;
+            background: #333;
+            color: white;
+            font-size: 28px;
+            text-align: center;
+            line-height: 56px;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -192,17 +201,39 @@
     >
 
     <select name="category">
-    <option value="">すべてのカテゴリ</option>
-    {% for c in categories %}
-        <option value="{{ c.id }}" {% if c.id|stringformat:"s" == category %}selected{% endif %}>
-            {{ c.name }}
-        </option>
-    {% endfor %}
-</select>
+        <option value="">すべてのカテゴリ</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}" {% if c.id|stringformat:"s" == category %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="manufacturer">
+        <option value="">すべてのメーカー</option>
+        {% for m in manufacturers %}
+            <option value="{{ m.id }}" {% if m.id|stringformat:"s" == manufacturer %}selected{% endif %}>
+                {{ m.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <input
+        type="number"
+        name="min_price"
+        placeholder="最低価格"
+        value="{{ min_price }}"
+    >
+
+    <input
+        type="number"
+        name="max_price"
+        placeholder="最高価格"
+        value="{{ max_price }}"
+    >
 
     <button type="submit">検索</button>
     <a href="{% url 'product_search' %}" class="clear-btn">クリア</a>
-    
 </form>
 
         {% if products %}
