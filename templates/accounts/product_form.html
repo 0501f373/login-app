@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        form p {
+            margin-bottom: 16px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            box-sizing: border-box;
+            margin-top: 6px;
+        }
+
+        .btn-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .save-btn {
+            background: #333;
+            color: white;
+        }
+
+        .back-btn {
+            background: #ddd;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ page_title }}</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="btn-area">
+                <button type="submit" class="btn save-btn">保存する</button>
+                <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

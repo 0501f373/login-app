@@ -121,7 +121,7 @@
 }
 
 .search-form input,
-..search-form select {
+.search-form select {
     height: 40px;          /* ←高さを固定 */
     padding: 0 12px;       /* ←上下padding消して中央寄せ */
     font-size: 14px;
@@ -145,6 +145,22 @@
     cursor: pointer;
     text-decoration: none;
     box-sizing: border-box;
+}
+
+    .floating-add-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    background: #333;
+    color: white;
+    font-size: 28px;
+    text-align: center;
+    line-height: 56px;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
     </style>
 </head>
@@ -224,6 +240,11 @@
             </div>
         {% endif %}
     </div>
+    {% if user.is_staff %}
+<a href="{% url 'product_create' %}" class="floating-add-btn">
+    ＋
+</a>
+{% endif %}
 </body>
 </html>
 

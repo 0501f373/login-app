@@ -6,6 +6,9 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 
 from .models import Product
+from django.contrib.auth.decorators import login_required
+from .forms import ProductForm
+from django.contrib.admin.views.decorators import staff_member_required
 
 
 def validate_password_policy(password):
@@ -299,3 +302,40 @@ from django.shortcuts import redirect
 def logout_view(request):
     logout(request)
     return redirect('product_search')
+
+from django.contrib.auth.decorators import login_required
+from .forms import ProductForm
+
+
+@staff_member_required
+def product_create(request):
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("product_search")
+    else:
+        form = ProductForm()
+
+    return render(request, "accounts/product_form.html", {
+        "form": form,
+        "page_title": "商品登録"
+    })
+
+
+@staff_member_required
+def product_edit(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        if form.is_valid():
+            form.save()
+            return redirect("product_detail", product_id=product.id)
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, "accounts/product_form.html", {
+        "form": form,
+        "page_title": "商品編集"
+    })
