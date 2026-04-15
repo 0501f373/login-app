@@ -112,9 +112,9 @@
         <button type="submit" class="btn save-btn">保存する</button>
 
         {% if page_title == "商品編集" %}
-            <a href="{% url 'product_edit_menu' %}" class="btn back-btn">戻る</a>
+            <a href="{% url 'product_detail' form.instance.id %}" class="btn back-btn">商品編集一覧に戻る</a>
         {% else %}
-            <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
+            <a href="{% url 'product_search' %}" class="btn back-btn">管理メニューに戻る</a>
         {% endif %}
     </div>
 </form>
