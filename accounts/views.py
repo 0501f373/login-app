@@ -2,13 +2,12 @@ import re
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
-
-from .models import Product, Category
-from django.contrib.auth.decorators import login_required
-from .forms import ProductForm
 from django.contrib.admin.views.decorators import staff_member_required
+
+from .models import Product, Category, Manufacturer
+from .forms import ProductForm
 
 
 def validate_password_policy(password):
@@ -108,10 +107,13 @@ def home_view(request):
 def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
+    manufacturer = request.GET.get("manufacturer", "")
+    min_price = request.GET.get("min_price", "")
+    max_price = request.GET.get("max_price", "")
     cart = request.session.get("cart", {})
     cart_count = len(cart)
 
-    products = Product.objects.select_related("category").all()
+    products = Product.objects.select_related("category", "manufacturer").all()
 
     if keyword:
         products = products.filter(name__icontains=keyword)
@@ -119,12 +121,26 @@ def product_search(request):
     if category:
         products = products.filter(category_id=category)
 
+    if manufacturer:
+        products = products.filter(manufacturer_id=manufacturer)
+
+    if min_price:
+        products = products.filter(price__gte=min_price)
+
+    if max_price:
+        products = products.filter(price__lte=max_price)
+
     categories = Category.objects.all()
+    manufacturers = Manufacturer.objects.all()
 
     return render(request, "accounts/product_search.html", {
         "keyword": keyword,
         "category": category,
+        "manufacturer": manufacturer,
+        "min_price": min_price,
+        "max_price": max_price,
         "categories": categories,
+        "manufacturers": manufacturers,
         "products": products,
         "cart_count": cart_count,
     })
@@ -149,7 +165,7 @@ def add_to_cart(request, product_id):
         quantity = int(request.POST.get("quantity", 1))
 
         if product.stock == 0:
-            return redirect(f"/products/{product.id}/?from_manage=1")
+            return redirect("product_detail", product_id=product.id)
 
         if quantity > product.stock:
             quantity = product.stock
@@ -307,10 +323,6 @@ def logout_view(request):
     logout(request)
     return redirect('product_search')
 
-from django.contrib.auth.decorators import login_required
-from .forms import ProductForm
-
-
 @staff_member_required
 def product_create(request):
     if request.method == "POST":
@@ -366,10 +378,32 @@ def category_create(request):
 
 @staff_member_required(login_url="login")
 def management_menu(request):
+    return render(request, "accounts/management_menu.html")
+
+@staff_member_required(login_url="login")
+def product_edit_menu(request):
     categories = Category.objects.prefetch_related("product_set").all().order_by("name")
     uncategorized_products = Product.objects.filter(category__isnull=True)
 
-    return render(request, "accounts/management_menu.html", {
+    return render(request, "accounts/product_edit_menu.html", {
         "categories": categories,
         "uncategorized_products": uncategorized_products,
+    })
+
+@staff_member_required(login_url="login")
+def manufacturer_create(request):
+    message = ""
+
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+
+        if name:
+            Manufacturer.objects.get_or_create(name=name)
+            message = "メーカーを登録しました"
+
+    manufacturers = Manufacturer.objects.all().order_by("name")
+
+    return render(request, "accounts/manufacturer_form.html", {
+        "message": message,
+        "manufacturers": manufacturers,
     })

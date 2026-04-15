@@ -20,16 +20,10 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
-        h1 {
-            margin-top: 0;
-            margin-bottom: 24px;
-        }
-
         .menu-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-bottom: 32px;
         }
 
         .menu-btn {
@@ -42,23 +36,6 @@
             text-align: center;
         }
 
-        /* 👇追加 */
-        .product-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .edit-btn {
-            padding: 8px 14px;
-            background: #555;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-
         .back-btn {
             display: inline-block;
             margin-top: 24px;
@@ -67,14 +44,6 @@
             color: #333;
             text-decoration: none;
             border-radius: 8px;
-        }
-
-        .category-group {
-            margin-bottom: 28px;
-        }
-
-        .category-group h3 {
-            margin-bottom: 12px;
         }
     </style>
 </head>
@@ -85,39 +54,10 @@
         <div class="menu-list">
             <a href="{% url 'product_create' %}" class="menu-btn">商品登録</a>
             <a href="{% url 'category_create' %}" class="menu-btn">カテゴリ登録</a>
+            <a href="{% url 'manufacturer_create' %}" class="menu-btn">メーカー登録</a>
+            <a href="{% url 'product_edit_menu' %}" class="menu-btn">商品編集</a>
         </div>
 
-        <h2>商品編集</h2>
-
-{% for category in categories %}
-    <div class="category-group">
-        <h3>{{ category.name }}</h3>
-
-        {% for product in category.product_set.all %}
-            <div class="product-item">
-                <span>{{ product.name }}</span>
-                <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">詳細</a>
-            </div>
-        {% empty %}
-            <p>このカテゴリの商品はありません</p>
-        {% endfor %}
-    </div>
-{% empty %}
-    <p>カテゴリがありません</p>
-{% endfor %}
-
-    <div class="category-group">
-    <h3>未選択</h3>
-
-    {% for product in uncategorized_products %}
-        <div class="product-item">
-            <span>{{ product.name }}</span>
-            <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">詳細</a>
-        </div>
-    {% empty %}
-        <p>未選択の商品はありません</p>
-    {% endfor %}
-</div>
         <a href="{% url 'product_search' %}" class="back-btn">戻る</a>
     </div>
 </body>

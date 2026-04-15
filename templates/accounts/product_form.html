@@ -63,24 +63,13 @@
             color: #333;
         }
 
-        .floating-category-btn {
-            position: fixed;
-            right: 24px;
-            bottom: 24px;
-            padding: 12px 18px;
-            background: #555;
-            color: white;
-            border-radius: 999px;
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>{{ page_title }}</h1>
 
-        <form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
     <p>
@@ -91,6 +80,12 @@
     <p>
         <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
         {{ form.category }}
+    </p>
+    
+    <p>
+        <label for="{{ form.manufacturer.id_for_label }}">メーカー名:</label>
+        <small>未選択でも登録できます</small>
+        {{ form.manufacturer }}
     </p>
 
     <p>
@@ -115,12 +110,14 @@
 
     <div class="btn-area">
         <button type="submit" class="btn save-btn">保存する</button>
+
         {% if page_title == "商品編集" %}
-    <a href="{% url 'management_menu' %}" class="btn back-btn">戻る</a>
-{% else %}
-    <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
-{% endif %}
+            <a href="{% url 'management_menu' %}" class="btn back-btn">戻る</a>
+        {% else %}
+            <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
+        {% endif %}
     </div>
 </form>
+    </div>
 </body>
 </html>

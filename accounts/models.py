@@ -8,11 +8,25 @@ class Category(models.Model):
         return self.name
 
 
+class Manufacturer(models.Model):
+    name = models.CharField("メーカー名", max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     name = models.CharField("商品名", max_length=100)
     category = models.ForeignKey(
         Category,
         verbose_name="カテゴリ",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    manufacturer = models.ForeignKey(
+        Manufacturer,
+        verbose_name="メーカー名",
         on_delete=models.SET_NULL,
         null=True,
         blank=True

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メーカー登録</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 20px;
+        }
+
+        .btn-area {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #333;
+            color: white;
+        }
+
+        .back-btn {
+            background: #ddd;
+            color: #333;
+        }
+
+        .message {
+            color: green;
+            margin-bottom: 16px;
+        }
+
+        .maker-list {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>メーカー登録</h1>
+
+        {% if message %}
+            <p class="message">{{ message }}</p>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <label for="name">メーカー名</label>
+            <input type="text" name="name" id="name">
+
+            <div class="btn-area">
+                <button type="submit" class="btn save-btn">登録する</button>
+                <a href="{% url 'management_menu' %}" class="btn back-btn">戻る</a>
+            </div>
+        </form>
+
+        <h2>メーカー一覧</h2>
+        <ul class="maker-list">
+            {% for manufacturer in manufacturers %}
+                <li>{{ manufacturer.name }}</li>
+            {% empty %}
+                <li>メーカーはまだありません</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
