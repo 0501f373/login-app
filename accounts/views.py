@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 
-from .models import Product
+from .models import Product, Category
 from django.contrib.auth.decorators import login_required
 from .forms import ProductForm
 from django.contrib.admin.views.decorators import staff_member_required
@@ -111,15 +111,15 @@ def product_search(request):
     cart = request.session.get("cart", {})
     cart_count = len(cart)
 
-    products = Product.objects.all()
+    products = Product.objects.select_related("category").all()
 
     if keyword:
         products = products.filter(name__icontains=keyword)
 
     if category:
-        products = products.filter(category=category)
+        products = products.filter(category_id=category)
 
-    categories = Product.objects.values_list("category", flat=True).distinct()
+    categories = Category.objects.all()
 
     return render(request, "accounts/product_search.html", {
         "keyword": keyword,

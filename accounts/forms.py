@@ -1,16 +1,20 @@
 from django import forms
-from .models import Product
+from .models import Product, Category
 
 
 class ProductForm(forms.ModelForm):
+    category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        required=False,
+        empty_label="カテゴリを選択してください"
+    )
+
     class Meta:
         model = Product
         fields = ["name", "category", "price", "description", "stock", "image"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "category": forms.TextInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
             "stock": forms.NumberInput(attrs={"class": "form-control"}),
-            "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
         }

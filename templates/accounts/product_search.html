@@ -192,13 +192,13 @@
     >
 
     <select name="category">
-        <option value="">すべてのカテゴリ</option>
-        {% for c in categories %}
-            <option value="{{ c }}" {% if c == category %}selected{% endif %}>
-                {{ c }}
-            </option>
-        {% endfor %}
-    </select>
+    <option value="">すべてのカテゴリ</option>
+    {% for c in categories %}
+        <option value="{{ c.id }}" {% if c.id|stringformat:"s" == category %}selected{% endif %}>
+            {{ c.name }}
+        </option>
+    {% endfor %}
+</select>
 
     <button type="submit">検索</button>
     <a href="{% url 'product_search' %}" class="clear-btn">クリア</a>
@@ -217,7 +217,7 @@
 
                 <h2>{{ product.name }}</h2>
 
-                <p>カテゴリ: {{ product.category }}</p>
+                <p>カテゴリ: {% if product.category %}{{ product.category.name }}{% else %}未設定{% endif %}</p>
                 <p class="price">価格: {{ product.price }}円</p>
 
                 {% if product.stock == 0 %}
