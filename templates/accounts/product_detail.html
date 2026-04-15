@@ -131,37 +131,36 @@
             {% endif %}
 
             <p>カテゴリ: {{ product.category }}</p>
-            <p class="price">価格: {{ product.price }}円</p>
-            <p>{{ product.description }}</p>
+<p>メーカー: {% if product.manufacturer %}{{ product.manufacturer.name }}{% else %}未設定{% endif %}</p>
+<p class="price">価格: {{ product.price }}円</p>
+<p>{{ product.description }}</p>
 
-            {% if product.stock == 0 %}
-                <p style="color: red;">売り切れ</p>
-                <button type="button" disabled>カートに入れる</button>
-            {% elif product.stock <= 5 %}
-                <p style="color: orange;">残りわずか</p>
-                <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
-                    {% csrf_token %}
-                    <label for="quantity">数量:</label>
-                    <select name="quantity" id="quantity">
-                        {% for i in quantity_range %}
-                            <option value="{{ i }}">{{ i }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit">カートに入れる</button>
-                </form>
-            {% else %}
-                <p style="color: green;">在庫あり</p>
-                <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
-                    {% csrf_token %}
-                    <label for="quantity">数量:</label>
-                    <select name="quantity" id="quantity">
-                        {% for i in quantity_range %}
-                            <option value="{{ i }}">{{ i }}</option>
-                        {% endfor %}
-                    </select>
-                    <button type="submit">カートに入れる</button>
-                </form>
-            {% endif %}
+<p>在庫数: {{ product.stock }}</p>
+
+{% if product.stock == 0 %}
+    <p style="color: red;">売り切れ</p>
+{% elif product.stock <= 5 %}
+    <p style="color: orange;">残りわずか</p>
+{% else %}
+    <p style="color: green;">在庫あり</p>
+{% endif %}
+
+{% if not from_manage %}
+    {% if product.stock == 0 %}
+        <button type="button" disabled>カートに入れる</button>
+    {% else %}
+        <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
+            {% csrf_token %}
+            <label for="quantity">数量:</label>
+            <select name="quantity" id="quantity">
+                {% for i in quantity_range %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">カートに入れる</button>
+        </form>
+    {% endif %}
+{% endif %}
 
             {% if user.is_staff and from_manage %}
             <a href="{% url 'product_edit' product.id %}" class="floating-add-btn">
@@ -171,7 +170,7 @@
         </div>
 
         {% if from_manage %}
-    <a href="{% url 'management_menu' %}" class="outside-back-link">← 管理メニューへ戻る</a>
+    <a href="{% url 'product_edit_menu' %}" class="outside-back-link">← 商品編集一覧へ戻る</a>
 {% else %}
     <a href="{% url 'product_search' %}" class="outside-back-link">← 商品一覧へ戻る</a>
 {% endif %}

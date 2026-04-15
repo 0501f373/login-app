@@ -152,6 +152,23 @@
     text-decoration: none;
     box-sizing: border-box;
 }
+
+.floating-add-btn {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    width: 56px;
+    height: 56px;
+    background: #333;
+    color: white;
+    font-size: 28px;
+    text-align: center;
+    line-height: 56px;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    z-index: 999;
+}
     </style>
 </head>
 <body>
@@ -246,14 +263,6 @@
     ＋
 </a>
 {% endif %}
-
-<select name="manufacturer">
-    <option value="">すべてのメーカー</option>
-    {% for m in manufacturers %}
-        <option value="{{ m.id }}" {% if m.id|stringformat:"s" == manufacturer %}selected{% endif %}>
-            {{ m.name }}
-        </option>
-    {% endfor %}
 </select>
 </body>
 </html>
