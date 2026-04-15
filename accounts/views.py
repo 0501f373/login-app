@@ -40,7 +40,12 @@ def login_view(request):
                 "error": "パスワードを入力してください"
             })
 
-        user = authenticate(request, username=email, password=password)
+        # 👇ここがポイント！！！！
+        try:
+            user_obj = User.objects.get(email=email)
+            user = authenticate(request, username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            user = None
 
         if user is not None:
             login(request, user)
