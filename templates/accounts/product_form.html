@@ -126,11 +126,11 @@
 </form>
     </div>
 
-    {% if user.is_staff %}
-    <a href="{% url 'category_create' %}" class="floating-category-btn">
-        カテゴリ登録
-    </a>
-    {% endif %}
+    {% if user.is_staff and page_title == "商品登録" %}
+<a href="{% url 'category_create' %}" class="floating-category-btn">
+    カテゴリ登録
+</a>
+{% endif %}
 
 </body>
 </html>

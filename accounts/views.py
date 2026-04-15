@@ -361,6 +361,6 @@ def category_create(request):
 
         if name:
             Category.objects.get_or_create(name=name)
-            return redirect("product_create")
+            return redirect("product_search")
 
     return render(request, "accounts/category_form.html")
