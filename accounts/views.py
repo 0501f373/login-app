@@ -321,7 +321,7 @@ def product_create(request):
             product = form.save(commit=False)
 
             product.save()
-            return redirect("product_detail", product_id=product.id)
+            return redirect(f"/products/{product.id}/?from_manage=1")
     else:
         form = ProductForm()
 

@@ -113,7 +113,6 @@
 
                 {% if page_title == "商品編集" %}
                     <a href="{% url 'product_detail' form.instance.id %}?from_manage=1" class="btn back-btn">商品詳細へ戻る</a>
-                    <a href="{% url 'product_edit_menu' %}" class="btn back-btn">商品編集一覧へ戻る</a>
                 {% else %}
                     <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ戻る</a>
                 {% endif %}
