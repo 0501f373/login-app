@@ -19,4 +19,5 @@ urlpatterns = [
     path("manage/", views.management_menu, name="management_menu"),
     path("manage/products/", views.product_edit_menu, name="product_edit_menu"),
     path("manufacturers/add/", views.manufacturer_create, name="manufacturer_create"),
+    path("products/<int:product_id>/delete/", views.product_delete, name="product_delete"),
 ]

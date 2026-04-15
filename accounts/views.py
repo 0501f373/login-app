@@ -397,3 +397,15 @@ def manufacturer_create(request):
         "message": message,
         "manufacturers": manufacturers,
     })
+
+@staff_member_required
+def product_delete(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        product.delete()
+        return redirect("product_edit_menu")
+
+    return render(request, "accounts/product_confirm_delete.html", {
+        "product": product
+    })
