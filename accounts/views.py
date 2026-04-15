@@ -186,9 +186,14 @@ def cart_view(request):
 
     cart_items = []
     total_price = 0
+    valid_cart = {}
 
     for product_id, quantity in cart.items():
-        product = get_object_or_404(Product, id=product_id)
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            continue
+
         subtotal = product.price * quantity
         total_price += subtotal
 
@@ -197,6 +202,10 @@ def cart_view(request):
             "quantity": quantity,
             "subtotal": subtotal,
         })
+
+        valid_cart[str(product_id)] = quantity
+
+    request.session["cart"] = valid_cart
 
     return render(request, "accounts/cart.html", {
         "cart_items": cart_items,
