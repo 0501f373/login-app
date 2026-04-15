@@ -96,7 +96,7 @@ def signup_view(request):
         )
 
         login(request, user)
-        return redirect("home")
+        return redirect("product_search")
 
     return render(request, "accounts/signup.html")
 
@@ -312,7 +312,14 @@ def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)
+
+            new_category = form.cleaned_data.get("new_category")
+            if new_category:
+                category, created = Category.objects.get_or_create(name=new_category)
+                product.category = category
+
+            product.save()
             return redirect("product_search")
     else:
         form = ProductForm()
@@ -330,7 +337,14 @@ def product_edit(request, product_id):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)
+
+            new_category = form.cleaned_data.get("new_category")
+            if new_category:
+                category, created = Category.objects.get_or_create(name=new_category)
+                product.category = category
+
+            product.save()
             return redirect("product_detail", product_id=product.id)
     else:
         form = ProductForm(instance=product)
