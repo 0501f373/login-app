@@ -372,3 +372,10 @@ def category_create(request):
     return render(request, "accounts/category_form.html", {
         "message": message
     })
+
+@staff_member_required(login_url="login")
+def management_menu(request):
+    products = Product.objects.all()
+    return render(request, "accounts/management_menu.html", {
+        "products": products
+    })
