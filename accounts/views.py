@@ -149,7 +149,7 @@ def add_to_cart(request, product_id):
         quantity = int(request.POST.get("quantity", 1))
 
         if product.stock == 0:
-            return redirect("product_detail", product_id=product.id)
+            return redirect(f"/products/{product.id}/?from_manage=1")
 
         if quantity > product.stock:
             quantity = product.stock
@@ -336,9 +336,7 @@ def product_edit(request, product_id):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            product = form.save(commit=False)
-
-            product.save()
+            product = form.save()
             return redirect(f"/products/{product.id}/?from_manage=1")
     else:
         form = ProductForm(instance=product)

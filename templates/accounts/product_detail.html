@@ -170,7 +170,11 @@
             {% endif %}
         </div>
 
-        <a href="{% url 'product_search' %}" class="outside-back-link">← 商品一覧へ戻る</a>
+        {% if from_manage %}
+    <a href="{% url 'management_menu' %}" class="outside-back-link">← 管理メニューへ戻る</a>
+{% else %}
+    <a href="{% url 'product_search' %}" class="outside-back-link">← 商品一覧へ戻る</a>
+{% endif %}
     </div>
 </body>
 </html>
