@@ -353,3 +353,14 @@ def product_edit(request, product_id):
         "form": form,
         "page_title": "商品編集"
     })
+
+@staff_member_required(login_url="login")
+def category_create(request):
+    if request.method == "POST":
+        name = request.POST.get("name", "").strip()
+
+        if name:
+            Category.objects.get_or_create(name=name)
+            return redirect("product_create")
+
+    return render(request, "accounts/category_form.html")
