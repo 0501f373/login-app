@@ -369,6 +369,9 @@ def category_create(request):
 @staff_member_required(login_url="login")
 def management_menu(request):
     categories = Category.objects.prefetch_related("product_set").all().order_by("name")
+    uncategorized_products = Product.objects.filter(category__isnull=True)
+
     return render(request, "accounts/management_menu.html", {
-        "categories": categories
+        "categories": categories,
+        "uncategorized_products": uncategorized_products,
     })

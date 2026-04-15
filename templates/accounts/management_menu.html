@@ -106,6 +106,18 @@
     <p>カテゴリがありません</p>
 {% endfor %}
 
+    <div class="category-group">
+    <h3>未選択</h3>
+
+    {% for product in uncategorized_products %}
+        <div class="product-item">
+            <span>{{ product.name }}</span>
+            <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">詳細</a>
+        </div>
+    {% empty %}
+        <p>未選択の商品はありません</p>
+    {% endfor %}
+</div>
         <a href="{% url 'product_search' %}" class="back-btn">戻る</a>
     </div>
 </body>

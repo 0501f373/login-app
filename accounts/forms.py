@@ -9,10 +9,6 @@ class ProductForm(forms.ModelForm):
         empty_label="カテゴリを選択してください"
     )
 
-    new_category = forms.CharField(
-        label="新しいカテゴリを追加",
-        required=False
-    )
 
     class Meta:
         model = Product
