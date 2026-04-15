@@ -126,7 +126,7 @@
             padding: 0 12px;       /* ←上下padding消して中央寄せ */
             font-size: 14px;
             border-radius: 6px;
-            border: 1px solid #ccc;
+            border: none;
             box-sizing: border-box;
         }
 
@@ -148,7 +148,7 @@
             font-size: 14px;
             height: 40px;
             order-radius: 6px;
-            border: 1px solid #ccc;
+            border: none;
             background: #eee;
             color: #333;
             cursor: pointer;
@@ -217,20 +217,6 @@
             </option>
         {% endfor %}
     </select>
-
-    <input
-        type="number"
-        name="min_price"
-        placeholder="最低価格"
-        value="{{ min_price }}"
-    >
-
-    <input
-        type="number"
-        name="max_price"
-        placeholder="最高価格"
-        value="{{ max_price }}"
-    >
 
     <button type="submit">検索</button>
     <a href="{% url 'product_search' %}" class="clear-btn">クリア</a>

@@ -108,8 +108,6 @@ def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     manufacturer = request.GET.get("manufacturer", "")
-    min_price = request.GET.get("min_price", "")
-    max_price = request.GET.get("max_price", "")
     cart = request.session.get("cart", {})
     cart_count = len(cart)
 
@@ -124,12 +122,6 @@ def product_search(request):
     if manufacturer:
         products = products.filter(manufacturer_id=manufacturer)
 
-    if min_price:
-        products = products.filter(price__gte=min_price)
-
-    if max_price:
-        products = products.filter(price__lte=max_price)
-
     categories = Category.objects.all()
     manufacturers = Manufacturer.objects.all()
 
@@ -137,8 +129,6 @@ def product_search(request):
         "keyword": keyword,
         "category": category,
         "manufacturer": manufacturer,
-        "min_price": min_price,
-        "max_price": max_price,
         "categories": categories,
         "manufacturers": manufacturers,
         "products": products,
