@@ -133,9 +133,13 @@ def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     quantity_range = range(1, product.stock + 1) if product.stock > 0 else []
 
+    # 👇追加（ここが重要）
+    from_manage = request.GET.get("from_manage") == "1"
+
     return render(request, "accounts/product_detail.html", {
         "product": product,
         "quantity_range": quantity_range,
+        "from_manage": from_manage,  # 👈これ追加
     })
 
 
@@ -356,11 +360,15 @@ def product_edit(request, product_id):
 
 @staff_member_required(login_url="login")
 def category_create(request):
+    message = ""
+
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
 
         if name:
             Category.objects.get_or_create(name=name)
-            return redirect("product_search")
+            message = "カテゴリを登録しました"
 
-    return render(request, "accounts/category_form.html")
+    return render(request, "accounts/category_form.html", {
+        "message": message
+    })

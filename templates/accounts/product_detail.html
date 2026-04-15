@@ -157,7 +157,7 @@
             {% endif %}
 
             <a href="{% url 'product_search' %}" class="back-link">← 商品一覧へ戻る</a>
-            {% if user.is_staff %}
+            {% if user.is_staff and from_manage %}
 <a href="{% url 'product_edit' product.id %}" class="floating-add-btn">
     編集
 </a>

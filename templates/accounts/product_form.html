@@ -123,14 +123,5 @@
         <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
     </div>
 </form>
-</form>
-    </div>
-
-    {% if user.is_staff and page_title == "商品登録" %}
-<a href="{% url 'category_create' %}" class="floating-category-btn">
-    カテゴリ登録
-</a>
-{% endif %}
-
 </body>
 </html>

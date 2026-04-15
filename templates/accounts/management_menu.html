@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理メニュー</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .menu-btn {
+            display: block;
+            padding: 16px 20px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* 👇追加 */
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .edit-btn {
+            padding: 8px 14px;
+            background: #555;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 10px 18px;
+            background: #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>管理メニュー</h1>
+
+        <div class="menu-list">
+            <a href="{% url 'product_create' %}" class="menu-btn">商品登録</a>
+            <a href="{% url 'category_create' %}" class="menu-btn">カテゴリ登録</a>
+        </div>
+
+        <h2>商品編集</h2>
+
+        {% for product in products %}
+            <div class="product-item">
+                <span>{{ product.name }}</span>
+
+                <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">
+                    詳細
+                </a>
+            </div>
+        {% empty %}
+            <p>商品がありません</p>
+        {% endfor %}
+
+        <a href="{% url 'product_search' %}" class="back-btn">戻る</a>
+    </div>
+</body>
+</html>
