@@ -68,6 +68,14 @@
             text-decoration: none;
             border-radius: 8px;
         }
+
+        .category-group {
+            margin-bottom: 28px;
+        }
+
+        .category-group h3 {
+            margin-bottom: 12px;
+        }
     </style>
 </head>
 <body>
@@ -81,17 +89,22 @@
 
         <h2>商品編集</h2>
 
-        {% for product in products %}
+{% for category in categories %}
+    <div class="category-group">
+        <h3>{{ category.name }}</h3>
+
+        {% for product in category.product_set.all %}
             <div class="product-item">
                 <span>{{ product.name }}</span>
-
-                <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">
-                    詳細
-                </a>
+                <a href="{% url 'product_detail' product.id %}?from_manage=1" class="edit-btn">詳細</a>
             </div>
         {% empty %}
-            <p>商品がありません</p>
+            <p>このカテゴリの商品はありません</p>
         {% endfor %}
+    </div>
+{% empty %}
+    <p>カテゴリがありません</p>
+{% endfor %}
 
         <a href="{% url 'product_search' %}" class="back-btn">戻る</a>
     </div>

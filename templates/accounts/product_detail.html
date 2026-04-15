@@ -96,7 +96,14 @@
             text-decoration: none;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             z-index: 999;
-}
+        }
+
+        .outside-back-link {
+            display: inline-block;
+            margin-top: 16px;
+            color: #333;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -156,13 +163,14 @@
                 </form>
             {% endif %}
 
-            <a href="{% url 'product_search' %}" class="back-link">← 商品一覧へ戻る</a>
             {% if user.is_staff and from_manage %}
-<a href="{% url 'product_edit' product.id %}" class="floating-add-btn">
-    編集
-</a>
-{% endif %}
+            <a href="{% url 'product_edit' product.id %}" class="floating-add-btn">
+                編集
+            </a>
+            {% endif %}
         </div>
+
+        <a href="{% url 'product_search' %}" class="outside-back-link">← 商品一覧へ戻る</a>
     </div>
 </body>
 </html>

@@ -94,11 +94,6 @@
     </p>
 
     <p>
-        <label for="{{ form.new_category.id_for_label }}">新しいカテゴリを追加:</label>
-        {{ form.new_category }}
-    </p>
-
-    <p>
         <label for="{{ form.price.id_for_label }}">価格:</label>
         {{ form.price }}
     </p>
@@ -120,7 +115,11 @@
 
     <div class="btn-area">
         <button type="submit" class="btn save-btn">保存する</button>
-        <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
+        {% if page_title == "商品編集" %}
+    <a href="{% url 'management_menu' %}" class="btn back-btn">戻る</a>
+{% else %}
+    <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
+{% endif %}
     </div>
 </form>
 </body>

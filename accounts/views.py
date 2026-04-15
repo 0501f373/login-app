@@ -318,11 +318,6 @@ def product_create(request):
         if form.is_valid():
             product = form.save(commit=False)
 
-            new_category = form.cleaned_data.get("new_category")
-            if new_category:
-                category, created = Category.objects.get_or_create(name=new_category)
-                product.category = category
-
             product.save()
             return redirect("product_search")
     else:
@@ -343,13 +338,8 @@ def product_edit(request, product_id):
         if form.is_valid():
             product = form.save(commit=False)
 
-            new_category = form.cleaned_data.get("new_category")
-            if new_category:
-                category, created = Category.objects.get_or_create(name=new_category)
-                product.category = category
-
             product.save()
-            return redirect("product_detail", product_id=product.id)
+            return redirect(f"/products/{product.id}/?from_manage=1")
     else:
         form = ProductForm(instance=product)
 
@@ -369,13 +359,16 @@ def category_create(request):
             Category.objects.get_or_create(name=name)
             message = "カテゴリを登録しました"
 
+    categories = Category.objects.all().order_by("name")
+
     return render(request, "accounts/category_form.html", {
-        "message": message
+        "message": message,
+        "categories": categories,
     })
 
 @staff_member_required(login_url="login")
 def management_menu(request):
-    products = Product.objects.all()
+    categories = Category.objects.prefetch_related("product_set").all().order_by("name")
     return render(request, "accounts/management_menu.html", {
-        "products": products
+        "categories": categories
     })

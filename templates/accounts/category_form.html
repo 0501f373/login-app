@@ -64,6 +64,11 @@
             color: green;
             margin-bottom: 16px;
         }
+
+        .category-list {
+            margin-top: 20px;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -85,6 +90,15 @@
                 <a href="{% url 'management_menu' %}" class="btn back-btn">戻る</a>
             </div>
         </form>
+        <h2>カテゴリ一覧</h2>
+
+<ul class="category-list">
+    {% for category in categories %}
+        <li>{{ category.name }}</li>
+    {% empty %}
+        <li>カテゴリはまだありません</li>
+    {% endfor %}
+</ul>
     </div>
 </body>
 </html>
