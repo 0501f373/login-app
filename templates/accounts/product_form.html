@@ -41,6 +41,7 @@
             display: flex;
             gap: 12px;
             margin-top: 24px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -62,62 +63,62 @@
             background: #ddd;
             color: #333;
         }
-
     </style>
 </head>
 <body>
     <div class="container">
         <h1>{{ page_title }}</h1>
 
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-    <p>
-        <label for="{{ form.name.id_for_label }}">商品名:</label>
-        {{ form.name }}
-    </p>
+            <p>
+                <label for="{{ form.name.id_for_label }}">商品名:</label>
+                {{ form.name }}
+            </p>
 
-    <p>
-        <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
-        {{ form.category }}
-    </p>
-    
-    <p>
-        <label for="{{ form.manufacturer.id_for_label }}">メーカー名:</label>
-        <small>未選択でも登録できます</small>
-        {{ form.manufacturer }}
-    </p>
+            <p>
+                <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
+                {{ form.category }}
+            </p>
 
-    <p>
-        <label for="{{ form.price.id_for_label }}">価格:</label>
-        {{ form.price }}
-    </p>
+            <p>
+                <label for="{{ form.manufacturer.id_for_label }}">メーカー名:</label>
+                <small>未選択でも登録できます</small>
+                {{ form.manufacturer }}
+            </p>
 
-    <p>
-        <label for="{{ form.description.id_for_label }}">説明:</label>
-        {{ form.description }}
-    </p>
+            <p>
+                <label for="{{ form.price.id_for_label }}">価格:</label>
+                {{ form.price }}
+            </p>
 
-    <p>
-        <label for="{{ form.stock.id_for_label }}">在庫数:</label>
-        {{ form.stock }}
-    </p>
+            <p>
+                <label for="{{ form.description.id_for_label }}">説明:</label>
+                {{ form.description }}
+            </p>
 
-    <p>
-        <label for="{{ form.image.id_for_label }}">商品画像:</label>
-        {{ form.image }}
-    </p>
+            <p>
+                <label for="{{ form.stock.id_for_label }}">在庫数:</label>
+                {{ form.stock }}
+            </p>
 
-    <div class="btn-area">
-        <button type="submit" class="btn save-btn">保存する</button>
+            <p>
+                <label for="{{ form.image.id_for_label }}">商品画像:</label>
+                {{ form.image }}
+            </p>
 
-        {% if page_title == "商品編集" %}
-            <a href="{% url 'product_detail' form.instance.id %}" class="btn back-btn">商品編集一覧に戻る</a>
-        {% else %}
-            <a href="{% url 'product_search' %}" class="btn back-btn">管理メニューに戻る</a>
-        {% endif %}
-    </div>
-</form>
+            <div class="btn-area">
+                <button type="submit" class="btn save-btn">保存する</button>
+
+                {% if page_title == "商品編集" %}
+                    <a href="{% url 'product_detail' form.instance.id %}?from_manage=1" class="btn back-btn">商品詳細へ戻る</a>
+                    <a href="{% url 'product_edit_menu' %}" class="btn back-btn">商品編集一覧へ戻る</a>
+                {% else %}
+                    <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ戻る</a>
+                {% endif %}
+            </div>
+        </form>
     </div>
 </body>
 </html>
