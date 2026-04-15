@@ -69,14 +69,45 @@
         <h1>{{ page_title }}</h1>
 
         <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
+    {% csrf_token %}
 
-            <div class="btn-area">
-                <button type="submit" class="btn save-btn">保存する</button>
-                <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
-            </div>
-        </form>
+    <p>
+        <label for="{{ form.name.id_for_label }}">商品名:</label>
+        {{ form.name }}
+    </p>
+
+    <p>
+        <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
+        {{ form.category }}
+    </p>
+
+    <p>
+        <label for="{{ form.new_category.id_for_label }}">新しいカテゴリを追加:</label>
+        {{ form.new_category }}
+    </p>
+
+    <p>
+        <label for="{{ form.price.id_for_label }}">価格:</label>
+        {{ form.price }}
+    </p>
+
+    <p>
+        <label for="{{ form.description.id_for_label }}">説明:</label>
+        {{ form.description }}
+    </p>
+
+    <p>
+        <label for="{{ form.stock.id_for_label }}">在庫数:</label>
+        {{ form.stock }}
+    </p>
+
+    <p>
+        <label for="{{ form.image.id_for_label }}">商品画像:</label>
+        {{ form.image }}
+    </p>
+
+    <div class="btn-area">
+        <button type="submit" class="btn save-btn">保存する</button>
+        <a href="{% url 'product_search' %}" class="btn back-btn">戻る</a>
     </div>
-</body>
-</html>
+</form>
