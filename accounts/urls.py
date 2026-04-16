@@ -25,4 +25,5 @@ urlpatterns = [
     path("staff/logout/", views.staff_logout_view, name="staff_logout"),
     path("management/products/view/", views.management_product_list, name="management_product_list"),
     path("management/staff/create/", views.staff_signup_view, name="staff_signup"),
+    path("management/staff/", views.staff_list_view, name="staff_list"),
 ]

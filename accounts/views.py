@@ -10,6 +10,7 @@ from .models import Product, Category, Manufacturer
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib import messages
 
 def validate_password_policy(password):
     errors = []
@@ -534,6 +535,15 @@ def staff_signup_view(request):
         user.is_staff = True
         user.save()
 
-        return redirect("management_menu")
+        messages.success(request, "管理者を登録しました")
+        return redirect("staff_signup")
 
     return render(request, "accounts/staff_signup.html")
+
+@staff_member_required(login_url="staff_login")
+def staff_list_view(request):
+    staff_users = User.objects.filter(is_staff=True).order_by("id")
+
+    return render(request, "accounts/staff_list.html", {
+        "staff_users": staff_users,
+    })

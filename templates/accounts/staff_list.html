@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者一覧</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .top-links {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .btn-dark {
+            background: #333;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        .empty {
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>管理者一覧</h1>
+
+        <div class="top-links">
+            <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
+            <a href="{% url 'staff_signup' %}" class="btn btn-dark">管理者登録</a>
+        </div>
+
+        {% if staff_users %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ユーザー名</th>
+                        <th>メールアドレス</th>
+                        <th>表示名</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in staff_users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.first_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                管理者がいません。
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
