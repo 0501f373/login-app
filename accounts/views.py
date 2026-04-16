@@ -9,7 +9,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .models import Product, Category, Manufacturer
 from .forms import ProductForm
 from django.urls import reverse
-
+from django.contrib import messages
 
 def validate_password_policy(password):
     errors = []
@@ -336,21 +336,19 @@ def product_create(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-
             action = request.POST.get("action")
 
-            # 👇追加：保存してそのまま画面に残る
+            messages.success(request, "商品を登録しました")
+
             if action == "stay":
                 return redirect("product_create")
 
-            # 念のため残す
             if action == "list":
                 return redirect("management_product_list")
             elif action == "menu":
                 return redirect("management_menu")
 
             return redirect("product_create")
-
     else:
         form = ProductForm()
 
@@ -370,12 +368,8 @@ def product_edit(request, product_id):
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
-            action = request.POST.get("action")
-
-            if action == "save":
-                return redirect("management_product_list")
-
-            return redirect("management_product_list")
+            messages.success(request, "商品を保存しました")
+            return redirect(f"{reverse('product_edit', args=[product.id])}?next={next_page}")
     else:
         form = ProductForm(instance=product)
 
@@ -451,6 +445,9 @@ def product_delete(request, product_id):
         product.delete()
 
         if next_page == "management_product_list":
+            return redirect("management_product_list")
+
+        if next_page == "product_edit":
             return redirect("management_product_list")
 
         return redirect("management_menu")
