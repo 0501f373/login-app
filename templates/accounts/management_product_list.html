@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>商品一覧確認</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .top-actions {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .btn-dark {
+            background: #333;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .stock-out {
+            color: red;
+            font-weight: bold;
+        }
+
+        .stock-low {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .stock-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .action-links a {
+            margin-right: 10px;
+            text-decoration: none;
+        }
+
+        .empty {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>商品一覧確認</h1>
+
+        <div class="top-actions">
+            <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
+            <a href="{% url 'product_create' %}" class="btn btn-dark">商品登録</a>
+        </div>
+
+        {% if products %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>画像</th>
+                        <th>商品名</th>
+                        <th>カテゴリ</th>
+                        <th>メーカー</th>
+                        <th>価格</th>
+                        <th>在庫</th>
+                        <th>状態</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                なし
+                            {% endif %}
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>
+                            {% if product.category %}
+                                {{ product.category.name }}
+                            {% else %}
+                                未設定
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if product.manufacturer %}
+                                {{ product.manufacturer.name }}
+                            {% else %}
+                                未設定
+                            {% endif %}
+                        </td>
+                        <td>{{ product.price }}円</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            {% if product.stock == 0 %}
+                                <span class="stock-out">売り切れ</span>
+                            {% elif product.stock <= 5 %}
+                                <span class="stock-low">残りわずか</span>
+                            {% else %}
+                                <span class="stock-ok">在庫あり</span>
+                            {% endif %}
+                        </td>
+                        <td class="action-links">
+                            <a href="{% url 'product_detail' product.id %}?from_manage=1">詳細</a>
+                            <a href="{% url 'product_edit' product.id %}">編集</a>
+                            <a href="{% url 'product_delete' product.id %}">削除</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                商品がありません。
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

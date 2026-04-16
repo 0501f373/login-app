@@ -22,4 +22,7 @@ urlpatterns = [
     path("management/products/<int:product_id>/delete/", views.product_delete, name="product_delete"),
     path("management/categories/add/", views.category_create, name="category_create"),
     path("management/manufacturers/add/", views.manufacturer_create, name="manufacturer_create"),
+    path("staff/logout/", views.staff_logout_view, name="staff_logout"),
+    path("management/products/view/", views.management_product_list, name="management_product_list"),
+    path("management/staff/create/", views.staff_signup_view, name="staff_signup"),
 ]

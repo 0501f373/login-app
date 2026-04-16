@@ -395,6 +395,13 @@ def product_edit_menu(request):
     })
 
 @staff_member_required(login_url="staff_login")
+def management_product_list(request):
+    products = Product.objects.select_related("category", "manufacturer").all()
+    return render(request, "accounts/management_product_list.html", {
+        "products": products,
+    })
+
+@staff_member_required(login_url="staff_login")
 def manufacturer_create(request):
     message = ""
 
@@ -454,3 +461,53 @@ def staff_login_view(request):
         })
 
     return render(request, "accounts/staff_login.html")
+
+def staff_logout_view(request):
+    logout(request)
+    return redirect("staff_login")
+
+@staff_member_required(login_url="staff_login")
+def staff_signup_view(request):
+    if request.method == "POST":
+        display_name = request.POST.get("display_name", "").strip()
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+        password_confirm = request.POST.get("password_confirm", "")
+
+        errors = []
+
+        if not display_name:
+            errors.append("ユーザー名を入力してください")
+
+        if not email:
+            errors.append("メールアドレスを入力してください")
+        elif User.objects.filter(email__iexact=email).exists():
+            errors.append("このメールアドレスはすでに登録されています")
+
+        if not password:
+            errors.append("パスワードを入力してください")
+
+        if password != password_confirm:
+            errors.append("パスワードが一致しません")
+
+        errors.extend(validate_password_policy(password))
+
+        if errors:
+            return render(request, "accounts/staff_signup.html", {
+                "errors": errors,
+                "display_name": display_name,
+                "email": email,
+            })
+
+        user = User.objects.create_user(
+            username=email,
+            email=email,
+            password=password,
+            first_name=display_name,
+        )
+        user.is_staff = True
+        user.save()
+
+        return redirect("management_menu")
+
+    return render(request, "accounts/staff_signup.html")
