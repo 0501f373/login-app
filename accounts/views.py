@@ -326,6 +326,8 @@ def logout_view(request):
     logout(request)
     return redirect('product_search')
 
+from django.urls import reverse
+
 @staff_member_required(login_url="staff_login")
 def product_create(request):
     next_page = request.GET.get("next") or request.POST.get("next", "")
@@ -333,14 +335,15 @@ def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save()
-
+            form.save()
             action = request.POST.get("action")
 
             if action == "list":
                 return redirect("management_product_list")
             elif action == "continue":
-                return redirect(f"{reverse('product_create')}?next={next_page}" if next_page else "product_create")
+                if next_page:
+                    return redirect(f"{reverse('product_create')}?next={next_page}")
+                return redirect("product_create")
             elif action == "menu":
                 return redirect("management_menu")
 
@@ -352,25 +355,37 @@ def product_create(request):
         "form": form,
         "page_title": "商品登録",
         "next_page": next_page,
-        "is_edit": False,
     })
 
 
 @staff_member_required(login_url="staff_login")
 def product_edit(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    next_page = request.GET.get("next") or request.POST.get("next", "")
 
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
-            product = form.save()
-            return redirect(f"/products/{product.id}/?from_manage=1")
+            form.save()
+            action = request.POST.get("action")
+
+            if action == "list":
+                return redirect("management_product_list")
+            elif action == "continue":
+                if next_page:
+                    return redirect(f"{reverse('product_edit', args=[product_id])}?next={next_page}")
+                return redirect("product_edit", product_id=product_id)
+            elif action == "menu":
+                return redirect("management_menu")
+
+            return redirect("management_product_list")
     else:
         form = ProductForm(instance=product)
 
     return render(request, "accounts/product_form.html", {
         "form": form,
-        "page_title": "商品編集"
+        "page_title": "商品編集",
+        "next_page": next_page,
     })
 
 @staff_member_required(login_url="staff_login")

@@ -113,7 +113,7 @@
                 <button type="submit" name="action" value="continue" class="btn save-btn">続けて登録</button>
                 <button type="submit" name="action" value="menu" class="btn save-btn">管理メニューへ</button>
                 {% if page_title == "商品編集" %}
-                    <a href="{% url 'product_detail' form.instance.id %}?from_manage=1" class="btn back-btn">商品詳細へ戻る</a>
+                    <a href="{% url 'product_detail' form.instance.id %}?next=management_product_list" class="btn back-btn">商品詳細へ戻る</a>
                     <a href="{% url 'product_delete' form.instance.id %}" class="btn" style="background:red; color:white;">
                         削除
                     </a>    
