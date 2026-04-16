@@ -48,6 +48,19 @@
     <div class="container">
         <h1>在庫履歴</h1>
 
+        <form method="get" style="margin: 20px 0;">
+    <select name="product">
+        <option value="">すべての商品</option>
+        {% for product in products %}
+            <option value="{{ product.id }}" {% if product.id|stringformat:"s" == selected_product %}selected{% endif %}>
+                {{ product.name }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit">絞り込み</button>
+    <a href="{% url 'stock_history_list' %}" class="btn">クリア</a>
+</form>
+
         <a href="{% url 'stock_management' %}" class="btn">在庫管理へ戻る</a>
 
         <table>

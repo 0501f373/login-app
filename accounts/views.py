@@ -563,9 +563,17 @@ def staff_delete_view(request, user_id):
 
 @staff_member_required(login_url="staff_login")
 def stock_history_list(request):
+    product_id = request.GET.get("product")
     histories = StockHistory.objects.select_related("product", "updated_by").order_by("-created_at")
+    products = Product.objects.all().order_by("name")
+
+    if product_id:
+        histories = histories.filter(product_id=product_id)
+
     return render(request, "accounts/stock_history_list.html", {
         "histories": histories,
+        "products": products,
+        "selected_product": product_id,
     })
 
 @staff_member_required(login_url="staff_login")

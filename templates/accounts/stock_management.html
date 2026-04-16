@@ -40,24 +40,34 @@
             padding: 12px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            vertical-align: middle;
         }
 
         th {
             background: #f0f0f0;
         }
 
-        input, select {
+        input {
             padding: 8px;
             font-size: 14px;
+            width: 90px;
         }
 
         .update-btn {
             padding: 8px 14px;
             border: none;
             border-radius: 6px;
-            background: #333;
             color: white;
             cursor: pointer;
+            font-size: 14px;
+        }
+
+        .in-btn {
+            background: #2e7d32;
+        }
+
+        .out-btn {
+            background: #c62828;
         }
 
         .stock-out {
@@ -90,6 +100,13 @@
             color: #c62828;
             border-radius: 8px;
         }
+
+        .action-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -113,7 +130,6 @@
                     <th>商品名</th>
                     <th>現在庫</th>
                     <th>状態</th>
-                    <th>更新種別</th>
                     <th>数量</th>
                     <th>更新</th>
                 </tr>
@@ -135,16 +151,13 @@
                     <td>
                         <form method="post" action="{% url 'stock_update' product.id %}">
                             {% csrf_token %}
-                            <select name="stock_type">
-                                <option value="in">入庫</option>
-                                <option value="out">出庫</option>
-                            </select>
-                    </td>
-                    <td>
                             <input type="number" name="quantity" min="1" required>
                     </td>
                     <td>
-                            <button type="submit" class="update-btn">更新</button>
+                            <div class="action-group">
+                                <button type="submit" name="stock_type" value="in" class="update-btn in-btn">＋ 入庫</button>
+                                <button type="submit" name="stock_type" value="out" class="update-btn out-btn">－ 出庫</button>
+                            </div>
                         </form>
                     </td>
                 </tr>
