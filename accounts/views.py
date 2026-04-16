@@ -336,18 +336,21 @@ def product_create(request):
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+
             action = request.POST.get("action")
 
+            # 👇追加：保存してそのまま画面に残る
+            if action == "stay":
+                return redirect("product_create")
+
+            # 念のため残す
             if action == "list":
                 return redirect("management_product_list")
-            elif action == "continue":
-                if next_page:
-                    return redirect(f"{reverse('product_create')}?next={next_page}")
-                return redirect("product_create")
             elif action == "menu":
                 return redirect("management_menu")
 
-            return redirect("management_product_list")
+            return redirect("product_create")
+
     else:
         form = ProductForm()
 

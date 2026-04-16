@@ -115,23 +115,17 @@
             </p>
 
             <div class="btn-area">
-                {% if page_title == "商品編集" %}
-                    <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
-                    <a href="{% url 'product_detail' form.instance.id %}?next=product_edit" class="btn back-btn">商品詳細へ</a>
-                    <a href="{% url 'product_delete' form.instance.id %}?next=management_product_list" class="btn delete-btn">削除</a>
-                    <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
-                {% else %}
-                    <button type="submit" name="action" value="list" class="btn save-btn">商品一覧確認へ</button>
-                    <button type="submit" name="action" value="continue" class="btn save-btn">続けて登録</button>
-                    <button type="submit" name="action" value="menu" class="btn save-btn">管理メニューへ</button>
-
-                    {% if next_page == "management_product_list" %}
-                        <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧確認へ戻る</a>
-                    {% else %}
-                        <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ戻る</a>
-                    {% endif %}
-                {% endif %}
-            </div>
+    {% if page_title == "商品編集" %}
+        <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
+        <a href="{% url 'product_detail' form.instance.id %}?next=product_edit" class="btn back-btn">商品詳細画面へ</a>
+        <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
+        <a href="{% url 'product_delete' form.instance.id %}?next=management_product_list" class="btn delete-btn">削除</a>
+    {% else %}
+        <button type="submit" name="action" value="stay" class="btn save-btn">保存</button>
+        <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
+        <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ</a>
+    {% endif %}
+</div>
         </form>
     </div>
 </body>

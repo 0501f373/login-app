@@ -54,13 +54,13 @@
             <input type="hidden" name="next" value="{{ next_page }}">
 
             <div class="btn-area">
-                <button type="submit" class="btn delete-btn">削除する</button>
-
                 {% if next_page == "management_product_list" %}
                     <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧確認へ戻る</a>
                 {% else %}
                     <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ戻る</a>
                 {% endif %}
+
+                <button type="submit" class="btn delete-btn">削除する</button>
             </div>
         </form>
     </div>
