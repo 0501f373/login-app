@@ -101,7 +101,7 @@
 
         <div class="top-actions">
             <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
-            <a href="{% url 'product_create' %}" class="btn btn-dark">商品登録</a>
+            <a href="{% url 'product_create' %}?next=management_product_list">商品登録</a>
         </div>
 
         {% if products %}
@@ -155,9 +155,9 @@
                             {% endif %}
                         </td>
                         <td class="action-links">
-                            <a href="{% url 'product_detail' product.id %}?from_manage=1">詳細</a>
-                            <a href="{% url 'product_edit' product.id %}">編集</a>
-                            <a href="{% url 'product_delete' product.id %}">削除</a>
+                            <a href="{% url 'product_detail' product.id %}?next=management_product_list">詳細</a>
+                            <a href="{% url 'product_edit' product.id %}?next=management_product_list">編集</a>
+                            <a href="{% url 'product_delete' product.id %}?next=management_product_list">削除</a>
                         </td>
                     </tr>
                     {% endfor %}

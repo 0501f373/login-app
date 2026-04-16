@@ -8,6 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 from .models import Product, Category, Manufacturer
 from .forms import ProductForm
+from django.urls import reverse
 
 
 def validate_password_policy(password):
@@ -143,14 +144,12 @@ def product_search(request):
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     quantity_range = range(1, product.stock + 1) if product.stock > 0 else []
-
-    # 👇追加（ここが重要）
-    from_manage = request.GET.get("from_manage") == "1"
+    next_page = request.GET.get("next", "")
 
     return render(request, "accounts/product_detail.html", {
         "product": product,
         "quantity_range": quantity_range,
-        "from_manage": from_manage,  # 👈これ追加
+        "next_page": next_page,
     })
 
 
@@ -329,19 +328,31 @@ def logout_view(request):
 
 @staff_member_required(login_url="staff_login")
 def product_create(request):
+    next_page = request.GET.get("next") or request.POST.get("next", "")
+
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            product = form.save(commit=False)
+            product = form.save()
 
-            product.save()
-            return redirect(f"/products/{product.id}/?from_manage=1")
+            action = request.POST.get("action")
+
+            if action == "list":
+                return redirect("management_product_list")
+            elif action == "continue":
+                return redirect(f"{reverse('product_create')}?next={next_page}" if next_page else "product_create")
+            elif action == "menu":
+                return redirect("management_menu")
+
+            return redirect("management_product_list")
     else:
         form = ProductForm()
 
     return render(request, "accounts/product_form.html", {
         "form": form,
-        "page_title": "商品登録"
+        "page_title": "商品登録",
+        "next_page": next_page,
+        "is_edit": False,
     })
 
 

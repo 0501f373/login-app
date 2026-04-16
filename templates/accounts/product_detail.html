@@ -169,10 +169,10 @@
             {% endif %}
         </div>
 
-        {% if from_manage %}
-    <a href="{% url 'product_edit_menu' %}" class="outside-back-link">← 商品編集一覧へ戻る</a>
+        {% if next_page == "management_product_list" %}
+    <a href="{% url 'management_product_list' %}">商品一覧確認へ戻る</a>
 {% else %}
-    <a href="{% url 'product_search' %}" class="outside-back-link">← 商品一覧へ戻る</a>
+    <a href="{% url 'product_search' %}">商品一覧へ戻る</a>
 {% endif %}
     </div>
 </body>
