@@ -17,12 +17,11 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ["name", "category", "manufacturer", "price", "cost", "description", "stock", "image"]
+        fields = ["name", "category", "manufacturer", "price", "cost", "description", "image"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
-            "stock": forms.NumberInput(attrs={"class": "form-control"}),
             "image": forms.FileInput(attrs={"class": "form-control"}),
             "cost": forms.NumberInput(attrs={"class": "form-control"}),
         }
