@@ -70,6 +70,14 @@
     <div class="container">
         <h1>管理者一覧</h1>
 
+        {% if messages %}
+    {% for message in messages %}
+        <div style="margin-bottom: 16px; padding: 12px 16px; background: #e8f5e9; color: #2e7d32; border-radius: 8px;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
         <div class="top-links">
             <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
             <a href="{% url 'staff_signup' %}" class="btn btn-dark">管理者登録</a>
@@ -83,6 +91,7 @@
                         <th>ユーザー名</th>
                         <th>メールアドレス</th>
                         <th>表示名</th>
+                        <th>操作</th>  
                     </tr>
                 </thead>
                 <tbody>
@@ -92,6 +101,9 @@
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
                         <td>{{ user.first_name }}</td>
+                        <td>
+                           <a href="{% url 'staff_delete' user.id %}">削除</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

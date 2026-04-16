@@ -547,3 +547,16 @@ def staff_list_view(request):
     return render(request, "accounts/staff_list.html", {
         "staff_users": staff_users,
     })
+
+@staff_member_required(login_url="staff_login")
+def staff_delete_view(request, user_id):
+    staff_user = get_object_or_404(User, id=user_id, is_staff=True)
+
+    if request.method == "POST":
+        staff_user.delete()
+        messages.success(request, "管理者を削除しました")
+        return redirect("staff_list")
+
+    return render(request, "accounts/staff_confirm_delete.html", {
+        "staff_user": staff_user,
+    })
