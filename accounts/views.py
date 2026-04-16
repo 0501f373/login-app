@@ -327,7 +327,7 @@ def logout_view(request):
     logout(request)
     return redirect('product_search')
 
-@staff_member_required
+@staff_member_required(login_url="staff_login")
 def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
@@ -345,7 +345,7 @@ def product_create(request):
     })
 
 
-@staff_member_required
+@staff_member_required(login_url="staff_login")
 def product_edit(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -362,7 +362,7 @@ def product_edit(request, product_id):
         "page_title": "商品編集"
     })
 
-@staff_member_required(login_url="login")
+@staff_member_required(login_url="staff_login")
 def category_create(request):
     message = ""
 
@@ -380,11 +380,11 @@ def category_create(request):
         "categories": categories,
     })
 
-@staff_member_required(login_url="login")
+@staff_member_required(login_url="staff_login")
 def management_menu(request):
     return render(request, "accounts/management_menu.html")
 
-@staff_member_required(login_url="login")
+@staff_member_required(login_url="staff_login")
 def product_edit_menu(request):
     categories = Category.objects.prefetch_related("product_set").all().order_by("name")
     uncategorized_products = Product.objects.filter(category__isnull=True)
@@ -394,7 +394,7 @@ def product_edit_menu(request):
         "uncategorized_products": uncategorized_products,
     })
 
-@staff_member_required(login_url="login")
+@staff_member_required(login_url="staff_login")
 def manufacturer_create(request):
     message = ""
 
@@ -412,7 +412,7 @@ def manufacturer_create(request):
         "manufacturers": manufacturers,
     })
 
-@staff_member_required
+@staff_member_required(login_url="staff_login")
 def product_delete(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
@@ -423,3 +423,34 @@ def product_delete(request, product_id):
     return render(request, "accounts/product_confirm_delete.html", {
         "product": product
     })
+
+def staff_login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email", "").strip().lower()
+        password = request.POST.get("password", "")
+
+        if not email:
+            return render(request, "accounts/staff_login.html", {
+                "error": "メールアドレスを入力してください"
+            })
+
+        if not password:
+            return render(request, "accounts/staff_login.html", {
+                "error": "パスワードを入力してください"
+            })
+
+        try:
+            user_obj = User.objects.get(email=email)
+            user = authenticate(request, username=user_obj.username, password=password)
+        except User.DoesNotExist:
+            user = None
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect("management_menu")
+
+        return render(request, "accounts/staff_login.html", {
+            "error": "管理者アカウントでログインしてください"
+        })
+
+    return render(request, "accounts/staff_login.html")

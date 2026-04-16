@@ -152,23 +152,6 @@
     text-decoration: none;
     box-sizing: border-box;
 }
-
-.floating-add-btn {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    width: 56px;
-    height: 56px;
-    background: #333;
-    color: white;
-    font-size: 28px;
-    text-align: center;
-    line-height: 56px;
-    border-radius: 50%;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    z-index: 999;
-}
     </style>
 </head>
 <body>
@@ -179,8 +162,8 @@
             <span>{{ request.user.first_name }}</span>
             <a href="{% url 'logout' %}">ログアウト</a>
         {% else %}
-            <a href="/login/">ログイン</a>
-            <a href="/signup/">新規登録</a>
+            <a href="{% url 'login' %}">ログイン</a>
+            <a href="{% url 'signup' %}">新規登録</a>
         {% endif %}
 
         <a href="{% url 'cart' %}">カート（{{ cart_count }}）</a>
@@ -258,12 +241,6 @@
             </div>
         {% endif %}
     </div>
-    {% if user.is_staff %}
-<a href="{% url 'management_menu' %}" class="floating-add-btn">
-    ＋
-</a>
-{% endif %}
-</select>
 </body>
 </html>
 
