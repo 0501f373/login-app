@@ -12,7 +12,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1300px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -45,6 +45,7 @@
 
         th {
             background: #f0f0f0;
+            white-space: nowrap;
         }
 
         input {
@@ -85,6 +86,21 @@
             font-weight: bold;
         }
 
+        .profit-plus {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .profit-zero {
+            color: #666;
+            font-weight: bold;
+        }
+
+        .profit-minus {
+            color: #c62828;
+            font-weight: bold;
+        }
+
         .message-success {
             margin-bottom: 16px;
             padding: 12px 16px;
@@ -107,6 +123,17 @@
             align-items: center;
             flex-wrap: wrap;
         }
+
+        .product-image {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .empty-image {
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -127,7 +154,13 @@
         <table>
             <thead>
                 <tr>
+                    <th>画像</th>
                     <th>商品名</th>
+                    <th>カテゴリ</th>
+                    <th>メーカー</th>
+                    <th>販売価格</th>
+                    <th>仕入れ単価</th>
+                    <th>粗利</th>
                     <th>現在庫</th>
                     <th>状態</th>
                     <th>数量</th>
@@ -137,8 +170,47 @@
             <tbody>
                 {% for product in products %}
                 <tr>
+                    <td>
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                        {% else %}
+                            <span class="empty-image">なし</span>
+                        {% endif %}
+                    </td>
+
                     <td>{{ product.name }}</td>
+
+                    <td>
+                        {% if product.category %}
+                            {{ product.category.name }}
+                        {% else %}
+                            未設定
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if product.manufacturer %}
+                            {{ product.manufacturer.name }}
+                        {% else %}
+                            未設定
+                        {% endif %}
+                    </td>
+
+                    <td>{{ product.price }}円</td>
+                    <td>{{ product.cost }}円</td>
+
+                    <td>
+                        {% if product.price > product.cost %}
+                            <span class="profit-plus">{{ product.price|add:-product.cost }}円</span>
+                        {% elif product.price == product.cost %}
+                            <span class="profit-zero">0円</span>
+                        {% else %}
+                            <span class="profit-minus">{{ product.price|add:-product.cost }}円</span>
+                        {% endif %}
+                    </td>
+
                     <td>{{ product.stock }}</td>
+
                     <td>
                         {% if product.stock == 0 %}
                             <span class="stock-out">売り切れ</span>
@@ -148,11 +220,13 @@
                             <span class="stock-ok">在庫あり</span>
                         {% endif %}
                     </td>
+
                     <td>
                         <form method="post" action="{% url 'stock_update' product.id %}">
                             {% csrf_token %}
                             <input type="number" name="quantity" min="1" required>
                     </td>
+
                     <td>
                             <div class="action-group">
                                 <button type="submit" name="stock_type" value="in" class="update-btn in-btn">＋ 入庫</button>

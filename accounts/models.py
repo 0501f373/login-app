@@ -33,6 +33,7 @@ class Product(models.Model):
         blank=True
     )
     price = models.IntegerField("価格")
+    cost = models.IntegerField("仕入れ単価", default=0)
     description = models.TextField("説明", blank=True)
     stock = models.PositiveIntegerField("在庫数", default=0)
     image = models.ImageField("商品画像", upload_to="products/", blank=True, null=True)
