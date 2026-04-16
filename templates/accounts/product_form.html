@@ -117,9 +117,8 @@
             <div class="btn-area">
     {% if page_title == "商品編集" %}
         <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
-        <a href="{% url 'product_detail' form.instance.id %}?next=product_edit" class="btn back-btn">商品詳細画面へ</a>
         <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
-        <a href="{% url 'product_delete' form.instance.id %}?next=management_product_list" class="btn delete-btn">削除</a>
+        <a href="{% url 'product_delete' form.instance.id %}?next=product_edit" class="btn delete-btn">削除</a>
     {% else %}
         <button type="submit" name="action" value="stay" class="btn save-btn">保存</button>
         <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
