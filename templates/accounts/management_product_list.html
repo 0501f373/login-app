@@ -101,7 +101,7 @@
 
         <div class="top-actions">
             <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
-            <a href="{% url 'product_create' %}?next=management_product_list">商品登録</a>
+            <a href="{% url 'product_create' %}?next=management_product_list" class="btn btn-dark">商品登録</a>
         </div>
 
         {% if products %}

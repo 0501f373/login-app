@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>商品一覧</title>
+    <title>商品詳細</title>
     <style>
         body {
             font-family: sans-serif;
@@ -19,23 +19,6 @@
             color: white;
         }
 
-        .header-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .header-links {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-links a,
-        .header-links span {
-            color: white;
-            text-decoration: none;
-        }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -46,135 +29,112 @@
             background: white;
             border-radius: 12px;
             padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .product-image {
             width: 300px;
-            max-width: 100%;
-            height: auto;
             border-radius: 12px;
             margin-bottom: 20px;
-            display: block;
         }
 
-        .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 12px;
-        }
-
-        .cart-form {
-            margin-top: 20px;
-        }
-
-        .cart-form select,
-        .cart-form button {
-            padding: 10px;
-            margin-right: 8px;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 24px;
-            color: #333;
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
             text-decoration: none;
+            background: #ddd;
+            color: #333;
+            margin-right: 10px;
         }
-        .floating-add-btn {
+
+        .btn-dark {
+            background: #333;
+            color: white;
+        }
+
+        .floating-btn {
             position: fixed;
             right: 24px;
             bottom: 24px;
-            width: 56px;
-            height: 56px;
             background: #333;
             color: white;
-            font-size: 28px;
-            text-align: center;
-            line-height: 56px;
+            padding: 14px 18px;
             border-radius: 50%;
-            text-decoration: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 999;
-        }
-
-        .outside-back-link {
-            display: inline-block;
-            margin-top: 16px;
-            color: #333;
             text-decoration: none;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-title">商品詳細</div>
-        <div class="header-links">
-            {% if request.user.is_authenticated %}
-                <span>{{ request.user.first_name }}</span>
-                <a href="{% url 'logout' %}">ログアウト</a>
+
+<div class="header">
+    <div>商品詳細</div>
+    <div>
+        {% if request.user.is_authenticated %}
+            {{ request.user.first_name }}
+            <a href="{% url 'logout' %}" style="color:white;">ログアウト</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+    <div class="detail-card">
+        <h1>{{ product.name }}</h1>
+
+        {% if product.image %}
+            <img src="{{ product.image.url }}" class="product-image">
+        {% endif %}
+
+        <p>カテゴリ: {{ product.category }}</p>
+        <p>メーカー: {{ product.manufacturer.name|default:"未設定" }}</p>
+        <p><strong>{{ product.price }}円</strong></p>
+        <p>{{ product.description }}</p>
+
+        <p>在庫数: {{ product.stock }}</p>
+
+        {% if product.stock == 0 %}
+            <p style="color:red;">売り切れ</p>
+        {% elif product.stock <= 5 %}
+            <p style="color:orange;">残りわずか</p>
+        {% else %}
+            <p style="color:green;">在庫あり</p>
+        {% endif %}
+
+        <!-- 一般ユーザーだけカート表示 -->
+        {% if not next_page %}
+            {% if product.stock > 0 %}
+                <form method="post" action="{% url 'add_to_cart' product.id %}">
+                    {% csrf_token %}
+                    <select name="quantity">
+                        {% for i in quantity_range %}
+                            <option value="{{ i }}">{{ i }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">カートに入れる</button>
+                </form>
             {% else %}
-                <a href="/login/">ログイン</a>
-                <a href="/signup/">新規登録</a>
+                <button disabled>カートに入れる</button>
             {% endif %}
-        </div>
+        {% endif %}
     </div>
 
-    <div class="container">
-        <div class="detail-card">
-            <h1>{{ product.name }}</h1>
-
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
-            {% else %}
-                <p>画像なし</p>
-            {% endif %}
-
-            <p>カテゴリ: {{ product.category }}</p>
-<p>メーカー: {% if product.manufacturer %}{{ product.manufacturer.name }}{% else %}未設定{% endif %}</p>
-<p class="price">価格: {{ product.price }}円</p>
-<p>{{ product.description }}</p>
-
-<p>在庫数: {{ product.stock }}</p>
-
-{% if product.stock == 0 %}
-    <p style="color: red;">売り切れ</p>
-{% elif product.stock <= 5 %}
-    <p style="color: orange;">残りわずか</p>
-{% else %}
-    <p style="color: green;">在庫あり</p>
-{% endif %}
-
-{% if not from_manage %}
-    {% if product.stock == 0 %}
-        <button type="button" disabled>カートに入れる</button>
-    {% else %}
-        <form method="post" action="{% url 'add_to_cart' product.id %}" class="cart-form">
-            {% csrf_token %}
-            <label for="quantity">数量:</label>
-            <select name="quantity" id="quantity">
-                {% for i in quantity_range %}
-                    <option value="{{ i }}">{{ i }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit">カートに入れる</button>
-        </form>
-    {% endif %}
-{% endif %}
-
-            {% if user.is_staff and from_manage %}
-            <a href="{% url 'product_edit' product.id %}" class="floating-add-btn">
-                編集
-            </a>
-            {% endif %}
-        </div>
-
+    <!-- 戻るボタン -->
+    <div style="margin-top:20px;">
         {% if next_page == "management_product_list" %}
-    <a href="{% url 'management_product_list' %}">商品一覧確認へ戻る</a>
-{% else %}
-    <a href="{% url 'product_search' %}">商品一覧へ戻る</a>
-{% endif %}
+            <a href="{% url 'management_product_list' %}" class="btn">商品一覧確認へ戻る</a>
+
+        {% elif next_page == "product_edit" %}
+            <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn">編集画面に戻る</a>
+            <a href="{% url 'management_product_list' %}" class="btn">商品一覧確認へ戻る</a>
+
+        {% else %}
+            <a href="{% url 'product_search' %}" class="btn">商品一覧へ戻る</a>
+        {% endif %}
     </div>
+</div>
+
+<!-- 管理者だけ編集ボタン -->
+{% if next_page == "management_product_list" %}
+    <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="floating-btn">編集</a>
+{% endif %}
+
 </body>
 </html>
-

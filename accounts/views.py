@@ -369,14 +369,8 @@ def product_edit(request, product_id):
             form.save()
             action = request.POST.get("action")
 
-            if action == "list":
+            if action == "save":
                 return redirect("management_product_list")
-            elif action == "continue":
-                if next_page:
-                    return redirect(f"{reverse('product_edit', args=[product_id])}?next={next_page}")
-                return redirect("product_edit", product_id=product_id)
-            elif action == "menu":
-                return redirect("management_menu")
 
             return redirect("management_product_list")
     else:
@@ -448,13 +442,19 @@ def manufacturer_create(request):
 @staff_member_required(login_url="staff_login")
 def product_delete(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    next_page = request.GET.get("next") or request.POST.get("next", "")
 
     if request.method == "POST":
         product.delete()
-        return redirect("product_edit_menu")
+
+        if next_page == "management_product_list":
+            return redirect("management_product_list")
+
+        return redirect("management_menu")
 
     return render(request, "accounts/product_confirm_delete.html", {
-        "product": product
+        "product": product,
+        "next_page": next_page,
     })
 
 def staff_login_view(request):
