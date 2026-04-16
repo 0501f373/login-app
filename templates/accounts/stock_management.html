@@ -200,12 +200,12 @@
                     <td>{{ product.cost }}円</td>
 
                     <td>
-                        {% if product.price > product.cost %}
-                            <span class="profit-plus">{{ product.price|add:-product.cost }}円</span>
-                        {% elif product.price == product.cost %}
+                        {% if product.profit > 0 %}
+                            <span class="profit-plus">{{ product.profit }}円</span>
+                        {% elif product.profit == 0 %}
                             <span class="profit-zero">0円</span>
                         {% else %}
-                            <span class="profit-minus">{{ product.price|add:-product.cost }}円</span>
+                            <span class="profit-minus">{{ product.profit }}円</span>
                         {% endif %}
                     </td>
 

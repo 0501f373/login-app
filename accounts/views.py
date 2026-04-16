@@ -579,6 +579,10 @@ def stock_history_list(request):
 @staff_member_required(login_url="staff_login")
 def stock_management(request):
     products = Product.objects.select_related("category", "manufacturer").all().order_by("id")
+
+    for p in products:
+        p.profit = p.price - p.cost  # ←追加
+
     return render(request, "accounts/stock_management.html", {
         "products": products,
     })
