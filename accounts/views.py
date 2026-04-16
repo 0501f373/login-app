@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 
-from .models import Product, Category, Manufacturer
+from .models import Product, Category, Manufacturer, StockHistory
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
@@ -560,3 +560,65 @@ def staff_delete_view(request, user_id):
     return render(request, "accounts/staff_confirm_delete.html", {
         "staff_user": staff_user,
     })
+
+@staff_member_required(login_url="staff_login")
+def stock_history_list(request):
+    histories = StockHistory.objects.select_related("product", "updated_by").order_by("-created_at")
+    return render(request, "accounts/stock_history_list.html", {
+        "histories": histories,
+    })
+
+@staff_member_required(login_url="staff_login")
+def stock_management(request):
+    products = Product.objects.select_related("category", "manufacturer").all().order_by("id")
+    return render(request, "accounts/stock_management.html", {
+        "products": products,
+    })
+
+
+@staff_member_required(login_url="staff_login")
+def stock_update(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == "POST":
+        stock_type = request.POST.get("stock_type")
+        quantity_str = request.POST.get("quantity", "0").strip()
+
+        if not quantity_str.isdigit():
+            messages.error(request, "数量は数字で入力してください")
+            return redirect("stock_management")
+
+        quantity = int(quantity_str)
+
+        if quantity <= 0:
+            messages.error(request, "数量は1以上で入力してください")
+            return redirect("stock_management")
+
+        before_stock = product.stock
+
+        if stock_type == "in":
+            after_stock = before_stock + quantity
+        elif stock_type == "out":
+            if quantity > before_stock:
+                messages.error(request, f"{product.name} の在庫が不足しています")
+                return redirect("stock_management")
+            after_stock = before_stock - quantity
+        else:
+            messages.error(request, "更新種別が不正です")
+            return redirect("stock_management")
+
+        product.stock = after_stock
+        product.save()
+
+        StockHistory.objects.create(
+            product=product,
+            stock_type=stock_type,
+            quantity=quantity,
+            before_stock=before_stock,
+            after_stock=after_stock,
+            updated_by=request.user,
+        )
+
+        messages.success(request, f"{product.name} の在庫を更新しました")
+
+    return redirect("stock_management")

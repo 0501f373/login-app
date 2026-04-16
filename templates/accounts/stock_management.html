@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>在庫管理</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #ddd;
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        input, select {
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .update-btn {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .stock-out {
+            color: red;
+            font-weight: bold;
+        }
+
+        .stock-low {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .stock-ok {
+            color: green;
+            font-weight: bold;
+        }
+
+        .message-success {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-radius: 8px;
+        }
+
+        .message-error {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background: #ffebee;
+            color: #c62828;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>在庫管理</h1>
+
+        <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
+        <a href="{% url 'stock_history_list' %}" class="btn">在庫履歴へ</a>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名</th>
+                    <th>現在庫</th>
+                    <th>状態</th>
+                    <th>更新種別</th>
+                    <th>数量</th>
+                    <th>更新</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                        {% if product.stock == 0 %}
+                            <span class="stock-out">売り切れ</span>
+                        {% elif product.stock <= 5 %}
+                            <span class="stock-low">残りわずか</span>
+                        {% else %}
+                            <span class="stock-ok">在庫あり</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'stock_update' product.id %}">
+                            {% csrf_token %}
+                            <select name="stock_type">
+                                <option value="in">入庫</option>
+                                <option value="out">出庫</option>
+                            </select>
+                    </td>
+                    <td>
+                            <input type="number" name="quantity" min="1" required>
+                    </td>
+                    <td>
+                            <button type="submit" class="update-btn">更新</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

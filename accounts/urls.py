@@ -27,4 +27,9 @@ urlpatterns = [
     path("management/staff/create/", views.staff_signup_view, name="staff_signup"),
     path("management/staff/", views.staff_list_view, name="staff_list"),
     path("management/staff/<int:user_id>/delete/", views.staff_delete_view, name="staff_delete"),
+    path("management/stock/", views.stock_management, name="stock_management"),
+    path("management/stock/<int:product_id>/update/", views.stock_update, name="stock_update"),
+    path("management/stock/", views.stock_management, name="stock_management"),
+    path("management/stock/<int:product_id>/update/", views.stock_update, name="stock_update"),
+    path("management/stock/history/", views.stock_history_list, name="stock_history_list"),
 ]

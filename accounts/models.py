@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Category(models.Model):
@@ -38,3 +39,21 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class StockHistory(models.Model):
+    STOCK_TYPE_CHOICES = [
+        ("in", "入庫"),
+        ("out", "出庫"),
+    ]
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="stock_histories")
+    stock_type = models.CharField(max_length=10, choices=STOCK_TYPE_CHOICES)
+    quantity = models.PositiveIntegerField()
+    before_stock = models.PositiveIntegerField()
+    after_stock = models.PositiveIntegerField()
+    updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product.name} / {self.get_stock_type_display()} / {self.quantity}"

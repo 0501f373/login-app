@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>在庫履歴</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #ddd;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>在庫履歴</h1>
+
+        <a href="{% url 'stock_management' %}" class="btn">在庫管理へ戻る</a>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>日時</th>
+                    <th>商品</th>
+                    <th>種別</th>
+                    <th>数量</th>
+                    <th>変更前</th>
+                    <th>変更後</th>
+                    <th>更新者</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for history in histories %}
+                <tr>
+                    <td>{{ history.created_at|date:"Y/m/d H:i" }}</td>
+                    <td>{{ history.product.name }}</td>
+                    <td>{{ history.get_stock_type_display }}</td>
+                    <td>{{ history.quantity }}</td>
+                    <td>{{ history.before_stock }}</td>
+                    <td>{{ history.after_stock }}</td>
+                    <td>
+                        {% if history.updated_by %}
+                            {{ history.updated_by.first_name }}
+                        {% else %}
+                            不明
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
