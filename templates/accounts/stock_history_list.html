@@ -17,15 +17,46 @@
             background: white;
             padding: 30px;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .top-links {
+            margin-bottom: 20px;
         }
 
         .btn {
             display: inline-block;
             padding: 10px 16px;
             background: #ddd;
+            color: #333;
             text-decoration: none;
             border-radius: 8px;
             margin-right: 10px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background: #333;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         table {
@@ -37,10 +68,28 @@
         th, td {
             padding: 12px;
             border-bottom: 1px solid #ddd;
+            text-align: left;
+            vertical-align: middle;
         }
 
         th {
             background: #f0f0f0;
+        }
+
+        .in-text {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .out-text {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .empty {
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -48,53 +97,72 @@
     <div class="container">
         <h1>在庫履歴</h1>
 
-        <form method="get" style="margin: 20px 0;">
-    <select name="product">
-        <option value="">すべての商品</option>
-        {% for product in products %}
-            <option value="{{ product.id }}" {% if product.id|stringformat:"s" == selected_product %}selected{% endif %}>
-                {{ product.name }}
-            </option>
-        {% endfor %}
-    </select>
-    <button type="submit">絞り込み</button>
-    <a href="{% url 'stock_history_list' %}" class="btn">クリア</a>
-</form>
+        <div class="top-links">
+            <a href="{% url 'stock_management' %}" class="btn">在庫管理へ戻る</a>
+            <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
+        </div>
 
-        <a href="{% url 'stock_management' %}" class="btn">在庫管理へ戻る</a>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>日時</th>
-                    <th>商品</th>
-                    <th>種別</th>
-                    <th>数量</th>
-                    <th>変更前</th>
-                    <th>変更後</th>
-                    <th>更新者</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for history in histories %}
-                <tr>
-                    <td>{{ history.created_at|date:"Y/m/d H:i" }}</td>
-                    <td>{{ history.product.name }}</td>
-                    <td>{{ history.get_stock_type_display }}</td>
-                    <td>{{ history.quantity }}</td>
-                    <td>{{ history.before_stock }}</td>
-                    <td>{{ history.after_stock }}</td>
-                    <td>
-                        {% if history.updated_by %}
-                            {{ history.updated_by.first_name }}
-                        {% else %}
-                            不明
-                        {% endif %}
-                    </td>
-                </tr>
+        <form method="get">
+            <select name="product">
+                <option value="">すべての商品</option>
+                {% for product in products %}
+                    <option value="{{ product.id }}" {% if product.id|stringformat:"s" == selected_product %}selected{% endif %}>
+                        {{ product.name }}
+                    </option>
                 {% endfor %}
-            </tbody>
-        </table>
+            </select>
+            <button type="submit">絞り込み</button>
+            <a href="{% url 'stock_history_list' %}" class="btn">クリア</a>
+        </form>
+
+        {% if histories %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>日時</th>
+                        <th>商品名</th>
+                        <th>種別</th>
+                        <th>数量</th>
+                        <th>変更前</th>
+                        <th>変更後</th>
+                        <th>更新者</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in histories %}
+                    <tr>
+                        <td>{{ history.created_at|date:"Y/m/d H:i" }}</td>
+                        <td>{{ history.product.name }}</td>
+                        <td>
+                            {% if history.stock_type == "in" %}
+                                <span class="in-text">入庫</span>
+                            {% else %}
+                                <span class="out-text">出庫</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ history.quantity }}</td>
+                        <td>{{ history.before_stock }}</td>
+                        <td>{{ history.after_stock }}</td>
+                        <td>
+                            {% if history.updated_by %}
+                                {% if history.updated_by.first_name %}
+                                    {{ history.updated_by.first_name }}
+                                {% else %}
+                                    {{ history.updated_by.username }}
+                                {% endif %}
+                            {% else %}
+                                不明
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                該当する在庫履歴がありません。
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>
