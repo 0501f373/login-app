@@ -414,9 +414,31 @@ def product_edit_menu(request):
 
 @staff_member_required(login_url="staff_login")
 def management_product_list(request):
+    keyword = request.GET.get("keyword", "")
+    category = request.GET.get("category", "")
+    manufacturer = request.GET.get("manufacturer", "")
+
     products = Product.objects.select_related("category", "manufacturer").all()
+
+    if keyword:
+        products = products.filter(name__icontains=keyword)
+
+    if category:
+        products = products.filter(category_id=category)
+
+    if manufacturer:
+        products = products.filter(manufacturer_id=manufacturer)
+
+    categories = Category.objects.all().order_by("name")
+    manufacturers = Manufacturer.objects.all().order_by("name")
+
     return render(request, "accounts/management_product_list.html", {
         "products": products,
+        "keyword": keyword,
+        "category": category,
+        "manufacturer": manufacturer,
+        "categories": categories,
+        "manufacturers": manufacturers,
     })
 
 @staff_member_required(login_url="staff_login")
@@ -578,13 +600,34 @@ def stock_history_list(request):
 
 @staff_member_required(login_url="staff_login")
 def stock_management(request):
+    keyword = request.GET.get("keyword", "")
+    category = request.GET.get("category", "")
+    manufacturer = request.GET.get("manufacturer", "")
+
     products = Product.objects.select_related("category", "manufacturer").all().order_by("id")
 
+    if keyword:
+        products = products.filter(name__icontains=keyword)
+
+    if category:
+        products = products.filter(category_id=category)
+
+    if manufacturer:
+        products = products.filter(manufacturer_id=manufacturer)
+
     for p in products:
-        p.profit = p.price - p.cost  # ←追加
+        p.profit = p.price - p.cost
+
+    categories = Category.objects.all().order_by("name")
+    manufacturers = Manufacturer.objects.all().order_by("name")
 
     return render(request, "accounts/stock_management.html", {
         "products": products,
+        "keyword": keyword,
+        "category": category,
+        "manufacturer": manufacturer,
+        "categories": categories,
+        "manufacturers": manufacturers,
     })
 
 

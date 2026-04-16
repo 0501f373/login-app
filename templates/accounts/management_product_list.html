@@ -99,6 +99,31 @@
     <div class="container">
         <h1>商品一覧確認</h1>
 
+        <form method="get" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+    <input type="text" name="keyword" placeholder="商品名で検索" value="{{ keyword }}" style="padding: 8px;">
+
+    <select name="category" style="padding: 8px;">
+        <option value="">すべてのカテゴリ</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}" {% if c.id|stringformat:"s" == category %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select name="manufacturer" style="padding: 8px;">
+        <option value="">すべてのメーカー</option>
+        {% for m in manufacturers %}
+            <option value="{{ m.id }}" {% if m.id|stringformat:"s" == manufacturer %}selected{% endif %}>
+                {{ m.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <button type="submit" class="btn">検索</button>
+    <a href="{% url 'management_product_list' %}" class="btn">クリア</a>
+</form>
+
         <div class="top-actions">
             <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
             <a href="{% url 'product_create' %}?next=management_product_list" class="btn btn-dark">商品登録</a>
