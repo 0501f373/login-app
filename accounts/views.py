@@ -120,7 +120,9 @@ def product_search(request):
     cart = request.session.get("cart", {})
     cart_count = len(cart)
 
-    products = Product.objects.select_related("category", "manufacturer").filter(is_visible=True)
+    products = Product.objects.select_related("category", "manufacturer")\
+    .filter(is_visible=True)\
+    .order_by("-id")
 
     if keyword:
         products = products.filter(name__icontains=keyword)
