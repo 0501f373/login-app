@@ -141,6 +141,7 @@
                         <th>在庫</th>
                         <th>状態</th>
                         <th>操作</th>
+                        <th>表示状態</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -184,6 +185,13 @@
                             <a href="{% url 'product_edit' product.id %}?next=management_product_list">編集</a>
                             <a href="{% url 'product_delete' product.id %}?next=management_product_list">削除</a>
                         </td>
+                        <td>
+                            {% if product.is_visible %}
+                        <span style="color:green; font-weight:bold;">表示中</span>
+                            {% else %}
+                        <span style="color:red; font-weight:bold;">非表示</span>
+                       {% endif %}
+                       </td>
                     </tr>
                     {% endfor %}
                 </tbody>
