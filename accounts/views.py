@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.paginator import Paginator
 
 from .models import Product, Category, Manufacturer, StockHistory
 from .forms import ProductForm
@@ -114,6 +115,8 @@ def product_search(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     manufacturer = request.GET.get("manufacturer", "")
+    page_number = request.GET.get("page")
+
     cart = request.session.get("cart", {})
     cart_count = len(cart)
 
@@ -128,6 +131,9 @@ def product_search(request):
     if manufacturer:
         products = products.filter(manufacturer_id=manufacturer)
 
+    paginator = Paginator(products, 10)  # 1ページ10件
+    page_obj = paginator.get_page(page_number)
+
     categories = Category.objects.all()
     manufacturers = Manufacturer.objects.all()
 
@@ -137,7 +143,8 @@ def product_search(request):
         "manufacturer": manufacturer,
         "categories": categories,
         "manufacturers": manufacturers,
-        "products": products,
+        "products": page_obj,
+        "page_obj": page_obj,
         "cart_count": cart_count,
     })
 
@@ -405,6 +412,7 @@ def management_product_list(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     manufacturer = request.GET.get("manufacturer", "")
+    page_number = request.GET.get("page")
 
     products = Product.objects.select_related("category", "manufacturer").all()
 
@@ -417,11 +425,15 @@ def management_product_list(request):
     if manufacturer:
         products = products.filter(manufacturer_id=manufacturer)
 
+    paginator = Paginator(products, 10)
+    page_obj = paginator.get_page(page_number)
+
     categories = Category.objects.all().order_by("name")
     manufacturers = Manufacturer.objects.all().order_by("name")
 
     return render(request, "accounts/management_product_list.html", {
-        "products": products,
+        "products": page_obj,
+        "page_obj": page_obj,
         "keyword": keyword,
         "category": category,
         "manufacturer": manufacturer,

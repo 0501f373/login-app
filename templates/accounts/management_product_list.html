@@ -193,6 +193,21 @@
                 商品がありません。
             </div>
         {% endif %}
+        {% if page_obj.has_other_pages %}
+    <div style="margin-top: 24px; text-align: center;">
+        {% if page_obj.has_previous %}
+            <a href="?keyword={{ keyword }}&category={{ category }}&manufacturer={{ manufacturer }}&page={{ page_obj.previous_page_number }}" class="btn">前へ</a>
+        {% endif %}
+
+        <span style="margin: 0 12px;">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?keyword={{ keyword }}&category={{ category }}&manufacturer={{ manufacturer }}&page={{ page_obj.next_page_number }}" class="btn">次へ</a>
+        {% endif %}
+    </div>
+{% endif %}
     </div>
 </body>
 </html>
