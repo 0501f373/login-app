@@ -37,6 +37,11 @@
             margin-top: 6px;
         }
 
+        input[type="checkbox"] {
+        width: auto;
+        margin-top: 0;
+        }
+
         .btn-area {
             display: flex;
             gap: 12px;
@@ -68,6 +73,7 @@
             background: red;
             color: white;
         }
+
     </style>
 </head>
 <body>
@@ -126,6 +132,11 @@
             <p>
                 <label for="{{ form.cost.id_for_label }}">仕入れ単価:</label>
                 {{ form.cost }}
+            </p>
+            
+            <p>
+                <label for="{{ form.is_visible.id_for_label }}">商品一覧に表示する:</label>
+                {{ form.is_visible }}
             </p>
 
             <p>

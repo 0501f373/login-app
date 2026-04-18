@@ -55,6 +55,7 @@ class StockHistory(models.Model):
     after_stock = models.PositiveIntegerField()
     updated_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_visible = models.BooleanField("商品一覧に表示", default=True)
 
     def __str__(self):
         return f"{self.product.name} / {self.get_stock_type_display()} / {self.quantity}"
