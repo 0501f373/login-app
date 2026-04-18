@@ -86,11 +86,24 @@
         <h2>メーカー一覧</h2>
         <ul class="maker-list">
             {% for manufacturer in manufacturers %}
-                <li>{{ manufacturer.name }}</li>
-            {% empty %}
-                <li>メーカーはまだありません</li>
-            {% endfor %}
-        </ul>
+    <ul class="category-list">
+    {% for manufacturer in manufacturers %}
+        <li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span>{{ manufacturer.name }}</span>
+
+            <form method="post" action="{% url 'manufacturer_delete' manufacturer.id %}" style="margin:0;">
+                {% csrf_token %}
+                <button type="submit"
+                    onclick="return confirm('削除しますか？')"
+                    style="background:red; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer;">
+                    削除
+                </button>
+            </form>
+        </li>
+    {% empty %}
+        <li>メーカーはまだありません</li>
+    {% endfor %}
+</ul>
     </div>
 </body>
 </html>

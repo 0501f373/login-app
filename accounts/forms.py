@@ -20,8 +20,8 @@ class ProductForm(forms.ModelForm):
         fields = ["name", "category", "manufacturer", "price", "cost", "description", "image"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
-            "price": forms.NumberInput(attrs={"class": "form-control"}),
-            "cost": forms.NumberInput(attrs={"class": "form-control"}),
+            "price": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
+            "cost": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
@@ -44,3 +44,19 @@ class ProductForm(forms.ModelForm):
     def clean_description(self):
         value = self.cleaned_data.get("description", "")
         return value.strip()
+
+    def clean_price(self):
+        value = self.cleaned_data.get("price")
+
+        if value is not None and value < 0:
+            raise forms.ValidationError("価格は0円以上で入力してください")
+
+        return value
+
+    def clean_cost(self):
+        value = self.cleaned_data.get("cost")
+
+        if value is not None and value < 0:
+            raise forms.ValidationError("仕入れ単価は0円以上で入力してください")
+
+        return value

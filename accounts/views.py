@@ -336,20 +336,9 @@ def product_create(request):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            action = request.POST.get("action")
-
+            product = form.save()
             messages.success(request, "商品を登録しました")
-
-            if action == "stay":
-                return redirect("product_create")
-
-            if action == "list":
-                return redirect("management_product_list")
-            elif action == "menu":
-                return redirect("management_menu")
-
-            return redirect("product_create")
+            return redirect(f"{reverse('product_edit', args=[product.id])}?next=management_product_list")
     else:
         form = ProductForm()
 
@@ -677,3 +666,26 @@ def stock_update(request, product_id):
         messages.success(request, f"{product.name} の在庫を更新しました")
 
     return redirect("stock_management")
+
+@staff_member_required(login_url="staff_login")
+def category_delete(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+
+    if request.method == "POST":
+        category.delete()
+        messages.success(request, "カテゴリを削除しました")
+        return redirect("category_create")
+
+    return redirect("category_create")
+
+
+@staff_member_required(login_url="staff_login")
+def manufacturer_delete(request, manufacturer_id):
+    manufacturer = get_object_or_404(Manufacturer, id=manufacturer_id)
+
+    if request.method == "POST":
+        manufacturer.delete()
+        messages.success(request, "メーカーを削除しました")
+        return redirect("manufacturer_create")
+
+    return redirect("manufacturer_create")
