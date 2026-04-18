@@ -26,6 +26,12 @@ class ProductForm(forms.ModelForm):
             "image": forms.FileInput(attrs={"class": "form-control"}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["name"].error_messages["required"] = "商品名を入力してください"
+        self.fields["price"].error_messages["required"] = "価格を入力してください"
+        self.fields["cost"].error_messages["required"] = "仕入れ単価を入力してください"
+
     def clean_name(self):
         value = self.cleaned_data.get("name", "")
         value = value.strip()
