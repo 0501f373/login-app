@@ -240,7 +240,30 @@
                 <p>該当する商品がありません。</p>
             </div>
         {% endif %}
+
+        <div style="margin-top: 30px; text-align: center;">
+
+            {% if page_obj.has_previous %}
+                <a href="?page=1&keyword={{ keyword }}&category={{ category }}&manufacturer={{ manufacturer }}">
+                    最初
+                </a>
+
+                <a href="?page={{ page_obj.previous_page_number }}&keyword={{ keyword }}&category={{ category }}&manufacturer={{ manufacturer }}">
+                    前へ
+                </a>
+            {% endif %}
+
+            <span style="margin: 0 10px;">
+                {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}&keyword={{ keyword }}&category={{ category }}&manufacturer={{ manufacturer }}">
+                    次へ
+                </a>
+            {% endif %}
+
+        </div>
     </div>
 </body>
 </html>
-
