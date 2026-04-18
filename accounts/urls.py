@@ -34,4 +34,4 @@ urlpatterns = [
     path("management/stock/history/", views.stock_history_list, name="stock_history_list"),
     path("categories/<int:category_id>/delete/", views.category_delete, name="category_delete"),
     path("manufacturers/<int:manufacturer_id>/delete/", views.manufacturer_delete, name="manufacturer_delete"),
-]
+    ]

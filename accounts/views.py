@@ -10,7 +10,6 @@ from .models import Product, Category, Manufacturer, StockHistory
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
-from django.contrib import messages
 
 def validate_password_policy(password):
     errors = []
@@ -676,8 +675,10 @@ def category_delete(request, category_id):
         messages.success(request, "カテゴリを削除しました")
         return redirect("category_create")
 
-    return redirect("category_create")
-
+    # 👇ここがポイント（確認画面を表示）
+    return render(request, "accounts/category_confirm_delete.html", {
+        "category": category,
+    })
 
 @staff_member_required(login_url="staff_login")
 def manufacturer_delete(request, manufacturer_id):
@@ -688,4 +689,6 @@ def manufacturer_delete(request, manufacturer_id):
         messages.success(request, "メーカーを削除しました")
         return redirect("manufacturer_create")
 
-    return redirect("manufacturer_create")
+    return render(request, "accounts/manufacturer_confirm_delete.html", {
+        "manufacturer": manufacturer,
+    })

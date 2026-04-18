@@ -23,10 +23,6 @@
             max-width: 500px;
         }
 
-        h1 {
-            margin-top: 0;
-        }
-
         a {
             display: inline-block;
             margin-top: 20px;
@@ -40,10 +36,9 @@
 </head>
 <body>
     <div class="box">
-        <h1>500</h1>
-        <p>システムエラーが発生しました。</p>
-        <p>しばらく時間をおいてから再度お試しください。</p>
-        <a href="/">トップへ戻る</a>
+        <h1>システムエラー</h1>
+        <p>エラーが発生しました。</p>
+        <a href="{% url 'staff_login' %}">管理者ログインへ戻る</a>
     </div>
 </body>
 </html>
