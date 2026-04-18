@@ -588,14 +588,20 @@ def staff_delete_view(request, user_id):
 @staff_member_required(login_url="staff_login")
 def stock_history_list(request):
     product_id = request.GET.get("product")
+    page_number = request.GET.get("page")
+
     histories = StockHistory.objects.select_related("product", "updated_by").order_by("-created_at")
     products = Product.objects.all().order_by("name")
 
     if product_id:
         histories = histories.filter(product_id=product_id)
 
+    paginator = Paginator(histories, 10)   # 1ページ10件
+    page_obj = paginator.get_page(page_number)
+
     return render(request, "accounts/stock_history_list.html", {
-        "histories": histories,
+        "histories": page_obj,
+        "page_obj": page_obj,
         "products": products,
         "selected_product": product_id,
     })
@@ -605,6 +611,7 @@ def stock_management(request):
     keyword = request.GET.get("keyword", "")
     category = request.GET.get("category", "")
     manufacturer = request.GET.get("manufacturer", "")
+    page_number = request.GET.get("page")
 
     products = Product.objects.select_related("category", "manufacturer").all().order_by("id")
 
@@ -617,14 +624,18 @@ def stock_management(request):
     if manufacturer:
         products = products.filter(manufacturer_id=manufacturer)
 
-    for p in products:
+    paginator = Paginator(products, 10)   # 1ページ10件
+    page_obj = paginator.get_page(page_number)
+
+    for p in page_obj:
         p.profit = p.price - p.cost
 
     categories = Category.objects.all().order_by("name")
     manufacturers = Manufacturer.objects.all().order_by("name")
 
     return render(request, "accounts/stock_management.html", {
-        "products": products,
+        "products": page_obj,
+        "page_obj": page_obj,
         "keyword": keyword,
         "category": category,
         "manufacturer": manufacturer,

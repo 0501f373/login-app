@@ -158,6 +158,21 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% if page_obj.has_other_pages %}
+    <div style="margin-top: 24px; text-align: center;">
+        {% if page_obj.has_previous %}
+            <a href="?product={{ selected_product }}&page={{ page_obj.previous_page_number }}" class="btn">前へ</a>
+        {% endif %}
+
+        <span style="margin: 0 12px;">
+            {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?product={{ selected_product }}&page={{ page_obj.next_page_number }}" class="btn">次へ</a>
+        {% endif %}
+    </div>
+{% endif %}
         {% else %}
             <div class="empty">
                 該当する在庫履歴がありません。
