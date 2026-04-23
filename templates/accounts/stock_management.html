@@ -169,13 +169,6 @@
         <a href="{% url 'management_menu' %}" class="btn">管理メニューへ戻る</a>
         <a href="{% url 'stock_history_list' %}" class="btn">在庫履歴へ</a>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="{% if message.tags == 'success' %}message-success{% else %}message-error{% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
 
         <table>
             <thead>
