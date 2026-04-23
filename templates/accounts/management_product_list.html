@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>商品一覧確認</title>
+    
     <style>
         body {
             font-family: sans-serif;
@@ -98,6 +99,7 @@
 <body>
     <div class="container">
         <h1>商品一覧確認</h1>
+        {% include "accounts/_messages.html" %}
 
         <form method="get" style="margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
     <input type="text" name="keyword" placeholder="商品名で検索" value="{{ keyword }}" style="padding: 8px;">

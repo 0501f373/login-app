@@ -139,6 +139,7 @@
 <body>
     <div class="container">
         <h1>在庫管理</h1>
+        {% include "accounts/_messages.html" %}
 
         <form method="get" style="margin: 20px 0; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
     <input type="text" name="keyword" placeholder="商品名で検索" value="{{ keyword }}" style="padding: 8px;">

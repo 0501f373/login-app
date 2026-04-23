@@ -50,7 +50,7 @@
 <body>
     <div class="container">
         <h1>管理メニュー</h1>
-
+{% include "accounts/_messages.html" %}
         <div class="menu-list">
             <a href="{% url 'management_product_list' %}" class="menu-btn">商品一覧確認</a>
             <a href="{% url 'product_create' %}" class="menu-btn">商品登録</a>
