@@ -61,11 +61,11 @@ class StockHistory(models.Model):
     def __str__(self):
         return f"{self.product.name} / {self.get_stock_type_display()} / {self.quantity}"
     
-    class ProductImage(models.Model):
-        product = models.ForeignKey(
-            Product,
-            on_delete=models.CASCADE,
-            related_name="images"
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images"
     )
     image = models.ImageField(upload_to="products/")
     created_at = models.DateTimeField(auto_now_add=True)
