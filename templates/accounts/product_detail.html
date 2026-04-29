@@ -135,9 +135,8 @@
 <body>
 
 <div class="header">
-    <div class="header-title">商品詳細</div>
-
-    <div class="header-links">
+    <div>商品詳細</div>
+    <div>
         <a href="{% url 'product_search' %}">商品一覧</a>
 
         {% if request.user.is_authenticated %}
@@ -205,8 +204,7 @@
 
             <p>{{ product.description }}</p>
 
-            {
-                {% if product.stock > 0 and not request.user.is_staff %}
+{% if product.stock > 0 and not request.user.is_staff %}
 <form method="post" action="{% url 'add_to_cart' product.id %}">
     {% csrf_token %}
 
@@ -216,6 +214,12 @@
             <option value="{{ i }}">{{ i }}</option>
         {% endfor %}
     </select>
+
+    <div class="btn-area">
+        <button type="submit" class="btn cart-btn">カートに追加</button>
+    </div>
+</form>
+{% endif %}
 
     <div class="btn-area">
         <button type="submit" class="btn cart-btn">カートに追加</button>
