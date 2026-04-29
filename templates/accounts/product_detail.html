@@ -34,14 +34,23 @@
         }
 
         .product {
-            display: flex;
-            gap: 24px;
-            align-items: flex-start;
+            display: block;
+        }
+
+        .product > div:first-child {
+            margin-bottom: 24px;
+        }
+
+        .info {
+            width: 100%;
         }
 
         .product img {
-            width: 250px;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
             border-radius: 10px;
+            margin: 6px;
         }
 
         .info {
