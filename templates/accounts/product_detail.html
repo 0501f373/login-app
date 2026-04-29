@@ -204,7 +204,7 @@
 
             <p>{{ product.description }}</p>
 
-{% if product.stock > 0 and not request.user.is_staff and next_page != "management_product_list" %}
+{% if product.stock > 0 and not request.user.is_staff %}
 <form method="post" action="{% url 'add_to_cart' product.id %}">
     {% csrf_token %}
 
@@ -220,11 +220,6 @@
     </div>
 </form>
 {% endif %}
-
-    <div class="btn-area">
-        <button type="submit" class="btn cart-btn">カートに追加</button>
-    </div>
-</form>
             <div class="btn-area">
     {% if request.user.is_staff and next_page == "management_product_list" %}
         <a href="{% url 'management_product_list' %}" class="btn back-btn">一覧へ戻る</a>
