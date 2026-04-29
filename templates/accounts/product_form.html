@@ -140,6 +140,12 @@
             </p>
 
             <p>
+                <label for="{{ form.display_order.id_for_label }}">表示順:</label>
+                {{ form.display_order }}
+                <small>数字が小さいほど上に表示されます</small>
+            </p>
+
+            <p>
                 <label for="{{ form.description.id_for_label }}">説明:</label>
                 {{ form.description }}
             </p>
@@ -170,18 +176,19 @@
         <p>登録済み画像：</p>
 
         {% for image in product.images.all %}
-            <div style="display: inline-block; margin-right: 12px; margin-bottom: 12px;">
-                <img src="{{ image.image.url }}"
-                     style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
+    <div style="display: inline-block; position: relative; margin-right: 12px; margin-bottom: 12px;">
+        <img src="{{ image.image.url }}"
+             style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
 
-                <form method="post"
-                      action="{% url 'product_image_delete' image.id %}"
-                      style="margin-top: 6px;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn delete-btn">削除</button>
-                </form>
-            </div>
-        {% endfor %}
+        <form method="post"
+              action="{% url 'product_image_delete' image.id %}"
+              style="position: absolute; top: 4px; right: 4px; margin: 0;">
+            {% csrf_token %}
+            <button type="submit"
+                    style="width: 24px; height: 24px; border-radius: 50%; border: none; background: red; color: white; font-size: 14px; cursor: pointer; padding: 0;">
+                ×
+            </button>
+        </form>
     </div>
-{% endif %}
+{% endfor %}
 
