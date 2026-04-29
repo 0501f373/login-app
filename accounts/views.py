@@ -7,11 +7,10 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 
-from .models import Product, Category, Manufacturer, StockHistory
+from .models import Product, Category, Manufacturer, StockHistory, ProductImage
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
-from .models import Product, Category, Manufacturer, StockHistory, ProductImage
 
 def validate_password_policy(password):
     errors = []
@@ -347,7 +346,7 @@ def product_create(request):
     next_page = request.GET.get("next") or request.POST.get("next", "")
 
     if request.method == "POST":
-        form = ProductForm(request.POST)
+        form = ProductForm(request.POST, request.FILES)
 
         images = request.FILES.getlist("images")
 
@@ -381,7 +380,7 @@ def product_edit(request, product_id):
     next_page = request.GET.get("next") or request.POST.get("next", "")
 
     if request.method == "POST":
-        form = ProductForm(request.POST, instance=product)
+        form = ProductForm(request.POST, request.FILES, instance=product)
         images = request.FILES.getlist("images")
 
         current_image_count = product.images.count()
@@ -750,11 +749,11 @@ def manufacturer_delete(request, manufacturer_id):
 
 @staff_member_required(login_url="staff_login")
 def product_image_delete(request, image_id):
-    product_image = get_object_or_404(ProductImage, id=image_id)
-    product = product_image.product
+    image = get_object_or_404(ProductImage, id=image_id)
+    product_id = image.product.id
 
     if request.method == "POST":
-        product_image.delete()
+        image.delete()
         messages.success(request, "画像を削除しました")
 
-    return redirect(f"{reverse('product_edit', args=[product.id])}?next=management_product_list")
+    return redirect("product_edit", product_id=product_id)

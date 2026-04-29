@@ -38,6 +38,7 @@ class Product(models.Model):
     stock = models.PositiveIntegerField("在庫数", default=0)
     image = models.ImageField("商品画像", upload_to="products/", blank=True, null=True)
     is_visible = models.BooleanField("商品一覧に表示", default=True)
+    created_at = models.DateTimeField("登録日", auto_now_add=True)
 
     def __str__(self):
         return self.name
