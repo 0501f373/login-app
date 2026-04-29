@@ -149,6 +149,17 @@
                 {{ form.image }}
             </p>
 
+            {% if temp_image_url %}
+    <div style="margin-top: 8px;">
+        <p>選択済み画像：</p>
+        <img src="{{ temp_image_url }}" style="width: 160px; border-radius: 8px;">
+    </div>
+{% endif %}
+
+{% if temp_image_path %}
+    <input type="hidden" name="temp_image_path" value="{{ temp_image_path }}">
+{% endif %}
+
             <div class="btn-area">
     {% if page_title == "商品編集" %}
         <button type="submit" name="action" value="save" class="btn save-btn">保存</button>

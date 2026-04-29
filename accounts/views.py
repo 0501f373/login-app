@@ -337,16 +337,46 @@ def logout_view(request):
 
 from django.urls import reverse
 
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+
 @staff_member_required(login_url="staff_login")
 def product_create(request):
     next_page = request.GET.get("next") or request.POST.get("next", "")
 
+    temp_image_path = request.POST.get("temp_image_path", "")
+    temp_image_url = ""
+
+    if temp_image_path:
+        temp_image_url = settings.MEDIA_URL + temp_image_path
+
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
+
+        uploaded_image = request.FILES.get("image")
+
+        #  新しくアップされた画像を一時保存
+        if uploaded_image:
+            temp_image_path = default_storage.save(
+                f"temp/{uploaded_image.name}",
+                ContentFile(uploaded_image.read())
+            )
+            temp_image_url = settings.MEDIA_URL + temp_image_path
+
         if form.is_valid():
-            product = form.save()
+            product = form.save(commit=False)
+
+            #  再送時に画像が空なら一時画像を使う
+            if temp_image_path:
+                product.image = temp_image_path
+
+            product.save()
+            form.save_m2m()
+
             messages.success(request, "商品を登録しました")
             return redirect(f"{reverse('product_detail', args=[product.id])}?next=management_product_list")
+
     else:
         form = ProductForm()
 
@@ -354,6 +384,8 @@ def product_create(request):
         "form": form,
         "page_title": "商品登録",
         "next_page": next_page,
+        "temp_image_path": temp_image_path,
+        "temp_image_url": temp_image_url,
     })
 
 
