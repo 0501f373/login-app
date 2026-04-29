@@ -175,6 +175,11 @@
 
         <div class="info">
             <h2>{{ product.name }}</h2>
+            {% if request.user.is_staff %}
+    <p style="font-size: 13px; color: #666;">
+        登録日：{{ product.created_at|date:"Y年m月d日 H:i" }}
+    </p>
+{% endif %}
 
             <div class="price">{{ product.price }}円</div>
 
@@ -190,7 +195,7 @@
 
             <p>{{ product.description }}</p>
 
-            {% if product.stock > 0 %}
+            {% if product.stock > 0 and not request.user.is_staff %}
             <form method="post" action="{% url 'add_to_cart' product.id %}">
                 {% csrf_token %}
                 <label>数量：</label>
@@ -213,8 +218,8 @@
         <a href="{% url 'product_search' %}" class="btn back-btn">商品一覧へ戻る</a>
     {% endif %}
 
-    {% if request.user.is_staff %}
-    <a href="{% url 'product_edit' product.id %}" class="btn back-btn">
+    {% if request.user.is_staff and next_page == "management_product_list" %}
+    <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn back-btn">
         編集
     </a>
 {% endif %}

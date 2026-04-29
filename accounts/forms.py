@@ -3,6 +3,15 @@ from .models import Product, Category, Manufacturer
 
 
 class ProductForm(forms.ModelForm):
+    images = forms.FileField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={
+            "class": "form-control",
+            "multiple": True
+        }),
+        label="商品画像"
+    )
+
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         required=False,
@@ -17,7 +26,16 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ["name", "category", "manufacturer", "price", "cost", "description", "is_visible"]
+        fields = [
+            "name",
+            "category",
+            "manufacturer",
+            "price",
+            "cost",
+            "description",
+            "stock",
+            "is_visible",
+        ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
