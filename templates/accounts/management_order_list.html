@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>注文一覧</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 10px;
+        }
+
+        ul {
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>注文一覧</h1>
+
+        {% for order in orders %}
+            <div class="card">
+                <p>注文者：{{ order.user.email }}</p>
+                <p>注文日：{{ order.created_at }}</p>
+                <p>合計金額：{{ order.total_price }}円</p>
+
+                <ul>
+                    {% for item in order.items.all %}
+                        <li>
+                            {{ item.product.name }}　
+                            数量：{{ item.quantity }}　
+                            単価：{{ item.price }}円
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% empty %}
+            <p>注文はまだありません。</p>
+        {% endfor %}
+
+        <a href="{% url 'management_menu' %}">管理メニューへ戻る</a>
+    </div>
+</body>
+</html>

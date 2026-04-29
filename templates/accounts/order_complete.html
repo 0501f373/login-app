@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>注文完了</title>
+    <title>購入完了</title>
     <style>
         body {
             font-family: sans-serif;
@@ -13,29 +13,50 @@
         .container {
             max-width: 700px;
             margin: 80px auto;
-            background: white;
-            padding: 32px;
+            background: #fff;
+            padding: 40px;
             border-radius: 12px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        .button {
+        h1 {
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 32px;
+        }
+
+        .btn-area {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .btn {
             display: inline-block;
-            padding: 12px 20px;
-            background: #333;
-            color: white;
-            text-decoration: none;
+            padding: 10px 18px;
             border-radius: 8px;
-            margin-top: 20px;
+            text-decoration: none;
+            color: white;
+            background: #333;
+        }
+
+        .btn-sub {
+            background: #777;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>注文が完了しました</h1>
-        <p>ご購入ありがとうございます。</p>
-        <a href="{% url 'product_search' %}" class="button">商品一覧へ戻る</a>
+        <h1>購入が完了しました</h1>
+        <p>ご注文ありがとうございます。注文内容はマイページから確認できます。</p>
+
+        <div class="btn-area">
+            <a href="{% url 'mypage' %}" class="btn">マイページで注文履歴を見る</a>
+            <a href="{% url 'product_search' %}" class="btn btn-sub">商品一覧へ戻る</a>
+        </div>
     </div>
 </body>
 </html>

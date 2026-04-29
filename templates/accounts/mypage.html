@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>マイページ</title>
+</head>
+<body>
+    <h1>マイページ</h1>
+
+    <h2>注文履歴</h2>
+
+    {% if orders %}
+        {% for order in orders %}
+            <div style="background: white; padding: 16px; margin-bottom: 16px; border-radius: 8px;">
+                <p>注文日：{{ order.created_at }}</p>
+                <p>合計金額：{{ order.total_price }}円</p>
+
+                <ul>
+                    {% for item in order.items.all %}
+                        <li>
+                            {{ item.product.name }}　
+                            数量：{{ item.quantity }}　
+                            単価：{{ item.price }}円
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>注文履歴はありません。</p>
+    {% endif %}
+
+    <a href="{% url 'product_search' %}">商品一覧へ戻る</a>
+</body>
+</html>

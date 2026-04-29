@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 
-from .models import Product, Category, Manufacturer, StockHistory, ProductImage
+from .models import Product, Category, Manufacturer, StockHistory, ProductImage, Order, OrderItem
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
@@ -42,7 +42,6 @@ def login_view(request):
                 "error": "パスワードを入力してください"
             })
 
-        # 👇ここがポイント！！！！
         try:
             user_obj = User.objects.get(email=email)
             user = authenticate(request, username=user_obj.username, password=password)
@@ -51,6 +50,21 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+
+            pending = request.session.pop("pending_cart", None)
+
+            if pending:
+                cart = request.session.get("cart", {})
+                product_id = str(pending["product_id"])
+                quantity = pending["quantity"]
+
+                cart[product_id] = cart.get(product_id, 0) + quantity
+
+                request.session["cart"] = cart
+                request.session.modified = True
+
+                return redirect("cart")
+
             return redirect("product_search")
 
         return render(request, "accounts/login.html", {
@@ -58,7 +72,6 @@ def login_view(request):
         })
 
     return render(request, "accounts/login.html")
-
 
 def signup_view(request):
     if request.method == "POST":
@@ -118,7 +131,7 @@ def product_search(request):
     page_number = request.GET.get("page")
 
     cart = request.session.get("cart", {})
-    cart_count = len(cart)
+    cart_count = sum(cart.values())
 
     products = Product.objects.select_related("category", "manufacturer")\
     .filter(is_visible=True)\
@@ -162,10 +175,21 @@ def product_detail(request, product_id):
     })
 
 
+from django.shortcuts import redirect, get_object_or_404
+
 def add_to_cart(request, product_id):
     if request.method == "POST":
-        product = get_object_or_404(Product, id=product_id)
         quantity = int(request.POST.get("quantity", 1))
+
+        # 🔴 未ログインなら一旦保存してログインへ
+        if not request.user.is_authenticated:
+            request.session["pending_cart"] = {
+                "product_id": product_id,
+                "quantity": quantity,
+            }
+            return redirect("login")
+
+        product = get_object_or_404(Product, id=product_id)
 
         if product.stock == 0:
             return redirect("product_detail", product_id=product.id)
@@ -179,17 +203,18 @@ def add_to_cart(request, product_id):
             cart = {}
 
         product_id_str = str(product_id)
+
         if product_id_str in cart:
             cart[product_id_str] += quantity
         else:
             cart[product_id_str] = quantity
 
         request.session["cart"] = cart
+        request.session.modified = True
 
         return redirect("cart")
 
     return redirect("product_search")
-
 
 def cart_view(request):
     cart = request.session.get("cart", {})
@@ -225,6 +250,15 @@ def cart_view(request):
         "total_price": total_price,
     })
 
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url="login")
+def mypage(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+
+    return render(request, "accounts/mypage.html", {
+        "orders": orders,
+    })
 
 def remove_from_cart(request, product_id):
     cart = request.session.get("cart", {})
@@ -284,6 +318,7 @@ def update_cart(request, product_id):
 
     return redirect("cart")
 
+@login_required(login_url="login")
 def order_confirm(request):
     if request.method != "POST":
         return redirect("cart")
@@ -299,6 +334,7 @@ def order_confirm(request):
     cart_items = []
     total_price = 0
 
+    # 先に在庫チェック
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)
 
@@ -319,17 +355,39 @@ def order_confirm(request):
                 "error": f"{product.name} の在庫が不足しています",
             })
 
+    # 注文作成
+    order = Order.objects.create(
+        user=request.user,
+        total_price=0
+    )
+
+    total_price = 0
+
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)
+        subtotal = product.price * quantity
+        total_price += subtotal
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            price=product.price
+        )
+
         product.stock -= quantity
         product.save()
 
+    order.total_price = total_price
+    order.save()
+
     request.session["cart"] = {}
+    request.session.modified = True
 
+    return redirect("order_complete")
+
+def order_complete(request):
     return render(request, "accounts/order_complete.html")
-
-from django.contrib.auth import logout
-from django.shortcuts import redirect
 
 def logout_view(request):
     logout(request)
@@ -757,3 +815,11 @@ def product_image_delete(request, image_id):
         messages.success(request, "画像を削除しました")
 
     return redirect("product_edit", product_id=product_id)
+
+@staff_member_required(login_url="staff_login")
+def management_order_list(request):
+    orders = Order.objects.select_related("user").order_by("-created_at")
+
+    return render(request, "accounts/management_order_list.html", {
+        "orders": orders,
+    })
