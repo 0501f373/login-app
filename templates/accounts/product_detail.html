@@ -147,7 +147,7 @@
             <a href="{% url 'signup' %}">新規登録</a>
         {% endif %}
 
-        {% if not request.user.is_staff %}
+        {% if not request.user.is_staff and next_page != "management_product_list" %}
             <a href="{% url 'cart' %}">カート（{{ cart_count }}）</a>
         {% endif %}
     </div>
@@ -204,7 +204,7 @@
 
             <p>{{ product.description }}</p>
 
-{% if product.stock > 0 and not request.user.is_staff %}
+{% if product.stock > 0 and not request.user.is_staff and next_page != "management_product_list" %}
 <form method="post" action="{% url 'add_to_cart' product.id %}">
     {% csrf_token %}
 
