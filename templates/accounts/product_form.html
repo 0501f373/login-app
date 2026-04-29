@@ -145,8 +145,9 @@
             </p>
 
             <p>
-                <label for="{{ form.image.id_for_label }}">商品画像:</label>
-                {{ form.image }}
+                <label>商品画像:</label>
+                <input type="file" name="images" accept="image/jpeg,image/png" multiple>
+                <small>最大5枚まで登録できます。JPEG / PNG推奨</small>
             </p>
 
             {% if temp_image_url %}

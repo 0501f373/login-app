@@ -11,6 +11,7 @@ from .models import Product, Category, Manufacturer, StockHistory
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
+from .models import Product, Category, Manufacturer, StockHistory, ProductImage
 
 def validate_password_policy(password):
     errors = []
@@ -345,38 +346,25 @@ from django.conf import settings
 def product_create(request):
     next_page = request.GET.get("next") or request.POST.get("next", "")
 
-    temp_image_path = request.POST.get("temp_image_path", "")
-    temp_image_url = ""
-
-    if temp_image_path:
-        temp_image_url = settings.MEDIA_URL + temp_image_path
-
     if request.method == "POST":
-        form = ProductForm(request.POST, request.FILES)
+        form = ProductForm(request.POST)
 
-        uploaded_image = request.FILES.get("image")
+        images = request.FILES.getlist("images")
 
-        #  新しくアップされた画像を一時保存
-        if uploaded_image:
-            temp_image_path = default_storage.save(
-                f"temp/{uploaded_image.name}",
-                ContentFile(uploaded_image.read())
-            )
-            temp_image_url = settings.MEDIA_URL + temp_image_path
+        if len(images) > 5:
+            form.add_error(None, "画像は最大5枚まで登録できます。")
 
         if form.is_valid():
-            product = form.save(commit=False)
+            product = form.save()
 
-            #  再送時に画像が空なら一時画像を使う
-            if temp_image_path:
-                product.image = temp_image_path
-
-            product.save()
-            form.save_m2m()
+            for image in images:
+                ProductImage.objects.create(
+                    product=product,
+                    image=image
+                )
 
             messages.success(request, "商品を登録しました")
             return redirect(f"{reverse('product_detail', args=[product.id])}?next=management_product_list")
-
     else:
         form = ProductForm()
 
@@ -384,8 +372,6 @@ def product_create(request):
         "form": form,
         "page_title": "商品登録",
         "next_page": next_page,
-        "temp_image_path": temp_image_path,
-        "temp_image_url": temp_image_url,
     })
 
 

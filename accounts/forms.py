@@ -17,7 +17,7 @@ class ProductForm(forms.ModelForm):
 
     class Meta:
         model = Product
-        fields = ["name", "category", "manufacturer", "price", "cost", "description", "image", "is_visible"]
+        fields = ["name", "category", "manufacturer", "price", "cost", "description", "is_visible"]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),
             "price": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
