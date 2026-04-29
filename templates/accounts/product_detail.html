@@ -225,8 +225,6 @@
         <button type="submit" class="btn cart-btn">カートに追加</button>
     </div>
 </form>
-{% endif %}
-
             <div class="btn-area">
     {% if request.user.is_staff and next_page == "management_product_list" %}
         <a href="{% url 'management_product_list' %}" class="btn back-btn">一覧へ戻る</a>
