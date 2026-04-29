@@ -56,7 +56,6 @@ class ProductForm(forms.ModelForm):
             "price",
             "cost",
             "description",
-            "stock",
             "is_visible",
         ]
         widgets = {
