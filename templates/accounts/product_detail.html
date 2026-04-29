@@ -138,8 +138,17 @@
     <div>商品詳細</div>
     <div>
         <a href="{% url 'product_search' %}">商品一覧</a>
+
+        {% if request.user.is_authenticated %}
+            <span>{{ request.user.first_name }} さん</span>
+            <a href="{% url 'logout' %}">ログアウト</a>
+        {% else %}
+            <a href="{% url 'login' %}">ログイン</a>
+            <a href="{% url 'signup' %}">新規登録</a>
+        {% endif %}
+
         {% if not request.user.is_staff %}
-        <a href="{% url 'cart' %}">カート</a>
+            <a href="{% url 'cart' %}">カート</a>
         {% endif %}
     </div>
 </div>
@@ -195,7 +204,7 @@
 
             <p>{{ product.description }}</p>
 
-            {% if product.stock > 0 and not request.user.is_staff %}
+            {% if product.stock > 0 and not request.user.is_staff and next_page != "management_product_list" %}
             <form method="post" action="{% url 'add_to_cart' product.id %}">
                 {% csrf_token %}
                 <label>数量：</label>
