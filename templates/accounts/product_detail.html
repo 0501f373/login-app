@@ -248,10 +248,10 @@
         編集
     </a>
 {% endif %}
-    {% if request.user.is_staff and next_page != "management_product_list" %}
-    <a href="{% url 'product_create' %}" class="btn back-btn">
-    登録を続ける
-</a>
+    {% if request.user.is_staff and next_page == "product_create" %}
+    <a href="{% url 'product_create' %}?next=management_product_list" class="btn back-btn">
+        登録を続ける
+    </a>
 {% endif %}
 </div>
         </div>

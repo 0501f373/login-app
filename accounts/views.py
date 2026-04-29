@@ -363,7 +363,7 @@ def product_create(request):
                 )
 
             messages.success(request, "商品を登録しました")
-            return redirect(f"{reverse('product_detail', args=[product.id])}?next=management_product_list")
+            return redirect(f"{reverse('product_detail', args=[product.id])}?next=product_create")
     else:
         form = ProductForm()
 
