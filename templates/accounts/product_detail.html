@@ -138,7 +138,9 @@
     <div>商品詳細</div>
     <div>
         <a href="{% url 'product_search' %}">商品一覧</a>
+        {% if not request.user.is_staff %}
         <a href="{% url 'cart' %}">カート</a>
+        {% endif %}
     </div>
 </div>
 
@@ -200,11 +202,6 @@
 
                 <div class="btn-area">
                     <button type="submit" class="btn cart-btn">カートに追加</button>
-                    {% if request.user.is_staff %}
-                        <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn back-btn">
-                            編集
-                        </a>
-                    {% endif %}
                 </div>
             </form>
             {% endif %}
@@ -216,10 +213,16 @@
         <a href="{% url 'product_search' %}" class="btn back-btn">商品一覧へ戻る</a>
     {% endif %}
 
-    <!-- 🔥 追加 -->
-    <a href="{% url 'product_create' %}?next=management_product_list" class="btn back-btn">
-        登録を続ける
+    {% if request.user.is_staff %}
+    <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn back-btn">
+        編集
     </a>
+{% endif %}
+    {% if next_page == "management_product_list" %}
+    <a href="{% url 'product_create' %}?next=management_product_list" class="btn back-btn">
+    登録を続ける
+</a>
+{% endif %}
 </div>
         </div>
     </div>
