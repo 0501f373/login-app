@@ -2,10 +2,7 @@ from django import forms
 from .models import Product, Category, Manufacturer
 
 
-class MultipleFileInput(forms.ClearableFileInput):
-    allow_multiple_selected = True
-
-
+class ProductForm(forms.ModelForm):
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
         required=False,
@@ -34,7 +31,6 @@ class MultipleFileInput(forms.ClearableFileInput):
             "price": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
             "cost": forms.NumberInput(attrs={"class": "form-control", "min": 0}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
-            "image": forms.FileInput(attrs={"class": "form-control"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -44,8 +40,7 @@ class MultipleFileInput(forms.ClearableFileInput):
         self.fields["cost"].error_messages["required"] = "仕入れ単価を入力してください"
 
     def clean_name(self):
-        value = self.cleaned_data.get("name", "")
-        value = value.strip()
+        value = self.cleaned_data.get("name", "").strip()
 
         if not value:
             raise forms.ValidationError("商品名を入力してください")
