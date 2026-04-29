@@ -237,21 +237,33 @@
 </form>
 {% endif %}
             <div class="btn-area">
-    {% if request.user.is_staff and next_page == "management_product_list" %}
-        <a href="{% url 'management_product_list' %}" class="btn back-btn">一覧へ戻る</a>
-    {% else %}
-        <a href="{% url 'product_search' %}" class="btn back-btn small-btn">商品一覧へ戻る</a>
-    {% endif %}
 
-    {% if request.user.is_staff and next_page == "management_product_list" %}
+{% if request.user.is_staff %}
+
+    <a href="{% url 'management_product_list' %}" class="btn back-btn">
+        一覧へ戻る
+    </a>
+
+    <a href="{% url 'management_menu' %}" class="btn back-btn">
+        管理メニューへ戻る
+    </a>
+
     <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn back-btn">
         編集
     </a>
-{% endif %}
-    {% if request.user.is_staff and next_page == "product_create" %}
-    <a href="{% url 'product_create' %}?next=management_product_list" class="btn back-btn">
-        登録を続ける
+
+    {% if next_page == "product_create" %}
+        <a href="{% url 'product_create' %}?next=management_product_list" class="btn back-btn">
+            登録を続ける
+        </a>
+    {% endif %}
+
+{% else %}
+
+    <a href="{% url 'product_search' %}" class="btn back-btn small-btn">
+        商品一覧へ戻る
     </a>
+
 {% endif %}
 </div>
         </div>
