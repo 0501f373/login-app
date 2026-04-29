@@ -240,7 +240,7 @@
     {% if request.user.is_staff and next_page == "management_product_list" %}
         <a href="{% url 'management_product_list' %}" class="btn back-btn">一覧へ戻る</a>
     {% else %}
-        <a href="{% url 'product_search' %}" class="btn back-btn">商品一覧へ戻る</a>
+        <a href="{% url 'product_search' %}" class="btn back-btn small-btn">商品一覧へ戻る</a>
     {% endif %}
 
     {% if request.user.is_staff and next_page == "management_product_list" %}
