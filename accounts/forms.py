@@ -4,13 +4,13 @@ from .models import Product, Category, Manufacturer
 
 class ProductForm(forms.ModelForm):
     images = forms.FileField(
-        required=False,
-        widget=forms.ClearableFileInput(attrs={
-            "class": "form-control",
-            "multiple": True
-        }),
-        label="商品画像"
-    )
+    required=False,
+    widget=forms.FileInput(attrs={
+        "class": "form-control",
+        "multiple": True
+    }),
+    label="商品画像"
+)
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
