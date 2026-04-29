@@ -135,8 +135,9 @@
 <body>
 
 <div class="header">
-    <div>商品詳細</div>
-    <div>
+    <div class="header-title">商品詳細</div>
+
+    <div class="header-links">
         <a href="{% url 'product_search' %}">商品一覧</a>
 
         {% if request.user.is_authenticated %}
@@ -147,8 +148,8 @@
             <a href="{% url 'signup' %}">新規登録</a>
         {% endif %}
 
-        {% if not request.user.is_staff %}
-            <a href="{% url 'cart' %}">カート</a>
+        {% if not request.user.is_staff and next_page != "management_product_list" %}
+            <a href="{% url 'cart' %}">カート（{{ cart_count }}）</a>
         {% endif %}
     </div>
 </div>
