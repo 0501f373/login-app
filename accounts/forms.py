@@ -25,7 +25,6 @@ class ProductForm(forms.ModelForm):
             "cost",
             "description",
             "is_visible",
-            "display_order",
         ]
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control"}),

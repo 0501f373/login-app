@@ -122,7 +122,7 @@ def product_search(request):
 
     products = Product.objects.select_related("category", "manufacturer")\
     .filter(is_visible=True)\
-    .order_by("display_order", "-created_at")
+    .order_by("-created_at")
 
     if keyword:
         products = products.filter(name__icontains=keyword)

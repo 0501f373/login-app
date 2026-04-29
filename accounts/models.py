@@ -39,7 +39,7 @@ class Product(models.Model):
     image = models.ImageField("商品画像", upload_to="products/", blank=True, null=True)
     is_visible = models.BooleanField("商品一覧に表示", default=True)
     created_at = models.DateTimeField("登録日", auto_now_add=True)
-    display_order = models.PositiveIntegerField("表示順", default=0)
+
 
     def __str__(self):
         return self.name
