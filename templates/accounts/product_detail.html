@@ -164,11 +164,11 @@
 
     <div class="product">
         <div>
-            {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-            {% else %}
+            {% for image in product.images.all %}
+                <img src="{{ image.image.url }}" alt="{{ product.name }}" style="width: 160px; border-radius: 10px; margin: 6px;">
+            {% empty %}
                 <p>画像なし</p>
-            {% endif %}
+            {% endfor %}
         </div>
 
         <div class="info">
@@ -200,6 +200,11 @@
 
                 <div class="btn-area">
                     <button type="submit" class="btn cart-btn">カートに追加</button>
+                    {% if request.user.is_staff %}
+                        <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn back-btn">
+                            編集
+                        </a>
+                    {% endif %}
                 </div>
             </form>
             {% endif %}

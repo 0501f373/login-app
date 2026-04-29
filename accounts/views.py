@@ -381,16 +381,28 @@ def product_edit(request, product_id):
     next_page = request.GET.get("next") or request.POST.get("next", "")
 
     if request.method == "POST":
-        form = ProductForm(request.POST, request.FILES, instance=product)
+        form = ProductForm(request.POST, instance=product)
+        images = request.FILES.getlist("images")
+
+        current_image_count = product.images.count()
+
+        if current_image_count + len(images) > 5:
+            form.add_error(None, "画像は最大5枚まで登録できます。")
+
         if form.is_valid():
-            form.save()
+            product = form.save()
+
+            for image in images:
+                ProductImage.objects.create(product=product, image=image)
+
             messages.success(request, "商品を保存しました")
-            return redirect(f"{reverse('product_edit', args=[product.id])}?next={next_page}")
+            return redirect(f"{reverse('product_detail', args=[product.id])}?next=management_product_list")
     else:
         form = ProductForm(instance=product)
 
     return render(request, "accounts/product_form.html", {
         "form": form,
+        "product": product,
         "page_title": "商品編集",
         "next_page": next_page,
     })
@@ -735,3 +747,14 @@ def manufacturer_delete(request, manufacturer_id):
     return render(request, "accounts/manufacturer_confirm_delete.html", {
         "manufacturer": manufacturer,
     })
+
+@staff_member_required(login_url="staff_login")
+def product_image_delete(request, image_id):
+    product_image = get_object_or_404(ProductImage, id=image_id)
+    product = product_image.product
+
+    if request.method == "POST":
+        product_image.delete()
+        messages.success(request, "画像を削除しました")
+
+    return redirect(f"{reverse('product_edit', args=[product.id])}?next=management_product_list")

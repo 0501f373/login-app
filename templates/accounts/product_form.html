@@ -145,23 +145,12 @@
             </p>
 
             <p>
-                <label>商品画像:</label>
-                <input type="file" name="images" accept="image/jpeg,image/png" multiple>
-                <small>最大5枚まで登録できます。JPEG / PNG推奨</small>
-            </p>
+    <label>商品画像:</label>
+    <input type="file" name="images" accept="image/jpeg,image/png" multiple>
+    <small>最大5枚まで登録できます。</small>
+</p>
 
-            {% if temp_image_url %}
-    <div style="margin-top: 8px;">
-        <p>選択済み画像：</p>
-        <img src="{{ temp_image_url }}" style="width: 160px; border-radius: 8px;">
-    </div>
-{% endif %}
-
-{% if temp_image_path %}
-    <input type="hidden" name="temp_image_path" value="{{ temp_image_path }}">
-{% endif %}
-
-            <div class="btn-area">
+<div class="btn-area">
     {% if page_title == "商品編集" %}
         <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
         <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
@@ -172,7 +161,24 @@
         <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ</a>
     {% endif %}
 </div>
-        </form>
+</form>
+
+{% if page_title == "商品編集" and product.images.all %}
+    <div style="margin-top: 16px;">
+        <p>登録済み画像：</p>
+
+        {% for image in product.images.all %}
+            <div style="display: inline-block; margin-right: 12px; margin-bottom: 12px;">
+                <img src="{{ image.image.url }}"
+                     style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
+
+                <form method="post"
+                      action="{% url 'product_image_delete' image.id %}"
+                      style="margin-top: 6px;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn delete-btn">削除</button>
+                </form>
+            </div>
+        {% endfor %}
     </div>
-</body>
-</html>
+{% endif %}
