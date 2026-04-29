@@ -2,15 +2,32 @@ from django import forms
 from .models import Product, Category, Manufacturer
 
 
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        if not data:
+            return []
+        if isinstance(data, (list, tuple)):
+            return [super(MultipleFileField, self).clean(d, initial) for d in data]
+        return [super().clean(data, initial)]
+
+
 class ProductForm(forms.ModelForm):
-    images = forms.FileField(
-    required=False,
-    widget=forms.FileInput(attrs={
-        "class": "form-control",
-        "multiple": True
-    }),
-    label="商品画像"
-)
+    images = MultipleFileField(
+        required=False,
+        label="商品画像",
+        widget=MultipleFileInput(attrs={
+            "class": "form-control",
+            "multiple": True
+        })
+    )
 
     category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
