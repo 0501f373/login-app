@@ -156,7 +156,7 @@
         <a href="{% url 'product_search' %}">商品一覧</a>
 
         {% if request.user.is_authenticated %}
-            <span>{{ request.user.first_name }} さん</span>
+            <span>{{ request.user.first_name }} </span>
             <a href="{% url 'logout' %}">ログアウト</a>
         {% else %}
             <a href="{% url 'login' %}">ログイン</a>

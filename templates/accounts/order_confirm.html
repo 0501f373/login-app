@@ -99,7 +99,9 @@
     <div>注文確認</div>
     <div>
         {% if request.user.is_authenticated %}
-            {{ request.user.first_name }}
+            <a href="{% url 'mypage' %}" style="color: white; text-decoration: none;">
+                {{ request.user.first_name }}
+            </a>
         {% endif %}
     </div>
 </div>
