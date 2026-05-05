@@ -11,13 +11,24 @@
         }
 
         .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
             background: #333;
             color: white;
-            padding: 16px 24px;
-            font-size: 20px;
-            font-weight: bold;
         }
 
+        .header-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        .header-links a:hover {
+            text-decoration: underline;
+        }
+            
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -80,7 +91,25 @@
     </style>
 </head>
 <body>
-    <div class="header">マイページ</div>
+    <div class="header">
+    <div class="header-title">マイページ</div>
+
+    <div class="header-links">
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'mypage' %}">
+                {{ request.user.first_name }}
+            </a>
+            <a href="{% url 'logout' %}">ログアウト</a>
+        {% else %}
+            <a href="{% url 'login' %}">ログイン</a>
+            <a href="{% url 'signup' %}">新規登録</a>
+        {% endif %}
+
+        <a href="{% url 'cart' %}">
+            カート（{{ request.session.cart|length|default:0 }}）
+        </a>
+    </div>
+</div>
 
     <div class="container">
         <h1 class="page-title">注文履歴</h1>

@@ -117,7 +117,7 @@
                 <div class="meta">単価：{{ item.price }}円</div>
                 <div class="meta">数量：{{ item.quantity }}</div>
                 <div class="meta">
-                    小計：{{ item.price|add:item.price|floatformat:0 }}円
+                    小計：{{ item.price }}円 × {{ item.quantity }}
                 </div>
             </div>
 
