@@ -38,8 +38,8 @@
         }
 
         input[type="checkbox"] {
-        width: auto;
-        margin-top: 0;
+            width: auto;
+            margin-top: 0;
         }
 
         .btn-area {
@@ -73,115 +73,117 @@
             background: red;
             color: white;
         }
-
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>{{ page_title }}</h1>
+<div class="container">
+    <h1>{{ page_title }}</h1>
 
-        {% if form.errors %}
-    <div style="margin-bottom: 16px; padding: 12px 16px; background: #ffebee; color: #c62828; border-radius: 8px;">
-        <p style="margin: 0 0 8px 0; font-weight: bold;">入力内容を確認してください。</p>
-        <ul style="margin: 0; padding-left: 20px;">
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <li>{{ field.label }}：{{ error }}</li>
+    {% if form.errors %}
+        <div style="margin-bottom: 16px; padding: 12px 16px; background: #ffebee; color: #c62828; border-radius: 8px;">
+            <p style="margin: 0 0 8px 0; font-weight: bold;">入力内容を確認してください。</p>
+            <ul style="margin: 0; padding-left: 20px;">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}：{{ error }}</li>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-            {% for error in form.non_field_errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endif %}
-
-        {% if messages %}
-    {% for message in messages %}
-        <div style="margin-bottom: 16px; padding: 12px 16px; background: #e8f5e9; color: #2e7d32; border-radius: 8px;">
-            {{ message }}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
         </div>
-    {% endfor %}
-{% endif %}
+    {% endif %}
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next_page }}">
-
-            <p>
-                <label for="{{ form.name.id_for_label }}">商品名:</label>
-                {{ form.name }}
-            </p>
-
-            <p>
-                <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
-                {{ form.category }}
-            </p>
-
-            <p>
-                <label for="{{ form.manufacturer.id_for_label }}">メーカー名:</label>
-                <small>未選択でも登録できます</small>
-                {{ form.manufacturer }}
-            </p>
-
-            <p>
-                <label for="{{ form.price.id_for_label }}">価格:</label>
-                {{ form.price }}
-            </p>
-
-            <p>
-                <label for="{{ form.cost.id_for_label }}">仕入れ単価:</label>
-                {{ form.cost }}
-            </p>
-            
-            <p>
-                <label for="{{ form.is_visible.id_for_label }}">商品一覧に表示する:</label>
-                {{ form.is_visible }}
-            </p>
-
-            <p>
-                <label for="{{ form.description.id_for_label }}">説明:</label>
-                {{ form.description }}
-            </p>
-
-            {% if page_title == "商品編集" and product.images.all %}
-    <div style="margin-top: 16px;">
-        <p>登録済み画像：</p>
-
-        {% for image in product.images.all %}
-            <div style="display: inline-block; position: relative; margin-right: 12px; margin-bottom: 12px;">
-                <img src="{{ image.image.url }}"
-                     style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
-
-                <form method="post" action="{% url 'product_image_delete' image.id %}">
-                    {% csrf_token %}
-                    <button type="submit"
-                        style="position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: none; background: red; color: white; font-size: 14px; cursor: pointer;">
-                        ×
-                    </button>
-                </form>
+    {% if messages %}
+        {% for message in messages %}
+            <div style="margin-bottom: 16px; padding: 12px 16px; background: #e8f5e9; color: #2e7d32; border-radius: 8px;">
+                {{ message }}
             </div>
         {% endfor %}
-    </div>
-{% endif %}
-            <p>
-    <label>商品画像:</label>
-    <input type="file" name="images" accept="image/jpeg,image/png" multiple>
-    <small>最大5枚まで登録できます。</small>
-</p>
-
-<p id="file-count" style="font-size: 12px; color: #666;"></p>
-
-<div class="btn-area">
-    {% if page_title == "商品編集" %}
-        <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
-        <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
-        <a href="{% url 'product_delete' form.instance.id %}?next=product_edit" class="btn delete-btn">削除</a>
-    {% else %}
-        <button type="submit" name="action" value="stay" class="btn save-btn">保存</button>
-        <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
-        <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ</a>
     {% endif %}
-</div>
-</form>
 
+    {% if page_title == "商品編集" and product.images.all %}
+        <div style="margin-top: 16px; margin-bottom: 24px;">
+            <p>登録済み画像：</p>
+
+            {% for image in product.images.all %}
+                <div style="display: inline-block; position: relative; margin-right: 12px; margin-bottom: 12px;">
+                    <img src="{{ image.image.url }}"
+                         style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px;">
+
+                    <form method="post" action="{% url 'product_image_delete' image.id %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                style="position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: none; background: red; color: white; font-size: 14px; cursor: pointer;">
+                            ×
+                        </button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next_page }}">
+
+        <p>
+            <label for="{{ form.name.id_for_label }}">商品名:</label>
+            {{ form.name }}
+        </p>
+
+        <p>
+            <label for="{{ form.category.id_for_label }}">カテゴリ:</label>
+            {{ form.category }}
+        </p>
+
+        <p>
+            <label for="{{ form.manufacturer.id_for_label }}">メーカー名:</label>
+            <small>未選択でも登録できます</small>
+            {{ form.manufacturer }}
+        </p>
+
+        <p>
+            <label for="{{ form.price.id_for_label }}">価格:</label>
+            {{ form.price }}
+        </p>
+
+        <p>
+            <label for="{{ form.cost.id_for_label }}">仕入れ単価:</label>
+            {{ form.cost }}
+        </p>
+
+        <p>
+            <label for="{{ form.is_visible.id_for_label }}">商品一覧に表示する:</label>
+            {{ form.is_visible }}
+        </p>
+
+        <p>
+            <label for="{{ form.description.id_for_label }}">説明:</label>
+            {{ form.description }}
+        </p>
+
+        <p>
+            <label>商品画像:</label>
+            <input type="file" name="images" accept="image/jpeg,image/png" multiple>
+            <small>最大5枚まで登録できます。</small>
+        </p>
+
+        <p id="file-count" style="font-size: 12px; color: #666;"></p>
+
+        <div class="btn-area">
+            {% if page_title == "商品編集" %}
+                <button type="submit" name="action" value="save" class="btn save-btn">保存</button>
+                <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
+                <a href="{% url 'product_delete' form.instance.id %}?next=product_edit" class="btn delete-btn">削除</a>
+            {% else %}
+                <button type="submit" name="action" value="stay" class="btn save-btn">保存</button>
+                <a href="{% url 'management_product_list' %}" class="btn back-btn">商品一覧へ</a>
+                <a href="{% url 'management_menu' %}" class="btn back-btn">管理メニューへ</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+</body>
+</html>
