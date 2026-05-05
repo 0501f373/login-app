@@ -25,6 +25,29 @@
         ul {
             margin-top: 8px;
         }
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #2d6cdf;
+            color: white;
+        }
+
+        .btn-back {
+            background: #e5e5e5;
+            color: #333;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
     </style>
 </head>
 <body>
@@ -37,7 +60,7 @@
                 <p>注文日：{{ order.created_at }}</p>
                 <p>合計金額：{{ order.total_price }}円</p>
 
-                <a href="{% url 'management_order_detail' order.id %}">
+                <a href="{% url 'management_order_detail' order.id %}" class="btn btn-primary">
                     詳細を見る
                 </a>
             </div>
@@ -45,7 +68,9 @@
             <p>注文はまだありません。</p>  
         {% endfor %}          
 
-        <a href="{% url 'management_menu' %}">管理メニューへ戻る</a>
+        <a href="{% url 'management_menu' %}" class="btn btn-back">
+            管理メニューへ戻る
+        </a>    
     </div>
 </body>
 </html>
