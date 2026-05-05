@@ -829,3 +829,19 @@ def management_order_list(request):
     return render(request, "accounts/management_order_list.html", {
         "orders": orders,
     })
+
+@login_required(login_url="login")
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+    return render(request, "accounts/order_detail.html", {
+        "order": order,
+    })
+
+@staff_member_required(login_url="staff_login")
+def management_order_detail(request, order_id):
+    order = get_object_or_404(Order.objects.select_related("user"), id=order_id)
+
+    return render(request, "accounts/management_order_detail.html", {
+        "order": order,
+    })
