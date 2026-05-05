@@ -159,7 +159,9 @@
     <div class="header-title">商品一覧</div>
     <div class="header-links">
         {% if request.user.is_authenticated %}
-            <span>{{ request.user.first_name }}</span>
+            <a href="{% url 'mypage' %}">
+                 {{ request.user.first_name }}
+            </a>
             <a href="{% url 'logout' %}">ログアウト</a>
         {% else %}
             <a href="{% url 'login' %}">ログイン</a>
