@@ -1,0 +1,17 @@
+<h1>注文詳細</h1>
+
+<p>注文者：{{ order.user.email }}</p>
+<p>注文日：{{ order.created_at }}</p>
+<p>合計金額：{{ order.total_price }}円</p>
+
+<hr>
+
+{% for item in order.items.all %}
+    <div style="margin-bottom: 12px;">
+        <p>商品名：{{ item.product.name }}</p>
+        <p>数量：{{ item.quantity }}</p>
+        <p>単価：{{ item.price }}円</p>
+    </div>
+{% endfor %}
+
+<a href="{% url 'management_order_list' %}">戻る</a>

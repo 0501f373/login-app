@@ -37,19 +37,13 @@
                 <p>注文日：{{ order.created_at }}</p>
                 <p>合計金額：{{ order.total_price }}円</p>
 
-                <ul>
-                    {% for item in order.items.all %}
-                        <li>
-                            {{ item.product.name }}　
-                            数量：{{ item.quantity }}　
-                            単価：{{ item.price }}円
-                        </li>
-                    {% endfor %}
-                </ul>
+                <a href="{% url 'management_order_detail' order.id %}">
+                    詳細を見る
+                </a>
             </div>
-        {% empty %}
-            <p>注文はまだありません。</p>
-        {% endfor %}
+        {% empty %}   
+            <p>注文はまだありません。</p>  
+        {% endfor %}          
 
         <a href="{% url 'management_menu' %}">管理メニューへ戻る</a>
     </div>

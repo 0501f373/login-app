@@ -3,33 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <title>マイページ</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 16px 24px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .page-title {
+            margin-bottom: 24px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .order-info {
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .empty {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            color: #555;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .btn-detail {
+            background: #2d6cdf;
+            color: white;
+        }
+
+        .btn-back {
+            background: #e5e5e5;
+            color: #333;
+        }
+    </style>
 </head>
 <body>
-    <h1>マイページ</h1>
+    <div class="header">マイページ</div>
 
-    <h2>注文履歴</h2>
+    <div class="container">
+        <h1 class="page-title">注文履歴</h1>
 
-    {% if orders %}
-        {% for order in orders %}
-            <div style="background: white; padding: 16px; margin-bottom: 16px; border-radius: 8px;">
-                <p>注文日：{{ order.created_at }}</p>
-                <p>合計金額：{{ order.total_price }}円</p>
+        {% if orders %}
+            {% for order in orders %}
+                <div class="order-card">
+                    <p class="order-info">
+                        <span class="label">注文日：</span>{{ order.created_at }}
+                    </p>
+                    <p class="order-info">
+                        <span class="label">合計金額：</span>{{ order.total_price }}円
+                    </p>
 
-                <ul>
-                    {% for item in order.items.all %}
-                        <li>
-                            {{ item.product.name }}　
-                            数量：{{ item.quantity }}　
-                            単価：{{ item.price }}円
-                        </li>
-                    {% endfor %}
-                </ul>
+                    <a href="{% url 'order_detail' order.id %}" class="btn btn-detail">
+                        注文詳細を見る
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <p>注文履歴はありません。</p>
             </div>
-        {% endfor %}
-    {% else %}
-        <p>注文履歴はありません。</p>
-    {% endif %}
+        {% endif %}
 
-    <a href="{% url 'product_search' %}">商品一覧へ戻る</a>
+        <div class="actions">
+            <a href="{% url 'product_search' %}" class="btn btn-back">
+                商品一覧へ戻る
+            </a>
+        </div>
+    </div>
 </body>
 </html>
