@@ -390,8 +390,14 @@ def order_complete(request):
     return render(request, "accounts/order_complete.html")
 
 def logout_view(request):
+    cart = request.session.get("cart", {})
+
     logout(request)
-    return redirect('product_search')
+
+    request.session["cart"] = cart
+    request.session.modified = True
+
+    return redirect("product_search")
 
 from django.urls import reverse
 
