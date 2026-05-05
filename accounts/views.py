@@ -65,7 +65,8 @@ def login_view(request):
 
                 return redirect("cart")
 
-            return redirect("product_search")
+            next_url = request.session.pop("next", "product_search")
+            return redirect(next_url)
 
         return render(request, "accounts/login.html", {
             "error": "メールアドレスまたはパスワードが違います"
@@ -180,14 +181,6 @@ from django.shortcuts import redirect, get_object_or_404
 def add_to_cart(request, product_id):
     if request.method == "POST":
         quantity = int(request.POST.get("quantity", 1))
-
-        # 🔴 未ログインなら一旦保存してログインへ
-        if not request.user.is_authenticated:
-            request.session["pending_cart"] = {
-                "product_id": product_id,
-                "quantity": quantity,
-            }
-            return redirect("login")
 
         product = get_object_or_404(Product, id=product_id)
 
@@ -318,10 +311,11 @@ def update_cart(request, product_id):
 
     return redirect("cart")
 
-@login_required(login_url="login")
 def order_confirm(request):
-    if request.method != "POST":
-        return redirect("cart")
+    # 未ログインならログインへ
+    if not request.user.is_authenticated:
+        request.session["next"] = "order_confirm"
+        return redirect("login")
 
     cart = request.session.get("cart", {})
 
@@ -331,37 +325,43 @@ def order_confirm(request):
     if not cart:
         return redirect("cart")
 
-    cart_items = []
+    # 👇 GET → 確認画面
+    if request.method == "GET":
+        cart_items = []
+        total_price = 0
+
+        for product_id, quantity in cart.items():
+            product = get_object_or_404(Product, id=product_id)
+            subtotal = product.price * quantity
+            total_price += subtotal
+
+            cart_items.append({
+                "product": product,
+                "quantity": quantity,
+                "subtotal": subtotal,
+            })
+
+        return render(request, "accounts/order_confirm.html", {
+            "cart_items": cart_items,
+            "total_price": total_price,
+        })
+
+    # 👇 POST → 注文確定
     total_price = 0
 
-    # 先に在庫チェック
+    # 在庫チェック
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)
 
         if product.stock < quantity:
-            for pid, qty in cart.items():
-                item_product = get_object_or_404(Product, id=pid)
-                subtotal = item_product.price * qty
-                total_price += subtotal
-                cart_items.append({
-                    "product": item_product,
-                    "quantity": qty,
-                    "subtotal": subtotal,
-                })
-
-            return render(request, "accounts/cart.html", {
-                "cart_items": cart_items,
-                "total_price": total_price,
-                "error": f"{product.name} の在庫が不足しています",
-            })
+            messages.error(request, f"{product.name} の在庫が不足しています")
+            return redirect("cart")
 
     # 注文作成
     order = Order.objects.create(
         user=request.user,
         total_price=0
     )
-
-    total_price = 0
 
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)

@@ -103,6 +103,11 @@
     .back-button:hover {
         background-color: #d6d6d6;
     }
+
+    .checkout-button {
+        display: inline-block;
+        text-decoration: none;
+    }
 </style>
 </head>
 <body>
@@ -158,15 +163,13 @@
     </div>
 {% endif %}
 
-<!-- 👇ここに移動 -->
 <div class="cart-actions">
     <a href="{% url 'product_search' %}" class="back-button">商品一覧に戻る</a>
 
     {% if cart_items %}
-        <form method="post" action="{% url 'order_confirm' %}" class="checkout-form">
-            {% csrf_token %}
-            <button type="submit" class="checkout-button">購入手続きへ</button>
-        </form>
+        <a href="{% url 'order_confirm' %}" class="checkout-button checkout-form">
+            購入手続きへ
+        </a>
     {% endif %}
 </div>
 </body>

@@ -1,0 +1,12 @@
+<h1>注文確認</h1>
+
+{% for item in cart_items %}
+    <p>{{ item.product.name }} × {{ item.quantity }}（{{ item.subtotal }}円）</p>
+{% endfor %}
+
+<p>合計：{{ total_price }}円</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">注文確定</button>
+</form>
