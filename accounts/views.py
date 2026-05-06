@@ -363,6 +363,7 @@ def order_confirm(request):
             "total_price": total_price,
             "address": address,
             "payment_method": payment_method,
+            "delivery_date": delivery_date,
             "delivery_time": delivery_time,
         })
 
