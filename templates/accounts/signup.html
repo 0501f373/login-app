@@ -87,6 +87,7 @@
 
         <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
 
             <div class="form-group">
                 <label for="display_name">ユーザー名</label>

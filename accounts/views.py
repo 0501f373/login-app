@@ -116,7 +116,8 @@ def signup_view(request):
         )
 
         login(request, user)
-        return redirect("product_search")
+        next_url = request.POST.get("next") or request.GET.get("next") or "product_search"
+        return redirect(next_url)
 
     return render(request, "accounts/signup.html")
 
@@ -880,35 +881,44 @@ def address_input(request):
     address = Address.objects.filter(user=request.user).first()
 
     if request.method == "POST":
-        postal_code = request.POST.get("postal_code")
-        prefecture = request.POST.get("prefecture")
-        city = request.POST.get("city")
-        addr = request.POST.get("address")
-        building = request.POST.get("building")
+        address_type = request.POST.get("address_type")
+
+        if address_type == "registered":
+            saved_address = Address.objects.filter(user=request.user).first()
+
+            postal_code = saved_address.postal_code
+            prefecture = saved_address.prefecture
+            city = saved_address.city
+            addr = saved_address.address
+            building = saved_address.building
+
+        else:
+            postal_code = request.POST.get("postal_code")
+            prefecture = request.POST.get("prefecture")
+            city = request.POST.get("city")
+            addr = request.POST.get("address")
+            building = request.POST.get("building")
+
+            if request.POST.get("save_to_mypage") == "1":
+                Address.objects.update_or_create(
+                    user=request.user,
+                    defaults={
+                        "postal_code": postal_code,
+                        "prefecture": prefecture,
+                        "city": city,
+                        "address": addr,
+                        "building": building,
+                    }
+                )
+
         delivery_date = request.POST.get("delivery_date")
-        request.session["delivery_date"] = delivery_date
-        request.session.modified = True
         delivery_time = request.POST.get("delivery_time")
-
-        request.session["delivery_time"] = delivery_time
-        request.session.modified = True
-
-        # 支払い方法
         payment_method = request.POST.get("payment_method", "credit_card")
+
+        request.session["delivery_date"] = delivery_date
+        request.session["delivery_time"] = delivery_time
         request.session["payment_method"] = payment_method
         request.session.modified = True
-
-        # 住所保存
-        Address.objects.update_or_create(
-            user=request.user,
-            defaults={
-                "postal_code": postal_code,
-                "prefecture": prefecture,
-                "city": city,
-                "address": addr,
-                "building": building,
-            }
-        )
 
         return redirect("order_confirm")
 
@@ -963,15 +973,15 @@ def mypage_address_edit(request):
         building = request.POST.get("building")
 
         Address.objects.update_or_create(
-            user=request.user,
-            defaults={
-                "postal_code": postal_code,
-                "prefecture": prefecture,
-                "city": city,
-                "address": addr,
-                "building": building,
-            }
-        )
+    user=request.user,
+    defaults={
+        "postal_code": postal_code,
+        "prefecture": prefecture,
+        "city": city,
+        "address": addr,
+        "building": building,
+    }
+)
 
         return redirect("mypage")
 
