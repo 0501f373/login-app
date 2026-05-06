@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 
-from .models import Product, Category, Manufacturer, StockHistory, ProductImage, Order, OrderItem
+from .models import Product, Category, Manufacturer, StockHistory, ProductImage, Order, OrderItem, Address
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
@@ -318,7 +318,6 @@ def order_confirm(request):
         return redirect("login")
 
     cart = request.session.get("cart", {})
-
     if not isinstance(cart, dict):
         cart = {}
 
@@ -852,8 +851,6 @@ def management_order_detail(request, order_id):
     return render(request, "accounts/management_order_detail.html", {
         "order": order,
     })
-
-from .models import Address
 
 @login_required(login_url="login")
 def address_input(request):
