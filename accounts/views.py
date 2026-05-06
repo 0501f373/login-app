@@ -355,6 +355,8 @@ def order_confirm(request):
 
         address = Address.objects.get(user=request.user)
         payment_method = request.session.get("payment_method", "credit_card")
+        delivery_date = request.session.get("delivery_date")
+        delivery_time = request.session.get("delivery_time")
 
         return render(request, "accounts/order_confirm.html", {
             "cart_items": cart_items,
