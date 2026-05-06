@@ -940,3 +940,31 @@ def order_list(request):
         "months": months,
         "selected_month": month,
     })
+
+@login_required(login_url="login")
+def mypage_address_edit(request):
+    address = Address.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
+        postal_code = request.POST.get("postal_code")
+        prefecture = request.POST.get("prefecture")
+        city = request.POST.get("city")
+        addr = request.POST.get("address")
+        building = request.POST.get("building")
+
+        Address.objects.update_or_create(
+            user=request.user,
+            defaults={
+                "postal_code": postal_code,
+                "prefecture": prefecture,
+                "city": city,
+                "address": addr,
+                "building": building,
+            }
+        )
+
+        return redirect("mypage")
+
+    return render(request, "accounts/mypage_address_edit.html", {
+        "address": address,
+    })

@@ -44,4 +44,5 @@ urlpatterns = [
     path("order/address/", views.address_input, name="address_input"),
     path("orders/", views.order_list, name="order_list"),
     path("address/", views.address_input, name="address_input"),
+    path("mypage/address/", views.mypage_address_edit, name="mypage_address_edit"),
     ]
