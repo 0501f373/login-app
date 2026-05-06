@@ -72,10 +72,9 @@
                 登録住所を使う
             </label>
 
-            <div class="address-preview">
-                <p>〒{{ address.postal_code }}</p>
-                <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
-                <p>{{ address.building }}</p>
+            {% if address %}
+            <div class="address-preview" style="font-size:12px; color:#555;">
+                〒{{ address.postal_code }} {{ address.prefecture }}{{ address.city }}
             </div>
         {% endif %}
 
