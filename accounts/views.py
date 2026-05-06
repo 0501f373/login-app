@@ -375,14 +375,16 @@ def order_confirm(request):
             return redirect("cart")
 
     payment_method = request.session.get("payment_method", "credit_card")
+    delivery_date = request.session.get("delivery_date")
 
     address = Address.objects.get(user=request.user)
     # 注文作成
     order = Order.objects.create(
-        user=request.user,
-        total_price=0,
-        payment_method=payment_method
-    )
+    user=request.user,
+    total_price=0,
+    payment_method=payment_method,
+    delivery_date=delivery_date if delivery_date else None
+)
 
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)
@@ -877,6 +879,9 @@ def address_input(request):
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
+        delivery_date = request.POST.get("delivery_date")
+        request.session["delivery_date"] = delivery_date
+        request.session.modified = True
 
         # 支払い方法
         payment_method = request.POST.get("payment_method", "credit_card")

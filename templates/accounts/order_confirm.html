@@ -184,6 +184,19 @@
     </div>
 </div>
 
+<div class="card">
+    <div class="info">
+        <div class="name">配送希望日</div>
+        <div class="meta">
+            {% if delivery_date %}
+                {{ delivery_date }}
+            {% else %}
+                指定なし（最短配送）
+            {% endif %}
+        </div>
+    </div>
+</div>
+
     <div class="actions">
     <a href="{% url 'cart' %}" class="btn btn-back">
         カートに戻る

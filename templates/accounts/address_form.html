@@ -31,6 +31,14 @@
             font-weight: normal;
             margin-bottom: 10px;
         }
+        input[type="date"] {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
     </style>
 </head>
 <body>
@@ -48,17 +56,7 @@
 <div class="container">
     <h1>配送先・支払い方法</h1>
 
-    {% if address %}
-        <div class="form-card">
-            <h2>登録住所</h2>
-            <p>〒{{ address.postal_code }}</p>
-            <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
-            <p>{{ address.building }}</p>
-            <p class="hint">登録済み住所を下の入力欄に反映しています。変更する場合は編集してください。</p>
-        </div>
-    {% endif %}
 
-    
     <form method="post">
         {% csrf_token %}
 
@@ -72,8 +70,12 @@
         登録住所を使う
     </label>
 
-    <div class="address-preview" style="font-size:12px; color:#555;">
-        〒{{ address.postal_code }} {{ address.prefecture }}{{ address.city }}
+    <div class="address-preview">
+        <p>〒{{ address.postal_code }}</p>
+        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
+        {% if address.building %}
+            <p>{{ address.building }}</p>
+        {% endif %}
     </div>
 {% endif %}
 
@@ -109,6 +111,16 @@
             </div>
 
             <p class="hint">※ここで入力した住所はマイページには保存されません。</p>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <h2>配送希望日</h2>
+
+        <div class="form-group">
+            <label>配送希望日</label>
+            <input type="date" name="delivery_date">
+            <p class="hint">指定がない場合は最短で発送します。</p>
         </div>
     </div>
 
