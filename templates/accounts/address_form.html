@@ -39,6 +39,15 @@
         font-size: 14px;
         box-sizing: border-box;
     }
+
+        select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
     </style>
 </head>
 <body>
@@ -115,14 +124,26 @@
 </div>
 
     <div class="form-card">
-        <h2>配送希望日</h2>
+    <h2>配送希望日時</h2>
 
-        <div class="form-group">
-            <label>配送希望日</label>
-            <input type="date" name="delivery_date">
-            <p class="hint">指定がない場合は最短で発送します。</p>
-        </div>
+    <div class="form-group">
+        <label>配送希望日</label>
+        <input type="date" name="delivery_date">
+        <p class="hint">指定がない場合は最短で発送します。</p>
     </div>
+
+    <div class="form-group">
+        <label>配送希望時間</label>
+        <select name="delivery_time">
+            <option value="">指定なし</option>
+            <option value="morning">午前中</option>
+            <option value="14_16">14時〜16時</option>
+            <option value="16_18">16時〜18時</option>
+            <option value="18_20">18時〜20時</option>
+            <option value="19_21">19時〜21時</option>
+        </select>
+    </div>
+</div>
 
     <div class="form-card">
         <h2>支払い方法</h2>

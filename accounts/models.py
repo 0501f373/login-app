@@ -89,6 +89,7 @@ class Order(models.Model):
     address = models.CharField("番地", max_length=200, blank=True)
     building = models.CharField("建物名", max_length=200, blank=True)
     delivery_date = models.DateField("配送希望日", null=True, blank=True)
+    delivery_time = models.CharField("配送希望時間",max_length=50,blank=True,null=True)
 
     def __str__(self):
         return f"注文ID:{self.id} / {self.user.email}"

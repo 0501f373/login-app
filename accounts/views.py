@@ -361,6 +361,7 @@ def order_confirm(request):
             "total_price": total_price,
             "address": address,
             "payment_method": payment_method,
+            "delivery_time": delivery_time,
         })
 
     # 👇 POST → 注文確定
@@ -376,6 +377,7 @@ def order_confirm(request):
 
     payment_method = request.session.get("payment_method", "credit_card")
     delivery_date = request.session.get("delivery_date")
+    delivery_time = request.session.get("delivery_time")
 
     address = Address.objects.get(user=request.user)
     # 注文作成
@@ -383,7 +385,8 @@ def order_confirm(request):
     user=request.user,
     total_price=0,
     payment_method=payment_method,
-    delivery_date=delivery_date if delivery_date else None
+    delivery_date=delivery_date if delivery_date else None,
+    delivery_time=delivery_time if delivery_time else None,
 )
 
     for product_id, quantity in cart.items():
@@ -881,6 +884,10 @@ def address_input(request):
         building = request.POST.get("building")
         delivery_date = request.POST.get("delivery_date")
         request.session["delivery_date"] = delivery_date
+        request.session.modified = True
+        delivery_time = request.POST.get("delivery_time")
+
+        request.session["delivery_time"] = delivery_time
         request.session.modified = True
 
         # 支払い方法
