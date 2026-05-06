@@ -353,9 +353,14 @@ def order_confirm(request):
                 "subtotal": subtotal,
             })
 
+        address = Address.objects.get(user=request.user)
+        payment_method = request.session.get("payment_method", "credit_card")
+
         return render(request, "accounts/order_confirm.html", {
             "cart_items": cart_items,
             "total_price": total_price,
+            "address": address,
+            "payment_method": payment_method,
         })
 
     # 👇 POST → 注文確定
@@ -864,10 +869,7 @@ def management_order_detail(request, order_id):
 
 @login_required(login_url="login")
 def address_input(request):
-    try:
-        address = Address.objects.get(user=request.user)
-    except Address.DoesNotExist:
-        address = None
+    address = Address.objects.filter(user=request.user).first()
 
     if request.method == "POST":
         postal_code = request.POST.get("postal_code")
@@ -875,10 +877,13 @@ def address_input(request):
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
+
+        # 支払い方法
         payment_method = request.POST.get("payment_method", "credit_card")
         request.session["payment_method"] = payment_method
         request.session.modified = True
 
+        # 住所保存
         Address.objects.update_or_create(
             user=request.user,
             defaults={
