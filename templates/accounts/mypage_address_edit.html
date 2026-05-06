@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>登録住所編集</title>
+</head>
+<body>
+    <h1>登録住所編集</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <p>
+            郵便番号<br>
+            <input type="text" name="postal_code" value="{{ address.postal_code|default:'' }}">
+        </p>
+
+        <p>
+            都道府県<br>
+            <input type="text" name="prefecture" value="{{ address.prefecture|default:'' }}">
+        </p>
+
+        <p>
+            市区町村<br>
+            <input type="text" name="city" value="{{ address.city|default:'' }}">
+        </p>
+
+        <p>
+            番地<br>
+            <input type="text" name="address" value="{{ address.address|default:'' }}">
+        </p>
+
+        <p>
+            建物名・部屋番号<br>
+            <input type="text" name="building" value="{{ address.building|default:'' }}">
+        </p>
+
+        <button type="submit">保存</button>
+    </form>
+
+    <a href="{% url 'mypage' %}">マイページへ戻る</a>
+</body>
+</html>
