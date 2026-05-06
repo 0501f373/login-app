@@ -153,34 +153,20 @@
     </div>
 
     <div class="actions">
-        <a href="{% url 'cart' %}" class="btn btn-back">カートに戻る</a>
+    <a href="{% url 'cart' %}" class="btn btn-back">
+        カートに戻る
+    </a>
 
-        <form method="post" class="confirm-form">
-    {% csrf_token %}
+    <a href="{% url 'address_input' %}" class="btn btn-back">
+        配送先・支払い方法を編集
+    </a>
 
-    <div class="payment-box">
-        <h2>支払い方法</h2>
-
-        <label>
-            <input type="radio" name="payment_method" value="credit_card" checked>
-            クレジットカード
-        </label>
-
-        <label>
-            <input type="radio" name="payment_method" value="bank_transfer">
-            銀行振込
-        </label>
-
-        <label>
-            <input type="radio" name="payment_method" value="cash_on_delivery">
-            代金引換
-        </label>
-    </div>
-
-    <button type="submit" class="btn btn-submit">
-        注文を確定する
-    </button>
-</form>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-submit">
+            注文を確定する
+        </button>
+    </form>
     </div>
 </div>
 

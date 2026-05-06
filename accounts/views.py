@@ -369,7 +369,7 @@ def order_confirm(request):
             messages.error(request, f"{product.name} の在庫が不足しています")
             return redirect("cart")
 
-    payment_method = request.POST.get("payment_method", "credit_card")
+    payment_method = request.session.get("payment_method", "credit_card")
 
     address = Address.objects.get(user=request.user)
     # 注文作成
@@ -875,6 +875,9 @@ def address_input(request):
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
+        payment_method = request.POST.get("payment_method", "credit_card")
+        request.session["payment_method"] = payment_method
+        request.session.modified = True
 
         Address.objects.update_or_create(
             user=request.user,
