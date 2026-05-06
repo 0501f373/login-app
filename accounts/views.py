@@ -249,8 +249,18 @@ from django.contrib.auth.decorators import login_required
 def mypage(request):
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
 
+    cart = request.session.get("cart", {})
+    if not isinstance(cart, dict):
+        cart = {}
+
+    cart_count = sum(cart.values())
+
+    address = Address.objects.filter(user=request.user).first()
+
     return render(request, "accounts/mypage.html", {
         "orders": orders,
+        "cart_count": cart_count,
+        "address": address,
     })
 
 def remove_from_cart(request, product_id):
