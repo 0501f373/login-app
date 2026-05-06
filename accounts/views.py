@@ -324,6 +324,9 @@ def order_confirm(request):
 
     if not cart:
         return redirect("cart")
+    
+    if not Address.objects.filter(user=request.user).exists():
+        return redirect("address_input")
 
     # 👇 GET → 確認画面
     if request.method == "GET":
@@ -357,10 +360,14 @@ def order_confirm(request):
             messages.error(request, f"{product.name} の在庫が不足しています")
             return redirect("cart")
 
+    payment_method = request.POST.get("payment_method", "credit_card")
+
+    address = Address.objects.get(user=request.user)
     # 注文作成
     order = Order.objects.create(
         user=request.user,
-        total_price=0
+        total_price=0,
+        payment_method=payment_method
     )
 
     for product_id, quantity in cart.items():
@@ -844,4 +851,37 @@ def management_order_detail(request, order_id):
 
     return render(request, "accounts/management_order_detail.html", {
         "order": order,
+    })
+
+from .models import Address
+
+@login_required(login_url="login")
+def address_input(request):
+    try:
+        address = Address.objects.get(user=request.user)
+    except Address.DoesNotExist:
+        address = None
+
+    if request.method == "POST":
+        postal_code = request.POST.get("postal_code")
+        prefecture = request.POST.get("prefecture")
+        city = request.POST.get("city")
+        addr = request.POST.get("address")
+        building = request.POST.get("building")
+
+        Address.objects.update_or_create(
+            user=request.user,
+            defaults={
+                "postal_code": postal_code,
+                "prefecture": prefecture,
+                "city": city,
+                "address": addr,
+                "building": building,
+            }
+        )
+
+        return redirect("order_confirm")
+
+    return render(request, "accounts/address_form.html", {
+        "address": address
     })

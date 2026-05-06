@@ -1,0 +1,13 @@
+<h1>配送先入力</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <input name="postal_code" placeholder="郵便番号" value="{{ address.postal_code }}">
+    <input name="prefecture" placeholder="都道府県" value="{{ address.prefecture }}">
+    <input name="city" placeholder="市区町村" value="{{ address.city }}">
+    <input name="address" placeholder="番地" value="{{ address.address }}">
+    <input name="building" placeholder="建物名" value="{{ address.building }}">
+
+    <button type="submit">次へ</button>
+</form>

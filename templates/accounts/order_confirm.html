@@ -91,6 +91,30 @@
             border: none;
             cursor: pointer;
         }
+
+        .payment-box {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .payment-box h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .payment-box label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .payment-box input {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -131,12 +155,32 @@
     <div class="actions">
         <a href="{% url 'cart' %}" class="btn btn-back">カートに戻る</a>
 
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-submit">
-                注文を確定する
-            </button>
-        </form>
+        <form method="post" class="confirm-form">
+    {% csrf_token %}
+
+    <div class="payment-box">
+        <h2>支払い方法</h2>
+
+        <label>
+            <input type="radio" name="payment_method" value="credit_card" checked>
+            クレジットカード
+        </label>
+
+        <label>
+            <input type="radio" name="payment_method" value="bank_transfer">
+            銀行振込
+        </label>
+
+        <label>
+            <input type="radio" name="payment_method" value="cash_on_delivery">
+            代金引換
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-submit">
+        注文を確定する
+    </button>
+</form>
     </div>
 </div>
 

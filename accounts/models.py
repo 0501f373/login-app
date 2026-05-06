@@ -81,6 +81,13 @@ class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    payment_method = models.CharField("支払い方法", max_length=50, default="credit_card")
+
+    postal_code = models.CharField("郵便番号", max_length=10, blank=True)
+    prefecture = models.CharField("都道府県", max_length=50, blank=True)
+    city = models.CharField("市区町村", max_length=100, blank=True)
+    address = models.CharField("番地", max_length=200, blank=True)
+    building = models.CharField("建物名", max_length=200, blank=True)
 
     def __str__(self):
         return f"注文ID:{self.id} / {self.user.email}"
@@ -94,3 +101,17 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return self.product.name
+    
+class Address(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    postal_code = models.CharField("郵便番号", max_length=10)
+    prefecture = models.CharField("都道府県", max_length=50)
+    city = models.CharField("市区町村", max_length=100)
+    address = models.CharField("番地", max_length=200)
+    building = models.CharField("建物名", max_length=200, blank=True)
+
+    def __str__(self):
+        return self.user.email
+    
+    
