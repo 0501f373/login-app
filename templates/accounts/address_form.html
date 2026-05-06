@@ -19,6 +19,18 @@
         .btn { display: inline-block; text-decoration: none; border: none; border-radius: 8px; padding: 10px 18px; font-weight: bold; font-size: 14px; cursor: pointer; }
         .btn-primary { background: #2d6cdf; color: white; }
         .btn-back { background: #e5e5e5; color: #333; }
+
+        .address-preview {
+            background: #f5f7fb;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0 16px;
+        }
+
+        .radio-label {
+            font-weight: normal;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -46,62 +58,103 @@
         </div>
     {% endif %}
 
-    <div class="form-card">
-        <form method="post">
-            {% csrf_token %}
+    
+    <form method="post">
+        {% csrf_token %}
 
+        <div class="form-card">
+        <h2>配送先</h2>
+
+        {% if address %}
+            <label class="radio-label">
+                <input type="radio" name="address_type" value="registered"
+                {% if address %}checked{% endif %}>
+                登録住所を使う
+            </label>
+
+            <div class="address-preview">
+                <p>〒{{ address.postal_code }}</p>
+                <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
+                <p>{{ address.building }}</p>
+            </div>
+        {% endif %}
+
+        <label class="radio-label">
+            <input type="radio" name="address_type" value="new" {% if not address %}checked{% endif %}>
+            登録と違う場所に送る
+        </label>
+
+        <div id="new-address-area" style="display: {% if address %}none{% else %}block{% endif %};">
             <div class="form-group">
                 <label>郵便番号</label>
-                <input type="text" name="postal_code" value="{{ address.postal_code|default:'' }}" placeholder="例：123-4567" required>
+                <input type="text" name="postal_code" placeholder="例：123-4567">
             </div>
 
             <div class="form-group">
                 <label>都道府県</label>
-                <input type="text" name="prefecture" value="{{ address.prefecture|default:'' }}" placeholder="例：東京都" required>
+                <input type="text" name="prefecture" placeholder="例：東京都">
             </div>
 
             <div class="form-group">
                 <label>市区町村</label>
-                <input type="text" name="city" value="{{ address.city|default:'' }}" placeholder="例：新宿区" required>
+                <input type="text" name="city" placeholder="例：新宿区">
             </div>
 
             <div class="form-group">
                 <label>番地</label>
-                <input type="text" name="address" value="{{ address.address|default:'' }}" placeholder="例：西新宿1-1-1" required>
+                <input type="text" name="address" placeholder="例：西新宿1-1-1">
             </div>
 
             <div class="form-group">
                 <label>建物名・部屋番号</label>
-                <input type="text" name="building" value="{{ address.building|default:'' }}" placeholder="例：〇〇マンション101">
-                <div class="hint">任意項目です。</div>
+                <input type="text" name="building" placeholder="例：〇〇マンション101">
             </div>
 
-            <div class="form-group">
-                <label>支払い方法</label>
-
-                <label class="radio-label">
-                    <input type="radio" name="payment_method" value="credit_card" checked>
-                    クレジットカード
-                </label>
-
-                <label class="radio-label">
-                    <input type="radio" name="payment_method" value="bank_transfer">
-                    銀行振込
-                </label>
-
-                <label class="radio-label">
-                    <input type="radio" name="payment_method" value="cash_on_delivery">
-                    代金引換
-                </label>
-            </div>
-
-            <div class="actions">
-                <a href="{% url 'cart' %}" class="btn btn-back">カートに戻る</a>
-                <button type="submit" class="btn btn-primary">注文確認へ進む</button>
-            </div>
-        </form>
+            <p class="hint">※ここで入力した住所はマイページには保存されません。</p>
+        </div>
     </div>
-</div>
 
-</body>
-</html>
+    <div class="form-card">
+        <h2>支払い方法</h2>
+
+        <label class="radio-label">
+            <input type="radio" name="payment_method" value="credit_card"
+            {% if request.session.payment_method == "credit_card" or not request.session.payment_method %}checked{% endif %}>
+            クレジットカード
+        </label>
+
+        <label class="radio-label">
+            <input type="radio" name="payment_method" value="bank_transfer"
+            {% if request.session.payment_method == "bank_transfer" %}checked{% endif %}>
+            銀行振込
+        </label>
+
+        <label class="radio-label">
+            <input type="radio" name="payment_method" value="cash_on_delivery"
+            {% if request.session.payment_method == "cash_on_delivery" %}checked{% endif %}>
+            代金引換
+        </label>
+    </div>
+
+    <div class="actions">
+        <a href="{% url 'cart' %}" class="btn btn-back">カートに戻る</a>
+        <button type="submit" class="btn btn-primary">注文確認へ進む</button>
+    </div>
+</form>
+
+<script>
+    const radios = document.querySelectorAll('input[name="address_type"]');
+    const newAddressArea = document.getElementById("new-address-area");
+
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            if (radio.value === "new" && radio.checked) {
+                newAddressArea.style.display = "block";
+            }
+
+            if (radio.value === "registered" && radio.checked) {
+                newAddressArea.style.display = "none";
+            }
+        });
+    });
+</script>
