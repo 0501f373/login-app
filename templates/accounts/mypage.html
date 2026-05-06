@@ -116,24 +116,28 @@
 
     <h2>登録住所</h2>
 
-    {% if address %}
-        <div class="order-card">
-            <p>〒{{ address.postal_code }}</p>
-            <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
-            <p>{{ address.building }}</p>
+{% if address %}
+    <div class="order-card">
+        <p>〒{{ address.postal_code }}</p>
+        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
 
-            <a href="{% url 'address_input' %}" class="btn btn-detail">
-                住所を変更する
-            </a>
-        </div>
-    {% else %}
-        <div class="empty">
-            <p>住所が登録されていません。</p>
-            <a href="{% url 'address_input' %}" class="btn btn-detail">
-                住所を登録する
-            </a>
-        </div>
-    {% endif %}
+        {% if address.building %}
+            <p>{{ address.building }}</p>
+        {% endif %}
+
+        <a href="{% url 'address_input' %}" class="btn btn-detail">
+            住所を変更する
+        </a>
+    </div>
+{% else %}
+    <div class="empty">
+        <p>住所が登録されていません。</p>
+
+        <a href="{% url 'address_input' %}" class="btn btn-detail">
+            住所を登録する
+        </a>
+    </div>
+{% endif %}
 
     {% if orders %}
         <h2>注文履歴</h2>

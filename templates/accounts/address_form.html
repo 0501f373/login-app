@@ -60,59 +60,59 @@
     <form method="post">
         {% csrf_token %}
 
-        <div class="form-card">
-        <h2>配送先</h2>
+    <div class="form-card">
+    <h2>配送先</h2>
 
-        {% if address %}
-    <label class="radio-label">
-        <input type="radio" name="address_type" value="registered"
-        {% if address %}checked{% endif %}>
-        登録住所を使う
-    </label>
-
-    <div class="address-preview">
-        <p>〒{{ address.postal_code }}</p>
-        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
-        {% if address.building %}
-            <p>{{ address.building }}</p>
-        {% endif %}
-    </div>
-{% endif %}
-
+    {% if address %}
         <label class="radio-label">
-            <input type="radio" name="address_type" value="new" {% if not address %}checked{% endif %}>
-            登録と違う場所に送る
+            <input type="radio" name="address_type" value="registered" checked>
+            登録住所を使う
         </label>
 
-        <div id="new-address-area" style="display: {% if address %}none{% else %}block{% endif %};">
-            <div class="form-group">
-                <label>郵便番号</label>
-                <input type="text" name="postal_code" placeholder="例：123-4567">
-            </div>
+        <div class="address-preview">
+            <p>〒{{ address.postal_code }}</p>
+            <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
 
-            <div class="form-group">
-                <label>都道府県</label>
-                <input type="text" name="prefecture" placeholder="例：東京都">
-            </div>
-
-            <div class="form-group">
-                <label>市区町村</label>
-                <input type="text" name="city" placeholder="例：新宿区">
-            </div>
-
-            <div class="form-group">
-                <label>番地</label>
-                <input type="text" name="address" placeholder="例：西新宿1-1-1">
-            </div>
-
-            <div class="form-group">
-                <label>建物名・部屋番号</label>
-                <input type="text" name="building" placeholder="例：〇〇マンション101">
-            </div>
-
-            <p class="hint">※ここで入力した住所はマイページには保存されません。</p>
+            {% if address.building %}
+                <p>{{ address.building }}</p>
+            {% endif %}
         </div>
+    {% endif %}
+
+    <label class="radio-label">
+        <input type="radio" name="address_type" value="new" {% if not address %}checked{% endif %}>
+        登録と違う場所に送る
+    </label>
+
+    <div id="new-address-area" style="display: {% if address %}none{% else %}block{% endif %};">
+        <div class="form-group">
+            <label>郵便番号</label>
+            <input type="text" name="postal_code" placeholder="例：123-4567">
+        </div>
+
+        <div class="form-group">
+            <label>都道府県</label>
+            <input type="text" name="prefecture" placeholder="例：東京都">
+        </div>
+
+        <div class="form-group">
+            <label>市区町村</label>
+            <input type="text" name="city" placeholder="例：新宿区">
+        </div>
+
+        <div class="form-group">
+            <label>番地</label>
+            <input type="text" name="address" placeholder="例：西新宿1-1-1">
+        </div>
+
+        <div class="form-group">
+            <label>建物名・部屋番号</label>
+            <input type="text" name="building" placeholder="例：〇〇マンション101">
+        </div>
+
+        <p class="hint">※ここで入力した住所はマイページには保存されません。</p>
     </div>
+</div>
 
     <div class="form-card">
         <h2>配送希望日</h2>
@@ -167,4 +167,13 @@
             }
         });
     });
+
+    window.addEventListener("load", () => {
+    const selected = document.querySelector('input[name="address_type"]:checked');
+    if (selected && selected.value === "new") {
+        newAddressArea.style.display = "block";
+    } else {
+        newAddressArea.style.display = "none";
+    }
+});
 </script>
