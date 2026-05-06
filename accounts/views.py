@@ -892,3 +892,38 @@ def address_input(request):
     return render(request, "accounts/address_form.html", {
         "address": address
     })
+
+from django.core.paginator import Paginator
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
+
+@login_required(login_url="login")
+def order_list(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+
+    # 👇 月検索
+    month = request.GET.get("month")
+
+    if month:
+        year, month_num = month.split("-")
+        orders = orders.filter(created_at__year=year, created_at__month=month_num)
+
+    # 👇 月リスト作成（ドロップダウン用）
+    months = (
+        Order.objects.filter(user=request.user)
+        .annotate(month=TruncMonth("created_at"))
+        .values("month")
+        .annotate(count=Count("id"))
+        .order_by("-month")
+    )
+
+    # 👇 ページネーション
+    paginator = Paginator(orders, 5)  # 1ページ5件
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "accounts/order_list.html", {
+        "page_obj": page_obj,
+        "months": months,
+        "selected_month": month,
+    })

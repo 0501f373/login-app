@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>注文履歴</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #333;
+            color: white;
+        }
+
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 16px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .filter-card,
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2d6cdf;
+            color: white;
+        }
+
+        .btn-back {
+            background: #e5e5e5;
+            color: #333;
+        }
+
+        .order-info {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>注文履歴</div>
+    <div>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'mypage' %}">{{ request.user.first_name }}</a>
+            <a href="{% url 'logout' %}">ログアウト</a>
+        {% endif %}
+        <a href="{% url 'cart' %}">カート</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>注文履歴</h1>
+
+    <div class="filter-card">
+        <form method="get" class="filter-form">
+            <label>注文月</label>
+
+            <select name="month">
+                <option value="">すべて</option>
+                {% for m in months %}
+                    <option value="{{ m.month|date:'Y-m' }}"
+                        {% if selected_month == m.month|date:'Y-m' %}selected{% endif %}>
+                        {{ m.month|date:"Y年m月" }}（{{ m.count }}件）
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-primary">検索</button>
+
+            <a href="{% url 'order_list' %}" class="btn btn-back">
+                クリア
+            </a>
+        </form>
+    </div>
+
+    {% if page_obj %}
+        {% for order in page_obj %}
+            <div class="order-card">
+                <p class="order-info">
+                    <span class="label">注文日：</span>{{ order.created_at }}
+                </p>
+                <p class="order-info">
+                    <span class="label">合計金額：</span>{{ order.total_price }}円
+                </p>
+
+                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
+                    注文詳細を見る
+                </a>
+            </div>
+        {% empty %}
+            <div class="order-card">
+                <p>該当する注文履歴はありません。</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+            <a class="btn btn-back" href="?page=1&month={{ selected_month }}">最初</a>
+            <a class="btn btn-back" href="?page={{ page_obj.previous_page_number }}&month={{ selected_month }}">前へ</a>
+        {% endif %}
+
+        <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-back" href="?page={{ page_obj.next_page_number }}&month={{ selected_month }}">次へ</a>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 24px;">
+        <a href="{% url 'mypage' %}" class="btn btn-back">
+            マイページへ戻る
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

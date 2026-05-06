@@ -138,20 +138,15 @@
     <h2>注文履歴</h2>
 
     {% if orders %}
-        {% for order in orders %}
-            <div class="order-card">
-                <p class="order-info">
-                    <span class="label">注文日：</span>{{ order.created_at }}
-                </p>
-                <p class="order-info">
-                    <span class="label">合計金額：</span>{{ order.total_price }}円
-                </p>
+        <h2>注文履歴</h2>
 
-                <a href="{% url 'order_detail' order.id %}" class="btn btn-detail">
-                    注文詳細を見る
-                </a>
-            </div>
-        {% endfor %}
+<div class="order-card">
+    <p>注文履歴を確認できます</p>
+
+    <a href="{% url 'order_list' %}" class="btn btn-detail">
+        注文履歴を見る
+    </a>
+</div>
     {% else %}
         <div class="empty">
             <p>注文履歴はありません。</p>
