@@ -66,17 +66,16 @@
         <h2>配送先</h2>
 
         {% if address %}
-            <label class="radio-label">
-                <input type="radio" name="address_type" value="registered"
-                {% if address %}checked{% endif %}>
-                登録住所を使う
-            </label>
+    <label class="radio-label">
+        <input type="radio" name="address_type" value="registered"
+        {% if address %}checked{% endif %}>
+        登録住所を使う
+    </label>
 
-            {% if address %}
-            <div class="address-preview" style="font-size:12px; color:#555;">
-                〒{{ address.postal_code }} {{ address.prefecture }}{{ address.city }}
-            </div>
-        {% endif %}
+    <div class="address-preview" style="font-size:12px; color:#555;">
+        〒{{ address.postal_code }} {{ address.prefecture }}{{ address.city }}
+    </div>
+{% endif %}
 
         <label class="radio-label">
             <input type="radio" name="address_type" value="new" {% if not address %}checked{% endif %}>
