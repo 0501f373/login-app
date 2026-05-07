@@ -49,4 +49,6 @@ urlpatterns = [
     path("order/payment/edit/", views.order_payment_edit, name="order_payment_edit"),
     path("order/address/edit/", views.order_address_edit, name="order_address_edit"),
     path("order/payment/edit/", views.order_payment_edit, name="order_payment_edit"),
+    path("mypage/address/<int:address_id>/main/", views.address_set_main, name="address_set_main"),
+    path("mypage/address/<int:address_id>/delete/", views.address_delete, name="address_delete"),
     ]

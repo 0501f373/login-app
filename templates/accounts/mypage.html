@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>マイページ</title>
+
     <style>
         body {
             margin: 0;
@@ -25,10 +26,6 @@
             margin-left: 16px;
         }
 
-        .header-links a:hover {
-            text-decoration: underline;
-        }
-
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -39,35 +36,14 @@
             margin-bottom: 24px;
         }
 
-        .order-card {
+        .form-card,
+        .order-card,
+        .empty {
             background: white;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 16px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .order-info {
-            margin-bottom: 12px;
-            color: #333;
-        }
-
-        .label {
-            font-weight: bold;
-        }
-
-        .empty {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            color: #555;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 24px;
         }
 
         .btn {
@@ -77,9 +53,11 @@
             padding: 10px 18px;
             font-weight: bold;
             font-size: 14px;
+            border: none;
+            cursor: pointer;
         }
 
-        .btn-detail {
+        .btn-primary {
             background: #2d6cdf;
             color: white;
         }
@@ -88,71 +66,120 @@
             background: #e5e5e5;
             color: #333;
         }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .actions {
+            margin-top: 24px;
+        }
     </style>
 </head>
+
 <body>
-    <div class="header">
-    <div class="header-title">マイページ</div>
+
+<div class="header">
+    <div>マイページ</div>
 
     <div class="header-links">
-        {% if request.user.is_authenticated %}
-            <a href="{% url 'mypage' %}">
-                {{ request.user.first_name }}
-            </a>
-            <a href="{% url 'logout' %}">ログアウト</a>
-        {% else %}
-            <a href="{% url 'login' %}">ログイン</a>
-            <a href="{% url 'signup' %}">新規登録</a>
-        {% endif %}
-
         <a href="{% url 'cart' %}">
             カート（{{ cart_count }}）
+        </a>
+
+        <a href="{% url 'logout' %}">
+            ログアウト
         </a>
     </div>
 </div>
 
-    <div class="container">
+<div class="container">
+
     <h1 class="page-title">マイページ</h1>
 
-    <h2>登録住所</h2>
+    <div class="form-card">
+        <h2>登録住所</h2>
 
-{% if address %}
-    <div class="order-card">
-        <p>〒{{ address.postal_code }}</p>
-        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
+        <a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
+            住所を追加する
+        </a>
 
-        {% if address.building %}
-            <p>{{ address.building }}</p>
+        {% if addresses %}
+            {% for address in addresses %}
+
+                <div style="border-top:1px solid #ddd; padding-top:16px; margin-top:16px;">
+
+                    {% if address.is_main %}
+                        <p style="color:#2d6cdf; font-weight:bold;">
+                            メイン住所
+                        </p>
+                    {% endif %}
+
+                    <p>〒{{ address.postal_code }}</p>
+
+                    <p>
+                        {{ address.prefecture }}
+                        {{ address.city }}
+                        {{ address.address }}
+                    </p>
+
+                    {% if address.building %}
+                        <p>{{ address.building }}</p>
+                    {% endif %}
+
+                    <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+
+                        <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}"
+                           class="btn btn-primary">
+                            編集
+                        </a>
+
+                        {% if not address.is_main %}
+                            <a href="{% url 'address_set_main' address.id %}"
+                               class="btn btn-back">
+                                メインにする
+                            </a>
+                        {% endif %}
+
+                        <form method="post"
+                              action="{% url 'address_delete' address.id %}">
+                            {% csrf_token %}
+
+                            <button type="submit" class="btn btn-danger">
+                                削除
+                            </button>
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+            <p>登録住所はありません。</p>
         {% endif %}
 
-        <a href="{% url 'mypage_address_edit' %}" class="btn btn-detail">
-            住所を変更する
-        </a>
     </div>
-{% else %}
-    <div class="empty">
-        <p>住所が登録されていません。</p>
-
-        <a href="{% url 'address_input' %}" class="btn btn-detail">
-            住所を登録する
-        </a>
-    </div>
-{% endif %}
 
     {% if orders %}
         <h2>注文履歴</h2>
 
-<div class="order-card">
-    <p>注文履歴を確認できます</p>
+        <div class="order-card">
+            <p>注文履歴を確認できます</p>
 
-    <a href="{% url 'order_list' %}" class="btn btn-detail">
-        注文履歴を見る
-    </a>
-</div>
+            <a href="{% url 'order_list' %}" class="btn btn-primary">
+                注文履歴を見る
+            </a>
+        </div>
+
     {% else %}
+
         <div class="empty">
             <p>注文履歴はありません。</p>
         </div>
+
     {% endif %}
 
     <div class="actions">
@@ -160,6 +187,8 @@
             商品一覧へ戻る
         </a>
     </div>
+
 </div>
+
 </body>
 </html>

@@ -256,12 +256,12 @@ def mypage(request):
 
     cart_count = sum(cart.values())
 
-    address = Address.objects.filter(user=request.user).first()
+    addresses = Address.objects.filter(user=request.user).order_by("-is_main", "-created_at")
 
     return render(request, "accounts/mypage.html", {
         "orders": orders,
         "cart_count": cart_count,
-        "address": address,
+        "addresses": addresses,
     })
 
 def remove_from_cart(request, product_id):
@@ -953,16 +953,26 @@ def order_address_edit(request):
                 "error": "配送先住所を入力してください。",
             })
 
-        Address.objects.update_or_create(
-            user=request.user,
-            defaults={
-                "postal_code": postal_code,
-                "prefecture": prefecture,
-                "city": city,
-                "address": addr,
-                "building": building,
-            }
-        )
+        if address:
+           address.postal_code = postal_code
+           address.prefecture = prefecture
+           address.city = city
+           address.address = addr
+           address.building = building
+           address.save()
+
+        else:
+            is_first = not Address.objects.filter(user=request.user).exists()
+
+            Address.objects.create(
+                user=request.user,
+                postal_code=postal_code,
+                prefecture=prefecture,
+                city=city,
+                address=addr,
+                building=building,
+                is_main=is_first,
+            )
 
         return redirect("order_confirm")
 
@@ -1014,7 +1024,16 @@ def order_list(request):
 
 @login_required(login_url="login")
 def mypage_address_edit(request):
-    address = Address.objects.filter(user=request.user).first()
+    address_id = request.GET.get("address_id")
+
+    address = None
+
+    if address_id:
+        address = get_object_or_404(
+            Address,
+            id=address_id,
+            user=request.user
+        )
 
     if request.method == "POST":
         postal_code = request.POST.get("postal_code")
@@ -1023,22 +1042,60 @@ def mypage_address_edit(request):
         addr = request.POST.get("address")
         building = request.POST.get("building")
 
-        Address.objects.update_or_create(
-    user=request.user,
-    defaults={
-        "postal_code": postal_code,
-        "prefecture": prefecture,
-        "city": city,
-        "address": addr,
-        "building": building,
-    }
-)
+        if not postal_code or not prefecture or not city or not addr:
+            return render(request, "accounts/mypage_address_edit.html", {
+                "address": address,
+                "error": "住所を入力してください。",
+            })
+
+        if address:
+            address.postal_code = postal_code
+            address.prefecture = prefecture
+            address.city = city
+            address.address = addr
+            address.building = building
+            address.save()
+
+        else:
+            is_first = not Address.objects.filter(user=request.user).exists()
+
+            Address.objects.create(
+                user=request.user,
+                postal_code=postal_code,
+                prefecture=prefecture,
+                city=city,
+                address=addr,
+                building=building,
+                is_main=is_first,
+            )
 
         return redirect("mypage")
 
     return render(request, "accounts/mypage_address_edit.html", {
         "address": address,
     })
+
+
+@login_required(login_url="login")
+def address_set_main(request, address_id):
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+
+    Address.objects.filter(user=request.user).update(is_main=False)
+
+    address.is_main = True
+    address.save()
+
+    return redirect("mypage")
+
+
+@login_required(login_url="login")
+def address_delete(request, address_id):
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+
+    if request.method == "POST":
+        address.delete()
+
+    return redirect("mypage")
 
 @login_required(login_url="login")
 def order_address_edit(request):

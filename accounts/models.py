@@ -105,7 +105,11 @@ class OrderItem(models.Model):
         return self.product.name
     
 class Address(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="addresses"
+    )
 
     postal_code = models.CharField("郵便番号", max_length=10)
     prefecture = models.CharField("都道府県", max_length=50)
@@ -113,7 +117,11 @@ class Address(models.Model):
     address = models.CharField("番地", max_length=200)
     building = models.CharField("建物名", max_length=200, blank=True)
 
+    is_main = models.BooleanField("メイン住所", default=False)
+    created_at = models.DateTimeField("登録日", auto_now_add=True)
+
     def __str__(self):
-        return self.user.email
+        main_label = "【メイン】" if self.is_main else ""
+        return f"{main_label}{self.user.email} / {self.prefecture}{self.city}{self.address}"
     
     
