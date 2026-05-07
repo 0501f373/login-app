@@ -108,6 +108,27 @@
         display: inline-block;
         text-decoration: none;
     }
+
+    .update-button {
+        background: #2d6cdf;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .delete-button {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 8px;
+    }
 </style>
 </head>
 <body>
@@ -150,8 +171,8 @@
     <label>数量:</label>
     <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
 
-    <button type="submit">更新</button>
-    <button type="submit" name="quantity" value="0">削除</button>
+    <button type="submit" class="update-button">数量を変更する</button>
+    <button type="submit" name="quantity" value="0" class="delete-button">商品を削除する</button>
 </form>
 <p>小計: {{ item.subtotal }}円</p>
     </div>

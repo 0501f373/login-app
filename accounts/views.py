@@ -898,6 +898,12 @@ def address_input(request):
             city = request.POST.get("city")
             addr = request.POST.get("address")
             building = request.POST.get("building")
+            
+            if not postal_code or not prefecture or not city or not addr:
+                return render(request, "accounts/address_form.html", {
+                    "address": address,
+                    "error": "配送先住所を入力してください。",
+                })
 
             if request.POST.get("save_to_mypage") == "1":
                 Address.objects.update_or_create(

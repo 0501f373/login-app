@@ -64,6 +64,10 @@
 
 <div class="container">
     <h1>配送先・支払い方法</h1>
+    
+    {% if error %}
+        <p style="color:red; font-weight:bold;">{{ error }}</p>
+    {% endif %}
 
 
     <form method="post">
