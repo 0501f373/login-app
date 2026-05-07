@@ -354,7 +354,10 @@ def order_confirm(request):
                 "subtotal": subtotal,
             })
 
-        address = Address.objects.get(user=request.user)
+        address = Address.objects.filter(user=request.user, is_main=True).first()
+
+        if not address:
+            address = Address.objects.filter(user=request.user).first()
         payment_method = request.session.get("payment_method", "credit_card")
         delivery_date = request.session.get("delivery_date")
         delivery_time = request.session.get("delivery_time")
@@ -383,7 +386,10 @@ def order_confirm(request):
     delivery_date = request.session.get("delivery_date")
     delivery_time = request.session.get("delivery_time")
 
-    address = Address.objects.get(user=request.user)
+    address = Address.objects.filter(user=request.user, is_main=True).first()
+
+    if not address:
+        address = Address.objects.filter(user=request.user).first()
     # 注文作成
     order = Order.objects.create(
     user=request.user,
@@ -1096,34 +1102,3 @@ def address_delete(request, address_id):
         address.delete()
 
     return redirect("mypage")
-
-@login_required(login_url="login")
-def order_address_edit(request):
-    address = Address.objects.filter(user=request.user).first()
-
-    if request.method == "POST":
-        Address.objects.update_or_create(
-            user=request.user,
-            defaults={
-                "postal_code": request.POST.get("postal_code"),
-                "prefecture": request.POST.get("prefecture"),
-                "city": request.POST.get("city"),
-                "address": request.POST.get("address"),
-                "building": request.POST.get("building"),
-            }
-        )
-        return redirect("order_confirm")
-
-    return render(request, "accounts/order_address_edit.html", {
-        "address": address,
-    })
-
-
-@login_required(login_url="login")
-def order_payment_edit(request):
-    if request.method == "POST":
-        request.session["payment_method"] = request.POST.get("payment_method", "credit_card")
-        request.session.modified = True
-        return redirect("order_confirm")
-
-    return render(request, "accounts/order_payment_edit.html")
