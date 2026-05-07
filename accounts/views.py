@@ -937,6 +937,51 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Count
 
 @login_required(login_url="login")
+def order_address_edit(request):
+    address = Address.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
+        postal_code = request.POST.get("postal_code")
+        prefecture = request.POST.get("prefecture")
+        city = request.POST.get("city")
+        addr = request.POST.get("address")
+        building = request.POST.get("building")
+
+        if not postal_code or not prefecture or not city or not addr:
+            return render(request, "accounts/order_address_edit.html", {
+                "address": address,
+                "error": "配送先住所を入力してください。",
+            })
+
+        Address.objects.update_or_create(
+            user=request.user,
+            defaults={
+                "postal_code": postal_code,
+                "prefecture": prefecture,
+                "city": city,
+                "address": addr,
+                "building": building,
+            }
+        )
+
+        return redirect("order_confirm")
+
+    return render(request, "accounts/order_address_edit.html", {
+        "address": address,
+    })
+
+
+@login_required(login_url="login")
+def order_payment_edit(request):
+    if request.method == "POST":
+        request.session["payment_method"] = request.POST.get("payment_method", "credit_card")
+        request.session.modified = True
+        return redirect("order_confirm")
+
+    return render(request, "accounts/order_payment_edit.html")
+
+
+@login_required(login_url="login")
 def order_list(request):
     orders = Order.objects.filter(user=request.user).order_by("-created_at")
 
@@ -994,3 +1039,34 @@ def mypage_address_edit(request):
     return render(request, "accounts/mypage_address_edit.html", {
         "address": address,
     })
+
+@login_required(login_url="login")
+def order_address_edit(request):
+    address = Address.objects.filter(user=request.user).first()
+
+    if request.method == "POST":
+        Address.objects.update_or_create(
+            user=request.user,
+            defaults={
+                "postal_code": request.POST.get("postal_code"),
+                "prefecture": request.POST.get("prefecture"),
+                "city": request.POST.get("city"),
+                "address": request.POST.get("address"),
+                "building": request.POST.get("building"),
+            }
+        )
+        return redirect("order_confirm")
+
+    return render(request, "accounts/order_address_edit.html", {
+        "address": address,
+    })
+
+
+@login_required(login_url="login")
+def order_payment_edit(request):
+    if request.method == "POST":
+        request.session["payment_method"] = request.POST.get("payment_method", "credit_card")
+        request.session.modified = True
+        return redirect("order_confirm")
+
+    return render(request, "accounts/order_payment_edit.html")

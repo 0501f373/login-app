@@ -129,6 +129,15 @@
         cursor: pointer;
         margin-left: 8px;
     }
+
+    .cart-quantity-input {
+        width: 70px;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-right: 8px;
+    }
 </style>
 </head>
 <body>
@@ -169,7 +178,13 @@
     {% csrf_token %}
 
     <label>数量:</label>
-    <input type="number" name="quantity" value="{{ item.quantity }}" min="0">
+    <input
+    type="number"
+    name="quantity"
+    value="{{ item.quantity }}"
+    min="0"
+    class="cart-quantity-input"
+>
 
     <button type="submit" class="update-button">数量を変更する</button>
     <button type="submit" name="quantity" value="0" class="delete-button">商品を削除する</button>
