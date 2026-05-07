@@ -136,10 +136,12 @@
                         </a>
 
                         {% if not address.is_main %}
-                            <a href="{% url 'address_set_main' address.id %}"
-                               class="btn btn-back">
-                                メインにする
-                            </a>
+                            <form method="post" action="{% url 'address_set_main' address.id %}">
+                               {% csrf_token %}
+                               <button type="submit" class="btn btn-back">
+                                   メインにする
+                                </button>
+                            </form>
                         {% endif %}
 
                         <form method="post"
