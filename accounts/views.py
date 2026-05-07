@@ -884,12 +884,21 @@ def management_order_detail(request, order_id):
 
 @login_required(login_url="login")
 def address_input(request):
-    address = Address.objects.filter(user=request.user).first()
+    address = Address.objects.filter(user=request.user, is_main=True).first()
 
+    if not address:
+        address = Address.objects.filter(user=request.user).first()
+        
     if request.method == "POST":
         address_type = request.POST.get("address_type")
 
         if address_type == "registered":
+            saved_address = Address.objects.filter(
+            user=request.user,
+            is_main=True
+        ).first()
+
+        if not saved_address:
             saved_address = Address.objects.filter(user=request.user).first()
 
             postal_code = saved_address.postal_code
