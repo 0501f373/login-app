@@ -119,6 +119,8 @@ class Address(models.Model):
 
     is_main = models.BooleanField("メイン住所", default=False)
     created_at = models.DateTimeField("登録日", auto_now_add=True)
+    name = models.CharField("氏名", max_length=100)
+    phone_number = models.CharField("電話番号", max_length=20)
 
     def __str__(self):
         main_label = "【メイン】" if self.is_main else ""

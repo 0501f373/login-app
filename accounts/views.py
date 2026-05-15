@@ -372,6 +372,7 @@ def order_confirm(request):
             "payment_method": payment_method,
             "delivery_date": delivery_date,
             "delivery_time": delivery_time,
+            "profile": request.user.userprofile,
         })
 
     # 👇 POST → 注文確定
@@ -975,6 +976,8 @@ def order_address_edit(request):
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
+        name = request.POST.get("name")
+        phone_number = request.POST.get("phone_number")
 
         if not postal_code or not prefecture or not city or not addr:
             return render(request, "accounts/order_address_edit.html", {
@@ -995,6 +998,8 @@ def order_address_edit(request):
 
             Address.objects.create(
                 user=request.user,
+                name=name,
+                phone_number=phone_number,
                 postal_code=postal_code,
                 prefecture=prefecture,
                 city=city,
@@ -1070,6 +1075,8 @@ def mypage_address_edit(request):
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
+        name = request.POST.get("name")
+        phone_number = request.POST.get("phone_number")
 
         if not postal_code or not prefecture or not city or not addr:
             return render(request, "accounts/mypage_address_edit.html", {
@@ -1078,6 +1085,9 @@ def mypage_address_edit(request):
             })
 
         if address:
+            address.name = name
+            address.phone_number = phone_number
+
             address.postal_code = postal_code
             address.prefecture = prefecture
             address.city = city
@@ -1099,7 +1109,7 @@ def mypage_address_edit(request):
             )
 
         messages.success(request, "住所を保存しました")
-        
+
         return redirect("mypage_address_list")
 
     return render(request, "accounts/mypage_address_edit.html", {
