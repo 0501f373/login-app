@@ -12,6 +12,7 @@ from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
 
+
 def validate_password_policy(password):
     errors = []
 
@@ -1113,7 +1114,9 @@ def address_set_main(request, address_id):
     address.is_main = True
     address.save()
 
-    return redirect("mypage")
+    messages.success(request, "メイン住所を変更しました")
+
+    return redirect("mypage_address_list")
 
 
 @login_required(login_url="login")
@@ -1122,8 +1125,8 @@ def address_delete(request, address_id):
 
     if request.method == "POST":
         address.delete()
-
-    return redirect("mypage")
+        messages.success(request, "住所を削除しました")
+    return redirect("mypage_address_list")
 
 #登録情報変更
 @login_required(login_url="login")
