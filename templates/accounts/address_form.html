@@ -78,7 +78,8 @@
 
     {% if address %}
         <label class="radio-label">
-            <input type="radio" name="address_type" value="registered" checked>
+            <input type="radio" name="address_type" value="registered"
+            {% if address %}checked{% endif %}>
             登録住所を使う
         </label>
 

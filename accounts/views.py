@@ -401,6 +401,15 @@ def order_confirm(request):
     payment_method=payment_method,
     delivery_date=delivery_date if delivery_date else None,
     delivery_time=delivery_time if delivery_time else None,
+
+    delivery_name=address.name,
+    delivery_phone_number=address.phone_number,
+    delivery_postal_code=address.postal_code,
+    delivery_prefecture=address.prefecture,
+    delivery_city=address.city,
+    delivery_address=address.address,
+    delivery_building=address.building,
+    delivery_address_id=address.id,
 )
 
     for product_id, quantity in cart.items():
@@ -888,7 +897,18 @@ def management_order_detail(request, order_id):
 
 @login_required(login_url="login")
 def address_input(request):
-    address = Address.objects.filter(user=request.user, is_main=True).first()
+    last_order = Order.objects.filter(user=request.user).order_by("-created_at").first()
+
+    address = None
+
+    if last_order and last_order.delivery_address_id:
+        address = Address.objects.filter(
+            id=last_order.delivery_address_id,
+            user=request.user
+        ).first()
+
+    if not address:
+        address = Address.objects.filter(user=request.user, is_main=True).first()
 
     if not address:
         address = Address.objects.filter(user=request.user).first()
@@ -935,6 +955,15 @@ def address_input(request):
             }
 
             if request.POST.get("save_to_mypage") == "1":
+
+                address_count = Address.objects.filter(user=request.user).count()
+                if address_count >= 5:
+                    messages.error(request, "住所は最大5件まで登録できます")
+                    return render(request, "accounts/address_form.html", {
+                        "address": address,
+                        "error": "住所は最大5件まで登録できます",
+                        })
+                
                 is_first = not Address.objects.filter(user=request.user).exists()
 
                 Address.objects.create(
@@ -1142,8 +1171,19 @@ def address_delete(request, address_id):
     address = get_object_or_404(Address, id=address_id, user=request.user)
 
     if request.method == "POST":
+        was_main = address.is_main
+
         address.delete()
+
+        if was_main:
+            next_address = Address.objects.filter(user=request.user).order_by("-created_at").first()
+
+            if next_address:
+                next_address.is_main = True
+                next_address.save()
+
         messages.success(request, "住所を削除しました")
+
     return redirect("mypage_address_list")
 
 #登録情報変更
