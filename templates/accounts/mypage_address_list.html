@@ -1,34 +1,153 @@
-<h1>お届け先の追加・変更</h1>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>お届け先の追加・変更</title>
 
-<a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
-    住所を追加する
-</a>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background: #f5f5f5;
+        }
 
-{% for address in addresses %}
-    <div style="margin-top:20px; border-top:1px solid #ddd; padding-top:10px;">
+        .header {
+            padding: 16px 24px;
+            background: #333;
+            color: white;
+        }
 
-        {% if address.is_main %}
-            <p style="color:blue;">メイン住所</p>
-        {% endif %}
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
 
-        <p>〒{{ address.postal_code }}</p>
-        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
+        .address-card,
+        .empty {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
 
-        <div style="display:flex; gap:8px;">
-            <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}">編集</a>
+        .main-label {
+            color: #2d6cdf;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
 
-            {% if not address.is_main %}
-                <form method="post" action="{% url 'address_set_main' address.id %}">
-                    {% csrf_token %}
-                    <button type="submit">メインにする</button>
-                </form>
-            {% endif %}
+        .address-text {
+            line-height: 1.7;
+            margin: 0;
+        }
 
-            <form method="post" action="{% url 'address_delete' address.id %}">
-                {% csrf_token %}
-                <button type="submit">削除</button>
-            </form>
-        </div>
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
 
+        .top-actions {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2d6cdf;
+            color: white;
+        }
+
+        .btn-back {
+            background: #e5e5e5;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    お届け先の追加・変更
+</div>
+
+<div class="container">
+    <h1>お届け先の追加・変更</h1>
+
+    <div class="top-actions">
+        <a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
+            住所を追加する
+        </a>
     </div>
-{% endfor %}
+
+    {% if addresses %}
+        {% for address in addresses %}
+            <div class="address-card">
+                {% if address.is_main %}
+                    <div class="main-label">メイン住所</div>
+                {% endif %}
+
+                <p class="address-text">〒{{ address.postal_code }}</p>
+                <p class="address-text">
+                    {{ address.prefecture }}{{ address.city }}{{ address.address }}
+                </p>
+
+                {% if address.building %}
+                    <p class="address-text">{{ address.building }}</p>
+                {% endif %}
+
+                <div class="actions">
+                    <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}" class="btn btn-primary">
+                        編集
+                    </a>
+
+                    {% if not address.is_main %}
+                        <form method="post" action="{% url 'address_set_main' address.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-back">
+                                メインにする
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'address_delete' address.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            削除
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty">
+            <p>登録住所はありません。</p>
+        </div>
+    {% endif %}
+
+    <div class="actions">
+        <a href="{% url 'mypage' %}" class="btn btn-back">
+            マイページへ戻る
+        </a>
+    </div>
+</div>
+
+</body>
+</html>
