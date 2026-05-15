@@ -101,7 +101,7 @@
     <div class="form-card">
         <h2>会員情報</h2>
 
-        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
             <a href="{% url 'mypage_profile_edit' %}" class="btn btn-primary">
                 登録情報変更
             </a>
@@ -114,9 +114,9 @@
 
 
     {% if orders %}
-        <h2>注文履歴</h2>
-
         <div class="order-card">
+            <h2>注文履歴</h2>
+
             <p>注文履歴を確認できます</p>
 
             <a href="{% url 'order_list' %}" class="btn btn-primary">
