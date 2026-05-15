@@ -205,7 +205,9 @@
 <div class="card">
     <div class="info">
         <div class="name">配送先</div>
-
+        
+        <div class="meta">氏名：{{ address.name }}</div>
+        <div class="meta">電話番号：{{ address.phone_number }}</div>
         <div class="meta">〒{{ address.postal_code }}</div>
         <div class="meta">
             {{ address.prefecture }}{{ address.city }}{{ address.address }}

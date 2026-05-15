@@ -101,7 +101,17 @@
     <div class="form-card">
         <form method="post">
             {% csrf_token %}
+            
+            <div class="form-group">
+                <label>氏名</label>
+                <input type="text" name="name" value="{{ address.name|default:'' }}" required>
+            </div>
 
+    <div class="form-group">
+        <label>電話番号</label>
+        <input type="text" name="phone_number" value="{{ address.phone_number|default:'' }}" required>
+    </div>
+             
             <div class="form-group">
                 <label>郵便番号</label>
                 <input type="text" name="postal_code" value="{{ address.postal_code|default:'' }}" placeholder="例：123-4567" required>
