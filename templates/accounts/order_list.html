@@ -131,32 +131,20 @@
     {% if page_obj %}
         {% for order in page_obj %}
             <div class="order-card">
-                <p class="order-info">
-                    <span class="label">注文日：</span>{{ order.created_at }}
-                </p>
-                <p>配送先</p>
+    <p>
+        <strong>注文日：</strong>
+        {{ order.created_at|date:"Y年m月d日 H:i" }}
+    </p>
 
-                <p>氏名：{{ order.delivery_name|default:"未設定" }}</p>
-                <p>電話番号：{{ order.delivery_phone_number|default:"未設定" }}</p>
-                <p>〒{{ order.delivery_postal_code }}</p>
-                <p>
-                    {{ order.delivery_prefecture }}
-                    {{ order.delivery_city }}
-                    {{ order.delivery_address }}
-                </p>
+    <p>
+        <strong>合計：</strong>
+        {{ order.total_price }}円
+    </p>
 
-                {% if order.delivery_building %}
-                    <p>{{ order.delivery_building }}</p>
-                {% endif %}
-
-                <p class="order-info">
-                    <span class="label">合計金額：</span>{{ order.total_price }}円
-                </p>
-
-                <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
-                    注文詳細を見る
-                </a>
-            </div>
+    <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
+        注文詳細を見る
+    </a>
+</div>
         {% empty %}
             <div class="order-card">
                 <p>該当する注文履歴はありません。</p>

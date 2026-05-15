@@ -390,27 +390,53 @@ def order_confirm(request):
     delivery_date = request.session.get("delivery_date")
     delivery_time = request.session.get("delivery_time")
 
-    address = Address.objects.filter(user=request.user, is_main=True).first()
+    checkout_address = request.session.get("checkout_address")
 
-    if not address:
-        address = Address.objects.filter(user=request.user).first()
-    # 注文作成
+    if checkout_address:
+        address = checkout_address
+    else:
+        address = Address.objects.filter(user=request.user, is_main=True).first()
+
+        if not address:
+            address = Address.objects.filter(user=request.user).first()
+
+
+    if isinstance(address, dict):
+        delivery_name = address.get("name", "")
+        delivery_phone_number = address.get("phone_number", "")
+        delivery_postal_code = address.get("postal_code", "")
+        delivery_prefecture = address.get("prefecture", "")
+        delivery_city = address.get("city", "")
+        delivery_address = address.get("address", "")
+        delivery_building = address.get("building", "")
+        delivery_address_id = None
+    else:
+        delivery_name = address.name
+        delivery_phone_number = address.phone_number
+        delivery_postal_code = address.postal_code
+        delivery_prefecture = address.prefecture
+        delivery_city = address.city
+        delivery_address = address.address
+        delivery_building = address.building
+        delivery_address_id = address.id
+
+
     order = Order.objects.create(
-    user=request.user,
-    total_price=0,
-    payment_method=payment_method,
-    delivery_date=delivery_date if delivery_date else None,
-    delivery_time=delivery_time if delivery_time else None,
+        user=request.user,
+        total_price=0,
+        payment_method=payment_method,
+        delivery_date=delivery_date if delivery_date else None,
+        delivery_time=delivery_time if delivery_time else None,
 
-    delivery_name=address.name,
-    delivery_phone_number=address.phone_number,
-    delivery_postal_code=address.postal_code,
-    delivery_prefecture=address.prefecture,
-    delivery_city=address.city,
-    delivery_address=address.address,
-    delivery_building=address.building,
-    delivery_address_id=address.id,
-)
+        delivery_name=delivery_name,
+        delivery_phone_number=delivery_phone_number,
+        delivery_postal_code=delivery_postal_code,
+        delivery_prefecture=delivery_prefecture,
+        delivery_city=delivery_city,
+        delivery_address=delivery_address,
+        delivery_building=delivery_building,
+        delivery_address_id=delivery_address_id,
+    )
 
     for product_id, quantity in cart.items():
         product = get_object_or_404(Product, id=product_id)
@@ -997,52 +1023,65 @@ from django.db.models import Count
 
 @login_required(login_url="login")
 def order_address_edit(request):
-    address = Address.objects.filter(user=request.user).first()
+    addresses = Address.objects.filter(user=request.user).order_by("-is_main", "-created_at")
+
+    address = addresses.filter(is_main=True).first()
+    if not address:
+        address = addresses.first()
 
     if request.method == "POST":
+        selected_address_id = request.POST.get("selected_address_id")
+
+        if selected_address_id:
+            selected_address = get_object_or_404(
+                Address,
+                id=selected_address_id,
+                user=request.user
+            )
+
+            request.session["checkout_address"] = {
+                "name": selected_address.name,
+                "phone_number": selected_address.phone_number,
+                "postal_code": selected_address.postal_code,
+                "prefecture": selected_address.prefecture,
+                "city": selected_address.city,
+                "address": selected_address.address,
+                "building": selected_address.building,
+            }
+            request.session.modified = True
+
+            return redirect("order_confirm")
+
         postal_code = request.POST.get("postal_code")
         prefecture = request.POST.get("prefecture")
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
-        name = request.POST.get("name")
-        phone_number = request.POST.get("phone_number")
 
         if not postal_code or not prefecture or not city or not addr:
             return render(request, "accounts/order_address_edit.html", {
                 "address": address,
+                "addresses": addresses,
                 "error": "配送先住所を入力してください。",
             })
 
-        if address:
-           address.postal_code = postal_code
-           address.prefecture = prefecture
-           address.city = city
-           address.address = addr
-           address.building = building
-           address.save()
-
-        else:
-            is_first = not Address.objects.filter(user=request.user).exists()
-
-            Address.objects.create(
-                user=request.user,
-                name=name,
-                phone_number=phone_number,
-                postal_code=postal_code,
-                prefecture=prefecture,
-                city=city,
-                address=addr,
-                building=building,
-                is_main=is_first,
-            )
+        request.session["checkout_address"] = {
+            "name": request.user.first_name,
+            "phone_number": "",
+            "postal_code": postal_code,
+            "prefecture": prefecture,
+            "city": city,
+            "address": addr,
+            "building": building,
+        }
+        request.session.modified = True
 
         return redirect("order_confirm")
 
     return render(request, "accounts/order_address_edit.html", {
         "address": address,
+        "addresses": addresses,
     })
-
 
 @login_required(login_url="login")
 def order_payment_edit(request):

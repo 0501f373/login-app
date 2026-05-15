@@ -33,20 +33,43 @@
         <form method="post">
             {% csrf_token %}
 
+            {% if addresses %}
+                <h3>登録住所から選択</h3>
+
+                {% for saved_address in addresses %}
+                    <label style="display:block; margin-bottom:12px; font-weight: normal;">
+                        <input type="radio" name="selected_address_id" value="{{ saved_address.id }}"
+                        {% if saved_address.is_main %}checked{% endif %}>
+
+                        {% if saved_address.is_main %}【メイン】{% endif %}
+                        {{ saved_address.name|default:"未設定" }} /
+                        {{ saved_address.phone_number|default:"未設定" }} /
+                        〒{{ saved_address.postal_code }}
+                        {{ saved_address.prefecture }}{{ saved_address.city }}{{ saved_address.address }}
+                        {{ saved_address.building }}
+                    </label>
+                {% endfor %}
+
+                <hr>
+            {% endif %}
+
             <div class="form-group">
                 <label>郵便番号</label>
-                <input type="text" name="postal_code" value="{{ address.postal_code|default:'' }}">
+                <input type="text" id="postal_code" name="postal_code" value="{{ address.postal_code|default:'' }}">
             </div>
+
+            <button type="button" onclick="searchAddress()" class="btn btn-back">
+                郵便番号から住所入力
+            </button>
 
             <div class="form-group">
                 <label>都道府県</label>
-                <input type="text" name="prefecture" value="{{ address.prefecture|default:'' }}">
+                <input type="text" id="prefecture" name="prefecture" value="{{ address.prefecture|default:'' }}">
             </div>
 
             <div class="form-group">
                 <label>市区町村</label>
-                <input type="text" name="city" value="{{ address.city|default:'' }}">
-            </div>
+                <input type="text" id="city" name="city" value="{{ address.city|default:'' }}">
 
             <div class="form-group">
                 <label>番地</label>
@@ -65,6 +88,33 @@
         </form>
     </div>
 </div>
+<script>
+function searchAddress() {
+    const postalCode = document.getElementById("postal_code").value.replace("-", "");
+
+    if (!postalCode) {
+        alert("郵便番号を入力してください");
+        return;
+    }
+
+    fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.results) {
+                alert("住所が見つかりませんでした");
+                return;
+            }
+
+            const result = data.results[0];
+
+            document.getElementById("prefecture").value = result.address1;
+            document.getElementById("city").value = result.address2 + result.address3;
+        })
+        .catch(() => {
+            alert("住所検索に失敗しました");
+        });
+}
+</script>
 
 </body>
 </html>
