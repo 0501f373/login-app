@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
 
-from .models import Product, Category, Manufacturer, StockHistory, ProductImage, Order, OrderItem, Address
+from .models import Product, Category, Manufacturer, StockHistory, ProductImage, Order, OrderItem, Address, UserProfile
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
@@ -258,12 +258,14 @@ def mypage(request):
 
     addresses = Address.objects.filter(user=request.user).order_by("-is_main", "-created_at")
 
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     return render(request, "accounts/mypage.html", {
         "orders": orders,
         "cart_count": cart_count,
         "addresses": addresses,
+        "profile": profile,
     })
-
 def remove_from_cart(request, product_id):
     cart = request.session.get("cart", {})
 

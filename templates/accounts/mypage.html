@@ -99,71 +99,61 @@
     <h1 class="page-title">マイページ</h1>
 
     <div class="form-card">
-        <h2>登録住所</h2>
+    <h2>会員情報</h2>
 
-        <a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
-            住所を追加する
-        </a>
+    <p><strong>氏名：</strong>{{ request.user.first_name }}</p>
+    <p><strong>電話番号：</strong>{{ profile.phone_number|default:"未登録" }}</p>
+    <p><strong>メールアドレス：</strong>{{ request.user.email }}</p>
 
-        {% if addresses %}
-            {% for address in addresses %}
+    <hr>
 
-                <div style="border-top:1px solid #ddd; padding-top:16px; margin-top:16px;">
+    <h3>登録住所</h3>
 
-                    {% if address.is_main %}
-                        <p style="color:#2d6cdf; font-weight:bold;">
-                            メイン住所
-                        </p>
-                    {% endif %}
+    <a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
+        住所を追加する
+    </a>
 
-                    <p>〒{{ address.postal_code }}</p>
+    {% if addresses %}
+        {% for address in addresses %}
+            <div style="border-top:1px solid #ddd; padding-top:16px; margin-top:16px;">
+                {% if address.is_main %}
+                    <p style="color:#2d6cdf; font-weight:bold;">メイン住所</p>
+                {% endif %}
 
-                    <p>
-                        {{ address.prefecture }}
-                        {{ address.city }}
-                        {{ address.address }}
-                    </p>
+                <p>〒{{ address.postal_code }}</p>
+                <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
 
-                    {% if address.building %}
-                        <p>{{ address.building }}</p>
-                    {% endif %}
+                {% if address.building %}
+                    <p>{{ address.building }}</p>
+                {% endif %}
 
-                    <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                    <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}" class="btn btn-primary">
+                        編集
+                    </a>
 
-                        <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}"
-                           class="btn btn-primary">
-                            編集
-                        </a>
-
-                        {% if not address.is_main %}
-                            <form method="post" action="{% url 'address_set_main' address.id %}">
-                               {% csrf_token %}
-                               <button type="submit" class="btn btn-back">
-                                   メインにする
-                                </button>
-                            </form>
-                        {% endif %}
-
-                        <form method="post"
-                              action="{% url 'address_delete' address.id %}">
+                    {% if not address.is_main %}
+                        <form method="post" action="{% url 'address_set_main' address.id %}">
                             {% csrf_token %}
-
-                            <button type="submit" class="btn btn-danger">
-                                削除
+                            <button type="submit" class="btn btn-back">
+                                メインにする
                             </button>
                         </form>
+                    {% endif %}
 
-                    </div>
-
+                    <form method="post" action="{% url 'address_delete' address.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">
+                            削除
+                        </button>
+                    </form>
                 </div>
-
-            {% endfor %}
-
-        {% else %}
-            <p>登録住所はありません。</p>
-        {% endif %}
-
-    </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>登録住所はありません。</p>
+    {% endif %}
+</div>
 
     {% if orders %}
         <h2>注文履歴</h2>
@@ -189,7 +179,7 @@
             商品一覧へ戻る
         </a>
     </div>
-
+<
 </div>
 
 </body>
