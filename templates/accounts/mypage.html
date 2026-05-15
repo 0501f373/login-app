@@ -75,6 +75,16 @@
         .actions {
             margin-top: 24px;
         }
+
+        .link {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -99,31 +109,30 @@
     <h1 class="page-title">マイページ</h1>
 
     <div class="form-card">
-        <h2>会員情報</h2>
-    </div>
+    <h2>会員情報</h2>
 
-    <div style="margin: 16px 0; display:flex; flex-direction:column; gap:12px;">
-        <a href="{% url 'mypage_profile_edit' %}" class="btn btn-primary">
+    <div style="margin-top: 16px; display:flex; flex-direction:column; gap:12px;">
+        <a href="{% url 'mypage_profile_edit' %}" class="link">
             登録情報変更
         </a>
 
-        <a href="{% url 'mypage_address_list' %}" class="btn btn-back">
+        <a href="{% url 'mypage_address_list' %}" class="link">
             お届け先の追加・変更
         </a>
     </div>
+</div>
 
 
     {% if orders %}
-        <div class="order-card">
-            <h2>注文履歴</h2>
-            <p>注文履歴を確認できます</p>
-        </div>
+    <div class="order-card">
+        <h2>注文履歴</h2>
 
         <div style="margin-top: 12px;">
-            <a href="{% url 'order_list' %}" class="btn btn-primary">
+            <a href="{% url 'order_list' %}" class="link">
                 注文履歴を見る
             </a>
         </div>
+    </div>
 
     {% else %}
 
