@@ -1141,7 +1141,7 @@ def mypage_profile_edit(request):
         profile.phone_number = request.POST.get("phone_number")
         profile.save()
 
-        return redirect("mypage")
+        return redirect("mypage_address_list")
 
     return render(request, "accounts/mypage_profile_edit.html", {
         "profile": profile
