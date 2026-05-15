@@ -100,25 +100,26 @@
 
     <div class="form-card">
         <h2>会員情報</h2>
+    </div>
 
-        <div style="display:flex; flex-direction:column; gap:12px; align-items:flex-start;">
-            <a href="{% url 'mypage_profile_edit' %}" class="btn btn-primary">
-                登録情報変更
-            </a>
+    <div style="margin: 16px 0; display:flex; flex-direction:column; gap:12px;">
+        <a href="{% url 'mypage_profile_edit' %}" class="btn btn-primary">
+            登録情報変更
+        </a>
 
-            <a href="{% url 'mypage_address_list' %}" class="btn btn-back">
-                お届け先の追加・変更
-            </a>
-        </div>
+        <a href="{% url 'mypage_address_list' %}" class="btn btn-back">
+            お届け先の追加・変更
+        </a>
     </div>
 
 
     {% if orders %}
         <div class="order-card">
             <h2>注文履歴</h2>
-
             <p>注文履歴を確認できます</p>
+        </div>
 
+        <div style="margin-top: 12px;">
             <a href="{% url 'order_list' %}" class="btn btn-primary">
                 注文履歴を見る
             </a>
