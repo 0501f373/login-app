@@ -11,6 +11,8 @@ from .models import Product, Category, Manufacturer, StockHistory, ProductImage,
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
 
 def validate_password_policy(password):
     errors = []
@@ -888,18 +890,20 @@ def address_input(request):
 
     if not address:
         address = Address.objects.filter(user=request.user).first()
-        
+
     if request.method == "POST":
         address_type = request.POST.get("address_type")
 
         if address_type == "registered":
-            saved_address = Address.objects.filter(
-            user=request.user,
-            is_main=True
-        ).first()
+            request.session.pop("checkout_address", None)
 
-        if not saved_address:
-            saved_address = Address.objects.filter(user=request.user).first()
+            saved_address = Address.objects.filter(
+                user=request.user,
+                is_main=True
+            ).first()
+
+            if not saved_address:
+                saved_address = Address.objects.filter(user=request.user).first()
 
             postal_code = saved_address.postal_code
             prefecture = saved_address.prefecture
@@ -913,12 +917,20 @@ def address_input(request):
             city = request.POST.get("city")
             addr = request.POST.get("address")
             building = request.POST.get("building")
-            
+
             if not postal_code or not prefecture or not city or not addr:
                 return render(request, "accounts/address_form.html", {
                     "address": address,
                     "error": "配送先住所を入力してください。",
                 })
+
+            request.session["checkout_address"] = {
+                "postal_code": postal_code,
+                "prefecture": prefecture,
+                "city": city,
+                "address": addr,
+                "building": building,
+            }
 
             if request.POST.get("save_to_mypage") == "1":
                 is_first = not Address.objects.filter(user=request.user).exists()
@@ -947,55 +959,6 @@ def address_input(request):
     return render(request, "accounts/address_form.html", {
         "address": address
     })
-
-from django.core.paginator import Paginator
-from django.db.models.functions import TruncMonth
-from django.db.models import Count
-
-@login_required(login_url="login")
-def order_address_edit(request):
-    address = Address.objects.filter(user=request.user).first()
-
-    if request.method == "POST":
-        postal_code = request.POST.get("postal_code")
-        prefecture = request.POST.get("prefecture")
-        city = request.POST.get("city")
-        addr = request.POST.get("address")
-        building = request.POST.get("building")
-
-        if not postal_code or not prefecture or not city or not addr:
-            return render(request, "accounts/order_address_edit.html", {
-                "address": address,
-                "error": "配送先住所を入力してください。",
-            })
-
-        if address:
-           address.postal_code = postal_code
-           address.prefecture = prefecture
-           address.city = city
-           address.address = addr
-           address.building = building
-           address.save()
-
-        else:
-            is_first = not Address.objects.filter(user=request.user).exists()
-
-            Address.objects.create(
-                user=request.user,
-                postal_code=postal_code,
-                prefecture=prefecture,
-                city=city,
-                address=addr,
-                building=building,
-                is_main=is_first,
-            )
-
-        return redirect("order_confirm")
-
-    return render(request, "accounts/order_address_edit.html", {
-        "address": address,
-    })
-
 
 @login_required(login_url="login")
 def order_payment_edit(request):
