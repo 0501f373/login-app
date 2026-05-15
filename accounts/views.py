@@ -921,15 +921,16 @@ def address_input(request):
                 })
 
             if request.POST.get("save_to_mypage") == "1":
-                Address.objects.update_or_create(
+                is_first = not Address.objects.filter(user=request.user).exists()
+
+                Address.objects.create(
                     user=request.user,
-                    defaults={
-                        "postal_code": postal_code,
-                        "prefecture": prefecture,
-                        "city": city,
-                        "address": addr,
-                        "building": building,
-                    }
+                    postal_code=postal_code,
+                    prefecture=prefecture,
+                    city=city,
+                    address=addr,
+                    building=building,
+                    is_main=is_first,
                 )
 
         delivery_date = request.POST.get("delivery_date")
