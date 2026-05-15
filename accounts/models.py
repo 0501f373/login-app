@@ -124,11 +124,11 @@ class Address(models.Model):
         main_label = "【メイン】" if self.is_main else ""
         return f"{main_label}{self.user.email} / {self.prefecture}{self.city}{self.address}"
     
-    class UserProfile(models.Model):
-        user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-        phone_number = models.CharField("電話番号", max_length=20, blank=True)
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    phone_number = models.CharField("電話番号", max_length=20, blank=True)
 
-        def __str__(self):
-            return self.user.email
+    def __str__(self):
+        return self.user.email
     
     
