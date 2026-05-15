@@ -1098,7 +1098,9 @@ def mypage_address_edit(request):
                 is_main=is_first,
             )
 
-        return redirect("mypage")
+        messages.success(request, "住所を保存しました")
+        
+        return redirect("mypage_address_list")
 
     return render(request, "accounts/mypage_address_edit.html", {
         "address": address,
@@ -1141,7 +1143,7 @@ def mypage_profile_edit(request):
         profile.phone_number = request.POST.get("phone_number")
         profile.save()
 
-        return redirect("mypage_address_list")
+        return redirect("mypage")
 
     return render(request, "accounts/mypage_profile_edit.html", {
         "profile": profile
