@@ -114,8 +114,7 @@
              
             <div class="form-group">
                 <label>郵便番号</label>
-                <input type="text" id="postal_code" name="postal_code" value="{{ address.postal_code|default:'' }}">
-                value="{{ address.postal_code|default:'' }}" 
+                <input type="text" id="postal_code" name="postal_code" value="{{ address.postal_code|default:'' }}"> 
                 placeholder="例：123-4567" required>
             </div>
 
@@ -126,14 +125,12 @@
             <div class="form-group">
                 <label>都道府県</label>
                 <input type="text" id="prefecture" name="prefecture" value="{{ address.prefecture|default:'' }}">
-                value="{{ address.prefecture|default:'' }}" 
                 placeholder="例：東京都" required>
             </div>
 
             <div class="form-group">
                 <label>市区町村</label>
                 <input type="text" id="city" name="city" value="{{ address.city|default:'' }}">
-                value="{{ address.city|default:'' }}" 
                 placeholder="例：新宿区" required>
             </div>
 
