@@ -1083,6 +1083,12 @@ def mypage_address_edit(request):
                 "address": address,
                 "error": "住所を入力してください。",
             })
+        
+        if not name or not phone_number:
+           messages.error(request, "氏名と電話番号を入力してください")
+           return render(request, "accounts/mypage_address_edit.html", {
+               "address": address,
+        })
 
         if address:
             address.name = name

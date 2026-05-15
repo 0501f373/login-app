@@ -105,7 +105,7 @@
             {% endfor %}
         </div>
     {% endif %}
-    
+
     <h1>お届け先の追加・変更</h1>
 
     <div class="top-actions">
@@ -120,7 +120,9 @@
                 {% if address.is_main %}
                     <div class="main-label">メイン住所</div>
                 {% endif %}
-
+                
+                <p class="address-text">氏名：{{ address.name|default:"未設定" }}</p>
+                <p class="address-text">電話番号：電話番号：{{ address.phone_number|default:"未設定" }}</p>
                 <p class="address-text">〒{{ address.postal_code }}</p>
                 <p class="address-text">
                     {{ address.prefecture }}{{ address.city }}{{ address.address }}
