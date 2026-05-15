@@ -1,0 +1,34 @@
+<h1>お届け先の追加・変更</h1>
+
+<a href="{% url 'mypage_address_edit' %}" class="btn btn-primary">
+    住所を追加する
+</a>
+
+{% for address in addresses %}
+    <div style="margin-top:20px; border-top:1px solid #ddd; padding-top:10px;">
+
+        {% if address.is_main %}
+            <p style="color:blue;">メイン住所</p>
+        {% endif %}
+
+        <p>〒{{ address.postal_code }}</p>
+        <p>{{ address.prefecture }}{{ address.city }}{{ address.address }}</p>
+
+        <div style="display:flex; gap:8px;">
+            <a href="{% url 'mypage_address_edit' %}?address_id={{ address.id }}">編集</a>
+
+            {% if not address.is_main %}
+                <form method="post" action="{% url 'address_set_main' address.id %}">
+                    {% csrf_token %}
+                    <button type="submit">メインにする</button>
+                </form>
+            {% endif %}
+
+            <form method="post" action="{% url 'address_delete' address.id %}">
+                {% csrf_token %}
+                <button type="submit">削除</button>
+            </form>
+        </div>
+
+    </div>
+{% endfor %}

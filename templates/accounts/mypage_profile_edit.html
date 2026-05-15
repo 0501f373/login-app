@@ -1,0 +1,17 @@
+<h1>登録情報変更</h1>
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>氏名</p>
+    <input type="text" name="first_name" value="{{ request.user.first_name }}">
+
+    <p>電話番号</p>
+    <input type="text" name="phone_number" value="{{ profile.phone_number }}">
+
+    <p>メールアドレス</p>
+    <input type="email" name="email" value="{{ request.user.email }}">
+
+    <br><br>
+    <button type="submit">保存</button>
+</form>

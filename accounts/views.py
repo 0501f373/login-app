@@ -1124,3 +1124,31 @@ def address_delete(request, address_id):
         address.delete()
 
     return redirect("mypage")
+
+#登録情報変更
+@login_required(login_url="login")
+def mypage_profile_edit(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        request.user.first_name = request.POST.get("first_name")
+        request.user.email = request.POST.get("email")
+        request.user.save()
+
+        profile.phone_number = request.POST.get("phone_number")
+        profile.save()
+
+        return redirect("mypage")
+
+    return render(request, "accounts/mypage_profile_edit.html", {
+        "profile": profile
+    })
+
+#住所一覧ページ
+@login_required(login_url="login")
+def mypage_address_list(request):
+    addresses = Address.objects.filter(user=request.user).order_by("-is_main", "-created_at")
+
+    return render(request, "accounts/mypage_address_list.html", {
+        "addresses": addresses
+    })
