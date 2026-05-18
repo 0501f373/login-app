@@ -54,6 +54,32 @@
     <div class="container">
         <h1>注文一覧</h1>
 
+        <div class="container">
+
+    <h1>注文一覧</h1>
+
+    <!-- 🔍 検索フォーム -->
+    <form method="get" style="margin-bottom:20px; display:flex; gap:10px;">
+
+        <input type="text" name="keyword"
+               placeholder="メールで検索"
+               value="{{ request.GET.keyword }}">
+
+        <select name="status">
+            <option value="">全ステータス</option>
+            <option value="pending" {% if selected_status == "pending" %}selected{% endif %}>受付中</option>
+            <option value="preparing" {% if selected_status == "preparing" %}selected{% endif %}>発送準備中</option>
+            <option value="shipped" {% if selected_status == "shipped" %}selected{% endif %}>発送済み</option>
+            <option value="cancelled" {% if selected_status == "cancelled" %}selected{% endif %}>キャンセル</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary">検索</button>
+    </form>
+
+    <!-- 👇ここから注文一覧 -->
+    {% for order in orders %}
+        <div class="order-card">
+
         {% for order in orders %}
             <div class="card">
                 <p>注文者：{{ order.user.email }}</p>

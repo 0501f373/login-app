@@ -79,6 +79,20 @@ class ProductImage(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    STATUS_CHOICES = [
+        ("pending", "受付中"),
+        ("preparing", "発送準備中"),
+        ("shipped", "発送済み"),
+        ("cancelled", "キャンセル"),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
+    )
+
     total_price = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     payment_method = models.CharField("支払い方法", max_length=50, default="credit_card")
@@ -133,7 +147,6 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone_number = models.CharField("電話番号", max_length=20, blank=True)
 
+
     def __str__(self):
         return self.user.email
-    
-    

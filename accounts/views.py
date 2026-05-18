@@ -899,10 +899,17 @@ def product_image_delete(request, image_id):
 
 @staff_member_required(login_url="staff_login")
 def management_order_list(request):
+    keyword = request.GET.get("keyword", "")
+    status = request.GET.get("status", "")
+
     orders = Order.objects.select_related("user").order_by("-created_at")
+
+    if keyword:
+        orders = orders.filter(user__email__icontains=keyword)
 
     return render(request, "accounts/management_order_list.html", {
         "orders": orders,
+        "selected_status": status,
     })
 
 @login_required(login_url="login")
@@ -913,9 +920,13 @@ def order_detail(request, order_id):
         "order": order,
     })
 
+    
+
 @staff_member_required(login_url="staff_login")
 def management_order_detail(request, order_id):
-    order = get_object_or_404(Order.objects.select_related("user"), id=order_id)
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+
+
 
     return render(request, "accounts/management_order_detail.html", {
         "order": order,

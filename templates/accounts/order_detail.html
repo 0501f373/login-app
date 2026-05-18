@@ -103,7 +103,26 @@
     <div class="order-info">
         <p><span class="label">注文日：</span>{{ order.created_at }}</p>
         <p><span class="label">合計金額：</span>{{ order.total_price }}円</p>
-    </div>
+
+        <form method="post" style="margin-top:12px;">
+        {% csrf_token %}
+
+        <label class="label">ステータス</label>
+
+        <select name="status" style="margin-top:6px;">
+            {% for value, label in order.STATUS_CHOICES %}
+                <option value="{{ value }}"
+                {% if order.status == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary" style="margin-left:8px;">
+            更新
+        </button>
+    </form>
+</div>
 
     <div class="order-info">
         <h3>配送先</h3>
