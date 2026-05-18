@@ -54,49 +54,39 @@
     <div class="container">
         <h1>注文一覧</h1>
 
-        <div class="container">
+        <form method="get" style="margin-bottom:20px; display:flex; gap:10px;">
+            <input type="text" name="keyword"
+                   placeholder="メールで検索"
+                   value="{{ request.GET.keyword }}">
 
-    <h1>注文一覧</h1>
+            <select name="status">
+                <option value="">全ステータス</option>
+                <option value="pending" {% if selected_status == "pending" %}selected{% endif %}>受付中</option>
+                <option value="preparing" {% if selected_status == "preparing" %}selected{% endif %}>発送準備中</option>
+                <option value="shipped" {% if selected_status == "shipped" %}selected{% endif %}>発送済み</option>
+                <option value="cancelled" {% if selected_status == "cancelled" %}selected{% endif %}>キャンセル</option>
+            </select>
 
-    <!-- 🔍 検索フォーム -->
-    <form method="get" style="margin-bottom:20px; display:flex; gap:10px;">
-
-        <input type="text" name="keyword"
-               placeholder="メールで検索"
-               value="{{ request.GET.keyword }}">
-
-        <select name="status">
-            <option value="">全ステータス</option>
-            <option value="pending" {% if selected_status == "pending" %}selected{% endif %}>受付中</option>
-            <option value="preparing" {% if selected_status == "preparing" %}selected{% endif %}>発送準備中</option>
-            <option value="shipped" {% if selected_status == "shipped" %}selected{% endif %}>発送済み</option>
-            <option value="cancelled" {% if selected_status == "cancelled" %}selected{% endif %}>キャンセル</option>
-        </select>
-
-        <button type="submit" class="btn btn-primary">検索</button>
-    </form>
-
-    <!-- 👇ここから注文一覧 -->
-    {% for order in orders %}
-        <div class="order-card">
+            <button type="submit" class="btn btn-primary">検索</button>
+        </form>
 
         {% for order in orders %}
             <div class="card">
                 <p>注文者：{{ order.user.email }}</p>
                 <p>注文日：{{ order.created_at }}</p>
                 <p>合計金額：{{ order.total_price }}円</p>
+                <p>ステータス：{{ order.get_status_display }}</p>
 
                 <a href="{% url 'management_order_detail' order.id %}" class="btn btn-primary">
                     詳細を見る
                 </a>
             </div>
-        {% empty %}   
-            <p>注文はまだありません。</p>  
-        {% endfor %}          
+        {% empty %}
+            <p>注文はまだありません。</p>
+        {% endfor %}
 
         <a href="{% url 'management_menu' %}" class="btn btn-back">
             管理メニューへ戻る
-        </a>    
+        </a>
     </div>
 </body>
-</html>

@@ -141,6 +141,19 @@
         {{ order.total_price }}円
     </p>
 
+    <p>
+        <span class="label">ステータス：</span>
+        <span style="
+            padding:4px 10px;
+            border-radius:12px;
+            background:#eef3ff;
+            font-size:12px;
+            font-weight:bold;
+        ">
+            {{ order.get_status_display }}
+    </span>
+    </p>
+
     <a href="{% url 'order_detail' order.id %}" class="btn btn-primary">
         注文詳細を見る
     </a>

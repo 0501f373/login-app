@@ -907,8 +907,12 @@ def management_order_list(request):
     if keyword:
         orders = orders.filter(user__email__icontains=keyword)
 
+    if status:
+        orders = orders.filter(status=status)
+
     return render(request, "accounts/management_order_list.html", {
         "orders": orders,
+        "keyword": keyword,
         "selected_status": status,
     })
 
