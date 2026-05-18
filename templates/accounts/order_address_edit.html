@@ -34,24 +34,50 @@
             {% csrf_token %}
 
             {% if addresses %}
-                <h3>登録住所から選択</h3>
+    <div class="form-group">
+        <label>登録住所から選択</label>
 
-                {% for saved_address in addresses %}
-                    <label style="display:block; margin-bottom:12px; font-weight: normal;">
-                        <input type="radio" name="selected_address_id" value="{{ saved_address.id }}"
-                        {% if saved_address.is_main %}checked{% endif %}>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            {% for saved_address in addresses %}
+                <label style="
+                    display:flex;
+                    align-items:flex-start;
+                    gap:10px;
+                    padding:12px;
+                    border:1px solid #ddd;
+                    border-radius:8px;
+                    font-weight:normal;
+                    background:#fafafa;
+                    cursor:pointer;
+                ">
+                    <input type="radio"
+                           name="selected_address_id"
+                           value="{{ saved_address.id }}"
+                           style="width:auto; margin-top:4px;"
+                           {% if saved_address.is_main %}checked{% endif %}>
 
-                        {% if saved_address.is_main %}【メイン】{% endif %}
-                        {{ saved_address.name|default:"未設定" }} /
-                        {{ saved_address.phone_number|default:"未設定" }} /
-                        〒{{ saved_address.postal_code }}
+                    <span>
+                        {% if saved_address.is_main %}
+                            <strong>メイン住所</strong><br>
+                        {% endif %}
+
+                        {{ saved_address.name|default:"未設定" }} / 
+                        {{ saved_address.phone_number|default:"未設定" }}<br>
+
+                        〒{{ saved_address.postal_code }}<br>
                         {{ saved_address.prefecture }}{{ saved_address.city }}{{ saved_address.address }}
-                        {{ saved_address.building }}
-                    </label>
-                {% endfor %}
 
-                <hr>
-            {% endif %}
+                        {% if saved_address.building %}
+                            {{ saved_address.building }}
+                        {% endif %}
+                    </span>
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <hr style="margin:24px 0;">
+{% endif %}
 
             <div class="form-group">
                 <label>郵便番号</label>
