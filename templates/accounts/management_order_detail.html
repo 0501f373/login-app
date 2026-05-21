@@ -128,8 +128,25 @@
         <p><span class="label">注文ID：</span>{{ order.id }}</p>
         <p><span class="label">注文者：</span>{{ order.user.email }}</p>
         <p><span class="label">注文日：</span>{{ order.created_at }}</p>
-    </div>
 
+        <div class="status-line">
+            <span class="label">ステータス：</span>
+
+            <form method="post" class="status-inline">
+                {% csrf_token %}
+
+                <select name="status">
+                    {% for value, label in order.STATUS_CHOICES %}
+                        <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn-primary">更新</button>
+            </form>
+        </div>
+    </div>
     <!-- 商品一覧 -->
     <table>
         <thead>
@@ -151,29 +168,6 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <div class="card info">
-    <p>
-        <span class="label">ステータス：</span>
-
-        <form method="post" class="status-form" style="display:inline-flex; margin-left:10px;">
-            {% csrf_token %}
-
-            <select name="status">
-                {% for value, label in order.STATUS_CHOICES %}
-                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
-                        {{ label }}
-                    </option>
-                {% endfor %}
-            </select>
-
-            <button type="submit" class="btn-primary" style="margin-left:8px;">
-                更新
-            </button>
-        </form>
-    </p>
-</div>
-
     <a href="{% url 'management_order_list' %}" class="btn-back">
         注文一覧へ戻る
     </a>
