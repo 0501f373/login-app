@@ -924,13 +924,9 @@ def order_detail(request, order_id):
         "order": order,
     })
 
-    
-
 @staff_member_required(login_url="staff_login")
 def management_order_detail(request, order_id):
-    order = get_object_or_404(Order, id=order_id, user=request.user)
-
-
+    order = get_object_or_404(Order, id=order_id)
 
     return render(request, "accounts/management_order_detail.html", {
         "order": order,
