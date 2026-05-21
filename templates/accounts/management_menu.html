@@ -4,89 +4,104 @@
     <meta charset="UTF-8">
     <title>管理メニュー</title>
     <style>
-        body {
-            font-family: sans-serif;
-            background: #f5f5f5;
-            margin: 0;
-            padding: 40px 20px;
-        }
+    .menu-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
 
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
+    .menu-card h2 {
+        margin-bottom: 16px;
+    }
 
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+    .menu-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
 
-        .menu-btn {
-            display: block;
-            padding: 16px 20px;
-            background: #333;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            text-align: center;
-        }
+    .menu-btn {
+        display: block;
+        text-align: center;
+        padding: 14px;
+        background: #333;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
 
-        .back-btn {
-            display: inline-block;
-            margin-top: 24px;
-            padding: 10px 18px;
-            background: #ddd;
-            color: #333;
-            text-decoration: none;
-            border-radius: 8px;
-        }
+    .menu-btn:hover {
+        background: #555;
+    }
 
-        .btn {
-            display: inline-block;
-            text-decoration: none;
-            border-radius: 8px;
-            padding: 10px 18px;
-            font-size: 14px;
-            font-weight: bold;
-        }
+    .btn-back {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 16px;
+        background: #e5e5e5;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #333;
+    }
 
-        .btn-primary {
-            background: #2d6cdf;
-            color: white;
-        }
+    body {
+        margin: 0;
+        font-family: sans-serif;
+        background: #f5f5f5;
+    }
 
-        .btn-back {
-            background: #e5e5e5;
-            color: #333;
-        }
-
-        .btn:hover {
-            opacity: 0.85;
-        }
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 0 16px;
+    }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>管理メニュー</h1>
-{% include "accounts/_messages.html" %}
-        <div class="menu-list">
+
+    <h1>管理メニュー</h1>
+
+    <!-- 商品管理 -->
+    <div class="menu-card">
+        <h2>商品管理</h2>
+        <div class="menu-grid">
             <a href="{% url 'management_product_list' %}" class="menu-btn">商品一覧確認</a>
             <a href="{% url 'product_create' %}" class="menu-btn">商品登録</a>
             <a href="{% url 'category_create' %}" class="menu-btn">カテゴリ登録</a>
             <a href="{% url 'manufacturer_create' %}" class="menu-btn">メーカー登録</a>
+        </div>
+    </div>
+
+    <!-- スタッフ管理 -->
+    <div class="menu-card">
+        <h2>スタッフ管理</h2>
+        <div class="menu-grid">
             <a href="{% url 'staff_signup' %}" class="menu-btn">管理者登録</a>
             <a href="{% url 'staff_list' %}" class="menu-btn">管理者一覧</a>
+        </div>
+    </div>
+
+    <!-- 在庫管理 -->
+    <div class="menu-card">
+        <h2>在庫管理</h2>
+        <div class="menu-grid">
             <a href="{% url 'stock_management' %}" class="menu-btn">在庫管理</a>
             <a href="{% url 'stock_history_list' %}" class="menu-btn">在庫履歴</a>
-            <a href="{% url 'management_order_list' %}"class="menu-btn">注文一覧</a>
         </div>
-
-        <a href="{% url 'staff_logout' %}" class="back-btn">サインアウト</a>
     </div>
-</body>
-</html>
+
+    <!-- 注文管理 -->
+    <div class="menu-card">
+        <h2>注文管理</h2>
+        <div class="menu-grid">
+            <a href="{% url 'management_order_list' %}" class="menu-btn">注文一覧</a>
+        </div>
+    </div>
+
+    <a href="{% url 'staff_logout' %}" class="btn-back">サインアウト</a>
+
+</div>
