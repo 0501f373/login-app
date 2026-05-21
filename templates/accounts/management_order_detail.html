@@ -105,7 +105,14 @@
             gap: 8px;
             align-items: center;
             }
-            
+
+        .tracking-input {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 13px;
+        }
+
     </style>
 </head>
 <body>
@@ -118,6 +125,21 @@
 </div>
 
 <div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="
+                background:#e6f4ea;
+                color:#2e7d32;
+                padding:12px;
+                border-radius:8px;
+                margin-bottom:16px;
+                font-weight:bold;
+            ">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
 
     <!-- 注文情報 -->
     <div class="card info">
@@ -138,6 +160,14 @@
                         </option>
                     {% endfor %}
                 </select>
+
+                <input
+                    type="text"
+                    name="tracking_number"
+                    value="{{ order.tracking_number|default:'' }}"
+                    placeholder="伝票番号"
+                   class="tracking-input"
+                >
 
                 <button type="submit" class="btn-primary">更新</button>
             </form>
