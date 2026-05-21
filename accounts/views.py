@@ -928,6 +928,16 @@ def order_detail(request, order_id):
 def management_order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id)
 
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+
+        if new_status:
+            order.status = new_status
+            order.save()
+            messages.success(request, "ステータスを更新しました")
+
+        return redirect("management_order_detail", order_id=order.id)
+
     return render(request, "accounts/management_order_detail.html", {
         "order": order,
     })

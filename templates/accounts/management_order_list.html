@@ -75,7 +75,10 @@
                 <p>注文者：{{ order.user.email }}</p>
                 <p>注文日：{{ order.created_at }}</p>
                 <p>合計金額：{{ order.total_price }}円</p>
-                <p>ステータス：{{ order.get_status_display }}</p>
+                <p>
+                   ステータス：
+                   <strong>{{ order.get_status_display }}</strong>
+                </p>
 
                 <a href="{% url 'management_order_detail' order.id %}" class="btn btn-primary">
                     詳細を見る
