@@ -87,6 +87,29 @@
             font-weight: bold;
             cursor: pointer;
         }
+
+        .status-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .status-form select {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            padding: 10px 18px;
+            background: #2d6cdf;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -132,23 +155,26 @@
     <div class="total">
         合計：{{ order.total_price }}円
     </div>
-<form method="post" style="margin-top:12px;">
-    {% csrf_token %}
 
-    <label>ステータス</label>
+    <div class="card">
+        <h3>注文ステータス</h3>
 
-    <select name="status">
-        {% for value, label in order.STATUS_CHOICES %}
-            <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
-                {{ label }}
-            </option>
-        {% endfor %}
-    </select>
+        <form method="post" class="status-form">
+            {% csrf_token %}
 
-    <button type="submit" class="btn btn-primary">
-        更新
-    </button>
-</form>
+            <select name="status">
+                {% for value, label in order.STATUS_CHOICES %}
+                    <option value="{{ value }}" {% if order.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn-primary">
+                更新
+            </button>
+        </form>
+    </div>
 
     <a href="{% url 'management_order_list' %}" class="btn-back">
         注文一覧へ戻る

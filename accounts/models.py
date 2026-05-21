@@ -82,6 +82,7 @@ class Order(models.Model):
 
     STATUS_CHOICES = [
         ("pending", "受付中"),
+        ("payment_waiting", "入金待ち"),
         ("preparing", "発送準備中"),
         ("shipped", "発送済み"),
         ("cancelled", "キャンセル"),

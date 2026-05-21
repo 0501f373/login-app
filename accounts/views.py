@@ -930,8 +930,14 @@ def management_order_detail(request, order_id):
 
     if request.method == "POST":
         new_status = request.POST.get("status")
+        old_status = order.status
 
         if new_status:
+            if new_status == "cancelled" and old_status != "cancelled":
+                for item in order.items.all():
+                    item.product.stock += item.quantity
+                    item.product.save()
+
             order.status = new_status
             order.save()
             messages.success(request, "ステータスを更新しました")
