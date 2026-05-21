@@ -104,43 +104,34 @@
         <p><span class="label">注文日：</span>{{ order.created_at }}</p>
         <p><span class="label">合計金額：</span>{{ order.total_price }}円</p>
 
-        <form method="post" style="margin-top:12px;">
-        {% csrf_token %}
-
-        <label class="label">ステータス</label>
-
-        <select name="status" style="margin-top:6px;">
-            {% for value, label in order.STATUS_CHOICES %}
-                <option value="{{ value }}"
-                {% if order.status == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
-            {% endfor %}
-        </select>
-
-        <button type="submit" class="btn btn-primary" style="margin-left:8px;">
-            更新
-        </button>
-    </form>
-</div>
+        <p>
+            <span class="label">ステータス：</span>
+            {{ order.get_status_display }}
+        </p>
+    </div>
 
     <div class="order-info">
         <h3>配送先</h3>
 
-        <p><span class="label">氏名：</span>{{ order.delivery_name|default:"未設定" }}</p>
-        <p><span class="label">電話番号：</span>{{ order.delivery_phone_number|default:"未設定" }}</p>
-        <p><span class="label">〒：</span>{{ order.delivery_postal_code|default:"未設定" }}</p>
+    <p><span class="label">氏名：</span>{{ order.delivery_name|default:"未設定" }}</p>
+    <p><span class="label">電話番号：</span>{{ order.delivery_phone_number|default:"未設定" }}</p>
+    <p><span class="label">〒：</span>{{ order.delivery_postal_code|default:"未設定" }}</p>
 
-        <p>
-            {{ order.delivery_prefecture }}
-            {{ order.delivery_city }}
-            {{ order.delivery_address }}
-        </p>
+    <p>
+        {{ order.delivery_prefecture }}
+        {{ order.delivery_city }}
+        {{ order.delivery_address }}
+    </p>
 
-        {% if order.delivery_building %}
-            <p>{{ order.delivery_building }}</p>
-        {% endif %}
-    </div>
+    {% if order.delivery_building %}
+        <p>{{ order.delivery_building }}</p>
+    {% endif %}
+
+    <p>
+        <span class="label">伝票番号：</span>
+        {{ order.tracking_number|default:"未登録" }}
+    </p>
+</div>
 
     {% for item in order.items.all %}
         <div class="item-card">

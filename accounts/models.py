@@ -108,6 +108,7 @@ class Order(models.Model):
     delivery_date = models.DateField("配送希望日", null=True, blank=True)
     delivery_time = models.CharField("配送希望時間",max_length=50,blank=True,null=True)
     delivery_address_id = models.IntegerField(null=True, blank=True)
+    tracking_number = models.CharField("伝票番号", max_length=100, blank=True)
 
     def __str__(self):
         return f"注文ID:{self.id} / {self.user.email}"

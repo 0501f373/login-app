@@ -930,6 +930,7 @@ def management_order_detail(request, order_id):
 
     if request.method == "POST":
         new_status = request.POST.get("status")
+        tracking_number = request.POST.get("tracking_number", "")
         old_status = order.status
 
         if new_status:
@@ -939,9 +940,11 @@ def management_order_detail(request, order_id):
                     item.product.save()
 
             order.status = new_status
-            order.save()
-            messages.success(request, "ステータスを更新しました")
 
+        order.tracking_number = tracking_number
+        order.save()
+
+        messages.success(request, "注文情報を更新しました")
         return redirect("management_order_detail", order_id=order.id)
 
     return render(request, "accounts/management_order_detail.html", {
