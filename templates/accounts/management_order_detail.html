@@ -152,14 +152,11 @@
         </tbody>
     </table>
 
-    <div class="total">
-        合計：{{ order.total_price }}円
-    </div>
+    <div class="card info">
+    <p>
+        <span class="label">ステータス：</span>
 
-    <div class="card">
-        <h3>注文ステータス</h3>
-
-        <form method="post" class="status-form">
+        <form method="post" class="status-form" style="display:inline-flex; margin-left:10px;">
             {% csrf_token %}
 
             <select name="status">
@@ -170,11 +167,12 @@
                 {% endfor %}
             </select>
 
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn-primary" style="margin-left:8px;">
                 更新
             </button>
         </form>
-    </div>
+    </p>
+</div>
 
     <a href="{% url 'management_order_list' %}" class="btn-back">
         注文一覧へ戻る
