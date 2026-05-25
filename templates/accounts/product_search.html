@@ -173,6 +173,20 @@
     color: #999;
     font-size: 14px;
 }
+
+.card {
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card h2 {
+    min-height: 60px;
+}
+
+.product-description {
+    min-height: 48px;
+}
     </style>
 </head>
 <body>
@@ -255,7 +269,13 @@
                     <p style="color: green;">在庫あり</p>
                 {% endif %}
 
-                <p>{{ product.description }}</p>
+                <p class="product-description">
+                    {% if product.description %}
+                    {{ product.description }}
+                    {% else %}
+                       &nbsp;
+                    {% endif %}
+                </p>
 
             </div>
         </a>
