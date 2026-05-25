@@ -14,6 +14,7 @@ from .models import Product, Category, Manufacturer, StockHistory, ProductImage,
 from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
+from datetime import date
 
 
 def validate_password_policy(password):
@@ -1067,6 +1068,7 @@ def address_input(request):
                 return render(request, "accounts/address_form.html", {
                     "address": address,
                     "error": "配送先住所を入力してください。",
+                    "today": date.today().isoformat(),
                 })
 
             request.session["checkout_address"] = {
@@ -1111,8 +1113,9 @@ def address_input(request):
         return redirect("order_confirm")
 
     return render(request, "accounts/address_form.html", {
-        "address": address
-    })
+    "address": address,
+    "today": date.today().isoformat(),
+})
 
 from django.core.paginator import Paginator
 from django.db.models.functions import TruncMonth
