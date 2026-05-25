@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+</head>
+<body>
+
+<h1>商品登録確認</h1>
+
+<h3>画像</h3>
+
+{% if preview_images %}
+    {% for image in preview_images %}
+        <div style="margin-bottom: 16px;">
+            <img src="{{ image.url }}" style="width:200px; height:200px; object-fit:cover;">
+            <p>{{ image.name }}</p>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>画像なし</p>
+{% endif %}
+
+<p>商品名：{{ form.name.value }}</p>
+<p>価格：{{ form.price.value }}円</p>
+<p>仕入れ単価：{{ form.cost.value }}円</p>
+<p>在庫数：{{ form.stock.value }}</p>
+<p>説明：{{ form.description.value|linebreaksbr }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">登録する</button>
+</form>
+
+<a href="{% url 'product_create' %}">戻って修正</a>
+
+</body>
+</html>

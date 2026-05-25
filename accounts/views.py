@@ -1,4 +1,7 @@
 import re
+import os
+import uuid
+from django.core.files import File
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
@@ -486,23 +489,34 @@ def product_create(request):
 
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
-
         images = request.FILES.getlist("images")
 
         if len(images) > 5:
             form.add_error(None, "画像は最大5枚まで登録できます。")
 
         if form.is_valid():
-            product = form.save()
+            product_data = request.POST.dict()
+            product_data.pop("csrfmiddlewaretoken", None)
+
+            request.session["product_create_data"] = product_data
+
+            temp_images = []
 
             for image in images:
-                ProductImage.objects.create(
-                    product=product,
-                    image=image
-                )
+                ext = os.path.splitext(image.name)[1]
+                temp_filename = f"tmp/product_{uuid.uuid4()}{ext}"
+                saved_path = default_storage.save(temp_filename, image)
 
-            messages.success(request, "商品を登録しました")
-            return redirect(f"{reverse('product_detail', args=[product.id])}?next=product_create")
+                temp_images.append({
+                    "path": saved_path,
+                    "name": image.name,
+                })
+
+            request.session["product_create_images"] = temp_images
+            request.session.modified = True
+
+            return redirect("product_create_confirm")
+
     else:
         form = ProductForm()
 
@@ -512,6 +526,54 @@ def product_create(request):
         "next_page": next_page,
     })
 
+@staff_member_required(login_url="staff_login")
+def product_create_confirm(request):
+    product_data = request.session.get("product_create_data")
+    temp_images = request.session.get("product_create_images", [])
+
+    if not product_data:
+        messages.error(request, "商品登録情報が見つかりません。もう一度入力してください。")
+        return redirect("product_create")
+
+    form = ProductForm(product_data)
+
+    if not form.is_valid():
+        messages.error(request, "入力内容に不備があります。もう一度入力してください。")
+        return redirect("product_create")
+
+    preview_images = []
+
+    for image in temp_images:
+        preview_images.append({
+            "url": default_storage.url(image["path"]),
+            "name": image["name"],
+        })
+
+    if request.method == "POST":
+        product = form.save()
+
+        for image in temp_images:
+            with default_storage.open(image["path"], "rb") as f:
+                ProductImage.objects.create(
+                    product=product,
+                    image=File(f, name=image["name"])
+                )
+
+            if default_storage.exists(image["path"]):
+                default_storage.delete(image["path"])
+
+        request.session.pop("product_create_data", None)
+        request.session.pop("product_create_images", None)
+        request.session.modified = True
+
+        messages.success(request, "商品を登録しました")
+        return redirect(f"{reverse('product_detail', args=[product.id])}?next=product_create")
+
+    return render(request, "accounts/product_create_confirm.html", {
+        "form": form,
+        "preview_images": preview_images,
+        "page_title": "商品登録確認",
+    })
 
 @staff_member_required(login_url="staff_login")
 def product_edit(request, product_id):

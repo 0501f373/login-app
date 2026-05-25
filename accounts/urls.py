@@ -53,4 +53,6 @@ urlpatterns = [
     path("mypage/address/<int:address_id>/delete/", views.address_delete, name="address_delete"),
     path("mypage/profile/edit/", views.mypage_profile_edit, name="mypage_profile_edit"),
     path("mypage/addresses/", views.mypage_address_list, name="mypage_address_list"),
+    path("products/add/confirm/", views.product_create_confirm, name="product_create_confirm"),
+    path("products/add/", views.product_create, name="product_create"),
     ]
