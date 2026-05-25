@@ -1091,6 +1091,8 @@ def address_input(request):
                 
                 is_first = not Address.objects.filter(user=request.user).exists()
 
+                profile = getattr(request.user, "userprofile", None)
+
                 Address.objects.create(
                     user=request.user,
                     postal_code=postal_code,
@@ -1099,6 +1101,8 @@ def address_input(request):
                     address=addr,
                     building=building,
                     is_main=is_first,
+                    name=request.user.first_name,
+                    phone_number=profile.phone_number if profile else "",
                 )
 
         delivery_date = request.POST.get("delivery_date")
@@ -1280,6 +1284,8 @@ def mypage_address_edit(request):
                 address=addr,
                 building=building,
                 is_main=is_first,
+                name=name,
+                phone_number=phone_number,
             )
 
         messages.success(request, "住所を保存しました")
