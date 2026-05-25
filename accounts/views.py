@@ -518,7 +518,12 @@ def product_create(request):
             return redirect("product_create_confirm")
 
     else:
-        form = ProductForm()
+        initial_data = request.session.get("product_create_data")
+
+        if initial_data:
+            form = ProductForm(initial_data)
+        else:
+            form = ProductForm()
 
     return render(request, "accounts/product_form.html", {
         "form": form,
