@@ -171,7 +171,24 @@
 
                 <button type="submit" class="btn-primary">更新</button>
             </form>
-        </div>
+                </div>
+
+        <hr style="margin:20px 0; border:none; border-top:1px solid #eee;">
+
+        <h3>配送先情報</h3>
+
+        <p><span class="label">氏名：</span>{{ order.delivery_name|default:"未設定" }}</p>
+        <p><span class="label">電話番号：</span>{{ order.delivery_phone_number|default:"未設定" }}</p>
+        <p><span class="label">郵便番号：</span>{{ order.delivery_postal_code|default:"未設定" }}</p>
+
+        <p>
+            <span class="label">住所：</span>
+            {{ order.delivery_prefecture }}
+            {{ order.delivery_city }}
+            {{ order.delivery_address }}
+            {{ order.delivery_building }}
+        </p>
+
     </div>
     <!-- 商品一覧 -->
     <table>
