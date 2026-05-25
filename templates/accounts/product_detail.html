@@ -146,6 +146,33 @@
             background: #eee;
             color: #555;
         }
+
+        .image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 12px;
+    background: white;
+}
+
+.close-btn {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+}
     </style>
 </head>
 <body>
@@ -190,15 +217,20 @@
     {% endif %}
 
     <div class="product">
-        <div>
-            {% for image in product.images.all %}
-                <img src="{{ image.image.url }}" alt="{{ product.name }}" style="width: 160px; border-radius: 10px; margin: 6px;">
-            {% empty %}
-                <p>画像なし</p>
-            {% endfor %}
-        </div>
+    <div>
+        {% for image in product.images.all %}
+            <img 
+                src="{{ image.image.url }}" 
+                alt="{{ product.name }}" 
+                style="width: 160px; border-radius: 10px; margin: 6px; cursor: zoom-in;"
+                onclick="openImageModal(this.src)"
+            >
+        {% empty %}
+            <p>画像なし</p>
+        {% endfor %}
+    </div>
 
-        <div class="info">
+    <div class="info">
             <h2>{{ product.name }}</h2>
             {% if request.user.is_staff %}
     <p style="font-size: 13px; color: #666;">
@@ -264,20 +296,28 @@
 </div>
         </div>
     </div>
-
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close-btn">&times;</span>
+    <img id="modalImage" class="modal-image">
 </div>
 
 <script>
-    setTimeout(function() {
-        const flashBox = document.getElementById("flash-messages");
-        if (flashBox) {
-            flashBox.classList.add("flash-hide");
-            setTimeout(function() {
-                flashBox.remove();
-            }, 500);
-        }
-    }, 2000);
-</script>
+function openImageModal(src) {
+    document.getElementById("imageModal").style.display = "flex";
+    document.getElementById("modalImage").src = src;
+}
 
-</body>
-</html>
+function closeImageModal() {
+    document.getElementById("imageModal").style.display = "none";
+}
+
+setTimeout(function() {
+    const flashBox = document.getElementById("flash-messages");
+    if (flashBox) {
+        flashBox.classList.add("flash-hide");
+        setTimeout(function() {
+            flashBox.remove();
+        }, 500);
+    }
+}, 2000);
+</script>
