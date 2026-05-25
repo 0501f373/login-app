@@ -104,8 +104,7 @@
         <div class="form-group">
             <label>郵便番号</label>
             <input type="text" id="postal_code" name="postal_code"
-            value="{{ address.postal_code|default:'' }}"
-            placeholder="例：123-4567">
+            <input type="text" id="postal_code" name="postal_code" placeholder="例：123-4567">
         </div>
         
         <button type="button" onclick="searchAddress()" class="btn btn-back">
@@ -115,29 +114,25 @@
         <div class="form-group">
             <label>都道府県</label>
             <input type="text" id="prefecture" name="prefecture"
-            value="{{ address.prefecture|default:'' }}"
-            placeholder="例：東京都">
+            <input type="text" id="prefecture" name="prefecture" placeholder="例：東京都">
         </div>
 
         <div class="form-group">
             <label>市区町村</label>
             <input type="text" id="city" name="city"
-            value="{{ address.city|default:'' }}"
-            placeholder="例：新宿区">
+            <input type="text" id="city" name="city" placeholder="例：新宿区">
         </div>
 
         <div class="form-group">
             <label>番地</label>
             <input type="text" name="address"
-            value="{{ address.address|default:'' }}"
-            placeholder="例：西新宿1-1-1">
+            <input type="text" name="address" placeholder="例：西新宿1-1-1">
         </div>
 
         <div class="form-group">
             <label>建物名・部屋番号</label>
             <input type="text" name="building"
-            value="{{ address.building|default:'' }}"
-            placeholder="例：〇〇マンション101">
+            <input type="text" name="building" placeholder="例：〇〇マンション101">
         </div>
 
         <label style="display:flex; align-items:center; gap:8px; margin-top:16px;">
