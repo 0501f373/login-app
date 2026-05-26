@@ -15,6 +15,7 @@ from .forms import ProductForm
 from django.urls import reverse
 from django.contrib import messages
 from datetime import date
+from django.contrib.auth import update_session_auth_hash
 
 
 def validate_password_policy(password):
@@ -63,12 +64,20 @@ def login_view(request):
                 product_id = str(pending["product_id"])
                 quantity = pending["quantity"]
 
-                cart[product_id] = cart.get(product_id, 0) + quantity
+                product = get_object_or_404(Product, id=product_id)
+                current_quantity = cart.get(product_id, 0)
+
+                if current_quantity + quantity > product.stock:
+                    messages.error(request, f"{product.name} の在庫を超えています")
+                    return redirect("cart")
+
+                cart[product_id] = current_quantity + quantity
 
                 request.session["cart"] = cart
                 request.session.modified = True
 
-                return redirect("cart")
+                next_url = request.session.pop("next", "order_confirm")
+                return redirect(next_url)
 
             next_url = request.session.pop("next", "product_search")
             return redirect(next_url)
@@ -187,26 +196,23 @@ from django.shortcuts import redirect, get_object_or_404
 def add_to_cart(request, product_id):
     if request.method == "POST":
         quantity = int(request.POST.get("quantity", 1))
-
         product = get_object_or_404(Product, id=product_id)
 
-        if product.stock == 0:
-            return redirect("product_detail", product_id=product.id)
-
-        if quantity > product.stock:
-            quantity = product.stock
-
         cart = request.session.get("cart", {})
-
         if not isinstance(cart, dict):
             cart = {}
 
         product_id_str = str(product_id)
+        current_quantity = cart.get(product_id_str, 0)
 
-        if product_id_str in cart:
-            cart[product_id_str] += quantity
-        else:
-            cart[product_id_str] = quantity
+        if current_quantity + quantity > product.stock:
+            messages.error(
+                request,
+                f"{product.name} は在庫数を超えてカートに追加できません。現在カート内：{current_quantity}点、在庫：{product.stock}点"
+            )
+            return redirect("cart")
+
+        cart[product_id_str] = current_quantity + quantity
 
         request.session["cart"] = cart
         request.session.modified = True
@@ -1358,3 +1364,35 @@ def mypage_address_list(request):
     return render(request, "accounts/mypage_address_list.html", {
         "addresses": addresses
     })
+#パスワード変更
+@login_required(login_url="login")
+def mypage_password_change(request):
+    if request.method == "POST":
+        current_password = request.POST.get("current_password")
+        new_password = request.POST.get("new_password")
+        new_password_confirm = request.POST.get("new_password_confirm")
+
+        errors = []
+
+        if not request.user.check_password(current_password):
+            errors.append("現在のパスワードが違います")
+
+        if new_password != new_password_confirm:
+            errors.append("新しいパスワードが一致しません")
+
+        errors.extend(validate_password_policy(new_password))
+
+        if errors:
+            return render(request, "accounts/mypage_password_change.html", {
+                "errors": errors,
+            })
+
+        request.user.set_password(new_password)
+        request.user.save()
+
+        update_session_auth_hash(request, request.user)
+
+        messages.success(request, "パスワードを変更しました")
+        return redirect("mypage")
+
+    return render(request, "accounts/mypage_password_change.html")
