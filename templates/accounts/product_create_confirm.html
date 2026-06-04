@@ -123,7 +123,7 @@
 
 <div class="container">
     <div class="card">
-        <h1>商品登録確認</h1>
+        <h1>{{ page_title }}</h1>
 
         <div class="confirm-layout">
             <div>
@@ -173,11 +173,25 @@
         </div>
 
         <div class="btn-area">
-            <a href="{% url 'product_create' %}" class="btn-back">戻って修正</a>
+            {% if mode == "edit" %}
+                <a href="{% url 'product_edit' product.id %}?next=management_product_list" class="btn-back">
+                    戻る
+                </a>
+            {% else %}
+                <a href="{% url 'product_create' %}" class="btn-back">
+                    戻る
+                </a>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}
-                <button type="submit" class="btn-submit">登録する</button>
+                <button type="submit" class="btn-submit">
+                    {% if mode == "edit" %}
+                        更新する
+                    {% else %}
+                        登録する
+                    {% endif %}
+                </button>
             </form>
         </div>
     </div>
