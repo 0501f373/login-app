@@ -147,7 +147,7 @@ def product_search(request):
     page_number = request.GET.get("page")
 
     cart = request.session.get("cart", {})
-    cart_count = sum(cart.values())
+    cart_count = len(cart)
 
     products = Product.objects.select_related("category", "manufacturer")\
     .filter(is_visible=True)\
@@ -162,7 +162,7 @@ def product_search(request):
     if manufacturer:
         products = products.filter(manufacturer_id=manufacturer)
 
-    paginator = Paginator(products, 10)  # 1ページ10件
+    paginator = Paginator(products, 9)  
     page_obj = paginator.get_page(page_number)
 
     categories = Category.objects.all()
@@ -265,7 +265,7 @@ def mypage(request):
     if not isinstance(cart, dict):
         cart = {}
 
-    cart_count = sum(cart.values())
+    cart_count = len(cart)
 
     addresses = Address.objects.filter(user=request.user).order_by("-is_main", "-created_at")
 
