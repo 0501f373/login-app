@@ -117,6 +117,29 @@
         .btn-back:hover {
             background: #d6d6d6;
         }
+
+        .image-list {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            flex-wrap: nowrap;
+            padding-bottom: 8px;
+        }
+
+        .image-item {
+            flex: 0 0 auto;
+            width: 120px;
+        }
+
+        .image-box {
+            width: 120px;
+            height: 120px;
+        }
+
+        .image-name {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -130,12 +153,15 @@
                 <h3>商品画像</h3>
 
                 {% if preview_images %}
-                    {% for image in preview_images %}
-                        <div class="image-box">
-                            <img src="{{ image.url }}" alt="商品画像">
-                        </div>
-                        <div class="image-name">{{ image.name }}</div>
-                    {% endfor %}
+                    <div class="image-list">
+                        {% for image in preview_images %}
+                            <div class="image-item">
+                                <div class="image-box">
+                                    <img src="{{ image.url }}" alt="商品画像">
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% else %}
                     <div class="image-box">
                         <span class="no-image">画像なし</span>
