@@ -658,7 +658,14 @@ def product_edit_confirm(request, product_id):
 
     preview_images = []
 
-    # 新しく追加した画像があれば表示
+    # 既存画像を表示
+    for image in product.images.all():
+        preview_images.append({
+            "url": image.image.url,
+            "name": image.image.name,
+        })
+
+    # 新しく追加した画像も表示
     for image in temp_images:
         preview_images.append({
             "url": default_storage.url(image["path"]),
