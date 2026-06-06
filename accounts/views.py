@@ -377,10 +377,16 @@ def order_confirm(request):
                 "subtotal": subtotal,
             })
 
-        address = Address.objects.filter(user=request.user, is_main=True).first()
+        checkout_address = request.session.get("checkout_address")
+        if checkout_address:
+            address = checkout_address
+        else:
+            address = Address.objects.filter(user=request.user, is_main=True).first()
 
-        if not address:
-            address = Address.objects.filter(user=request.user).first()
+
+            if not address:
+                address = Address.objects.filter(user=request.user).first()
+
         payment_method = request.session.get("payment_method", "credit_card")
         delivery_date = request.session.get("delivery_date")
         delivery_time = request.session.get("delivery_time")
@@ -1248,13 +1254,13 @@ def order_address_edit(request):
             profile = getattr(request.user, "userprofile", None)
             
             request.session["checkout_address"] = {
-                "name": request.user.first_name,
-                "phone_number": profile.phone_number if profile else "",
-                "postal_code": postal_code,
-                "prefecture": prefecture,
-                "city": city,
-                "address": addr,
-                "building": building,
+                "name": selected_address.name,
+                "phone_number": selected_address.phone_number,
+                "postal_code": selected_address.postal_code,
+                "prefecture": selected_address.prefecture,
+                "city": selected_address.city,
+                "address": selected_address.address,
+                "building": selected_address.building,
             }
             request.session.modified = True
 
