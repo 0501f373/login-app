@@ -384,7 +384,8 @@ def order_confirm(request):
         payment_method = request.session.get("payment_method", "credit_card")
         delivery_date = request.session.get("delivery_date")
         delivery_time = request.session.get("delivery_time")
-
+        profile, created = UserProfile.objects.get_or_create(user=request.user)
+        
         return render(request, "accounts/order_confirm.html", {
             "cart_items": cart_items,
             "total_price": total_price,
@@ -392,7 +393,7 @@ def order_confirm(request):
             "payment_method": payment_method,
             "delivery_date": delivery_date,
             "delivery_time": delivery_time,
-            "profile": request.user.userprofile,
+            "profile": profile,
         })
 
     # 👇 POST → 注文確定
@@ -1240,14 +1241,16 @@ def order_address_edit(request):
                 user=request.user
             )
 
+            profile = getattr(request.user, "userprofile", None)
+            
             request.session["checkout_address"] = {
-                "name": selected_address.name,
-                "phone_number": selected_address.phone_number,
-                "postal_code": selected_address.postal_code,
-                "prefecture": selected_address.prefecture,
-                "city": selected_address.city,
-                "address": selected_address.address,
-                "building": selected_address.building,
+                "name": request.user.first_name,
+                "phone_number": profile.phone_number if profile else "",
+                "postal_code": postal_code,
+                "prefecture": prefecture,
+                "city": city,
+                "address": addr,
+                "building": building,
             }
             request.session.modified = True
 
