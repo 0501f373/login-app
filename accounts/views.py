@@ -57,6 +57,9 @@ def login_view(request):
         if user is not None:
             login(request, user)
 
+            if request.session.get("next") != "order_confirm":
+                request.session.pop("checkout_flow", None)
+
             pending = request.session.pop("pending_cart", None)
 
             if pending:
@@ -79,7 +82,7 @@ def login_view(request):
                 next_url = request.session.pop("next", "product_search")
                 return redirect(next_url)
 
-            next_url = request.session.pop("next", "order_confirm")
+            next_url = request.session.pop("next", "product_search")
             return redirect(next_url)
 
         return render(request, "accounts/login.html", {
@@ -347,6 +350,7 @@ def update_cart(request, product_id):
 def order_confirm(request):
     # 未ログインならログインへ
     if not request.user.is_authenticated:
+        request.session["checkout_flow"] = True
         request.session["next"] = "order_confirm"
         return redirect("login")
 
@@ -362,16 +366,19 @@ def order_confirm(request):
         return redirect("address_input")
 
     # 👇 GET → 確認画面
-    if request.session.get("checkout_flow"):
-        for product_id, quantity in cart.items():
-            product = get_object_or_404(Product, id=product_id)
+    if request.method == "GET":
 
-            if product.stock < quantity:
-                messages.error(
-                    request,
-                    f"{product.name} の在庫が不足しています。在庫は {product.stock} 点です。"
-                )
-                return redirect("cart")
+        if request.session.get("checkout_flow"):
+            for product_id, quantity in cart.items():
+                product = get_object_or_404(Product, id=product_id)
+
+                if product.stock < quantity:
+                    messages.error(
+                        request,
+                        f"{product.name} の在庫が不足しています。在庫は {product.stock} 点です。"
+                    )
+                    request.session.pop("checkout_flow", None)
+                    return redirect("cart")
             
         cart_items = []
         total_price = 0
