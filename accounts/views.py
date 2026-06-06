@@ -357,7 +357,8 @@ def order_confirm(request):
     if not cart:
         return redirect("cart")
     
-    if not Address.objects.filter(user=request.user).exists():
+    checkout_address = request.session.get("checkout_address")
+    if not Address.objects.filter(user=request.user).exists() and not checkout_address:
         return redirect("address_input")
 
     # 👇 GET → 確認画面
