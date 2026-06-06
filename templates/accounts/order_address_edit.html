@@ -78,7 +78,20 @@
 
     <hr style="margin:24px 0;">
 {% endif %}
+            <label>氏名</label>
+            <input
+                type="text"
+                name="name"
+                value="{{ address.name|default:'' }}"
+            >
 
+            <label>電話番号</label>
+            <input
+                type="text"
+                name="phone_number"
+                value="{{ address.phone_number|default:'' }}"
+            >
+            
             <div class="form-group">
                 <label>郵便番号</label>
                 <input type="text" id="postal_code" name="postal_code" value="{{ address.postal_code|default:'' }}">
@@ -96,7 +109,8 @@
             <div class="form-group">
                 <label>市区町村</label>
                 <input type="text" id="city" name="city" value="{{ address.city|default:'' }}">
-
+            </div>
+            
             <div class="form-group">
                 <label>番地</label>
                 <input type="text" name="address" value="{{ address.address|default:'' }}">

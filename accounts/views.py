@@ -363,6 +363,16 @@ def order_confirm(request):
 
     # 👇 GET → 確認画面
     if request.method == "GET":
+        for product_id, quantity in cart.items():
+            product = get_object_or_404(Product, id=product_id)
+
+            if product.stock < quantity:
+                messages.error(
+                    request,
+                    f"{product.name} の在庫が不足しています。在庫は {product.stock} 点です。"
+                )
+                return redirect("cart")
+            
         cart_items = []
         total_price = 0
 
@@ -1266,13 +1276,15 @@ def order_address_edit(request):
 
             return redirect("order_confirm")
 
+        name = request.POST.get("name")
+        phone_number = request.POST.get("phone_number")
         postal_code = request.POST.get("postal_code")
         prefecture = request.POST.get("prefecture")
         city = request.POST.get("city")
         addr = request.POST.get("address")
         building = request.POST.get("building")
 
-        if not postal_code or not prefecture or not city or not addr:
+        if not name or not phone_number or not postal_code or not prefecture or not city or not addr:
             return render(request, "accounts/order_address_edit.html", {
                 "address": address,
                 "addresses": addresses,
@@ -1280,8 +1292,8 @@ def order_address_edit(request):
             })
 
         request.session["checkout_address"] = {
-            "name": request.user.first_name,
-            "phone_number": "",
+            "name": name,
+            "phone_number": phone_number,
             "postal_code": postal_code,
             "prefecture": prefecture,
             "city": city,
