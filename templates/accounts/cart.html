@@ -223,7 +223,7 @@
 
     {% if cart_items %}
     {% if request.user.is_authenticated %}
-        <a href="{% url 'address_input' %}" class="checkout-button checkout-form">
+        <a href="{% url 'address_input' %}?from_cart=1" class="checkout-button checkout-form">
             購入手続きへ
         </a>
     {% else %}

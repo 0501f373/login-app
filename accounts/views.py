@@ -362,7 +362,7 @@ def order_confirm(request):
         return redirect("address_input")
 
     # 👇 GET → 確認画面
-    if request.method == "GET":
+    if request.session.get("checkout_flow"):
         for product_id, quantity in cart.items():
             product = get_object_or_404(Product, id=product_id)
 
@@ -1136,6 +1136,9 @@ def management_order_detail(request, order_id):
 @login_required(login_url="login")
 def address_input(request):
     last_order = Order.objects.filter(user=request.user).order_by("-created_at").first()
+
+    if request.GET.get("from_cart") == "1":
+        request.session["checkout_flow"] = True
 
     address = None
 
