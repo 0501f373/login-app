@@ -1156,13 +1156,15 @@ def address_input(request):
             building = saved_address.building
 
         else:
+            name = request.POST.get("name")
+            phone_number = request.POST.get("phone_number")
             postal_code = request.POST.get("postal_code")
             prefecture = request.POST.get("prefecture")
             city = request.POST.get("city")
             addr = request.POST.get("address")
             building = request.POST.get("building")
 
-            if not postal_code or not prefecture or not city or not addr:
+            if not name or not phone_number or not postal_code or not prefecture or not city or not addr:
                 return render(request, "accounts/address_form.html", {
                     "address": address,
                     "error": "配送先住所を入力してください。",
@@ -1170,6 +1172,8 @@ def address_input(request):
                 })
 
             request.session["checkout_address"] = {
+                "name": name,
+                "phone_number": phone_number,
                 "postal_code": postal_code,
                 "prefecture": prefecture,
                 "city": city,
@@ -1199,8 +1203,8 @@ def address_input(request):
                     address=addr,
                     building=building,
                     is_main=is_first,
-                    name=request.user.first_name,
-                    phone_number=profile.phone_number if profile else "",
+                    name=name,
+                    phone_number=phone_number,
                 )
 
         delivery_date = request.POST.get("delivery_date")
