@@ -76,10 +76,10 @@ def login_view(request):
                 request.session["cart"] = cart
                 request.session.modified = True
 
-                next_url = request.session.pop("next", "order_confirm")
+                next_url = request.session.pop("next", "product_search")
                 return redirect(next_url)
 
-            next_url = request.session.pop("next", "product_search")
+            next_url = request.session.pop("next", "order_confirm")
             return redirect(next_url)
 
         return render(request, "accounts/login.html", {
@@ -210,7 +210,16 @@ def add_to_cart(request, product_id):
                 request,
                 f"{product.name} は在庫数を超えてカートに追加できません。現在カート内：{current_quantity}点、在庫：{product.stock}点"
             )
-            return redirect("cart")
+            return render(
+                request,
+                "accounts/product_detail.html",
+                {
+                    "product": product,
+                    "cart_count": len(cart),
+                    "quantity_range": range(1, min(product.stock, 10) + 1),
+                    "next_page": "",
+                }
+            )
 
         cart[product_id_str] = current_quantity + quantity
 
