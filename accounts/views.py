@@ -89,7 +89,12 @@ def login_view(request):
             "error": "メールアドレスまたはパスワードが違います"
         })
 
+    next_url = request.GET.get("next")
+    if next_url:
+        request.session["next"] = next_url
+
     return render(request, "accounts/login.html")
+
 
 def signup_view(request):
     if request.method == "POST":

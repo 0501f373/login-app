@@ -150,7 +150,7 @@
                 </a>
                 <a href="{% url 'logout' %}">ログアウト</a>
             {% else %}
-                <a href="/login/">ログイン</a>
+                <a href="{% url 'login' %}?next=cart">ログイン</a>
                 <a href="{% url 'signup' %}?next={% url 'cart' %}">新規登録</a>
             {% endif %}
         </div>
