@@ -93,6 +93,9 @@ def login_view(request):
     if next_url:
         request.session["next"] = next_url
 
+    next_url = request.GET.get("next")
+    if next_url:
+        request.session["next"] = next_url
     return render(request, "accounts/login.html")
 
 
